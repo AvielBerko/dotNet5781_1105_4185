@@ -15,8 +15,17 @@ namespace dotNet_5781_01_1105_4185
 			Registration = reg;
 			KmToRefuel = 1200;
 		}
+
+		public uint Kilometrage { get; private set; }
+
+		private uint lastTreatmentKm;
+		private DateTime lastTreatmentDate;
+		public bool Risky => (Kilometrage - lastTreatmentKm > 20000);
+		public uint KmToRefuel { get; private set; }
+
 		public DateTime DateRegistered { get; private set; }
 
+		private string registration;
 		public string Registration
 		{
 			get => registration;
@@ -28,12 +37,7 @@ namespace dotNet_5781_01_1105_4185
 						DateRegistered.Year < 2018 && value.Length == 7)
 					{
 						registration = value;
-						//registration = string.Format("{0}-{1}-{2}", value.Substring(0, 3), value.Substring(3, 2), value.Substring(5, 3));
 					}
-					/*else if (value.Length == 7)
-					{
-						registration = string.Format("{0}-{1}-{2}", value.Substring(0, 2), value.Substring(2, 3), value.Substring(4, 2));
-					}*/
 					else
 					{
 						throw new Exception("Invalid registration");
@@ -45,14 +49,6 @@ namespace dotNet_5781_01_1105_4185
 				}
 			}
 		}
-		private string registration;
-
-		public uint Kilometrage { get; private set; }
-
-		private uint lastTreatmentKm;
-		private DateTime lastTreatmentDate;
-		public bool Risky => (Kilometrage - lastTreatmentKm > 20000);
-		public uint KmToRefuel { get; private set; }
 
 		public void Treatment()
 		{
@@ -67,13 +63,16 @@ namespace dotNet_5781_01_1105_4185
 		{
 			if (KmToRefuel >= km)
 			{
-				KmToRefuel -= km;
-				Kilometrage += km;
+				if (!Risky)
+				{
+					KmToRefuel -= km;
+					Kilometrage += km;
+				}
+				else
+					throw new Exception("Cannot drive, the bus is risky (need treatment).");
 			}
 			else
-			{
 				throw new Exception("Cannot drive the distance, refuel needed");
-			}
 		}
 		public override string ToString()
 		{
