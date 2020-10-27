@@ -80,7 +80,7 @@ namespace dotNet_5781_01_1105_4185
 			if (registration.Length == 8)
 				fmtReg = $"{registration.Substring(0, 3)}-{registration.Substring(3, 2)}-{ registration.Substring(5, 3)}";
 			else
-				fmtReg = $"{registration.Substring(0, 2)}-{registration.Substring(2, 3)}-{ registration.Substring(4, 2)}";
+				fmtReg = $"{registration.Substring(0, 2)}-{registration.Substring(2, 3)}-{ registration.Substring(5, 2)}";
 
 			return $"Registration Number: {fmtReg}, Km since last treatment: {Kilometrage - lastTreatmentKm}";
 		}

@@ -16,12 +16,16 @@ namespace dotNet_5781_01_1105_4185
 		static List<Bus> buses = new List<Bus>();
 		static void Main()
 		{
-			Console.WriteLine("Select 1-5:\n" + "1: Insert a new bus to the database\n" +
-							 "2: Select a bus to drive\n" + "3: Refuel or send to treatment\n" +
-							 "4: Print all buses last treatment Kilometrage\n" + "5: Exit");
+			Console.WriteLine("1: Insert a new bus to the database\n" +
+							"2: Select a bus to drive\n" +
+							"3: Refuel or send to treatment\n" +
+							"4: Print all buses last treatment Kilometrage\n" +
+							"5: Exit");
 			Menu choice = Menu.EXIT;
 			do
 			{
+				Console.Write("Select 1-5: ");
+
 				try
 				{
 					Execute(out choice);
@@ -30,10 +34,14 @@ namespace dotNet_5781_01_1105_4185
 				{
 					Console.WriteLine(e.Message);
 				}
-				Console.Write("Select 1-5: ");
 			} while (choice != Menu.EXIT);
 		}
 
+		/// <summary>
+		/// Getting the user choice and executing it.
+		/// </summary>
+		/// <param name="choice">The user choice</param>
+		/// <exception cref="Exception">When the execution gone wrong.</exception>
 		static void Execute(out Menu choice)
 		{
 			if (Enum.TryParse(Console.ReadLine(), out choice))
@@ -44,11 +52,14 @@ namespace dotNet_5781_01_1105_4185
 					case Menu.INSERT:
 						{
 							string regnum = GetRegistration();
+							if (buses.Any((bus) => bus.Registration == regnum))
+								throw new Exception("Bus is already registered in the system");
+
 							Console.Write("Enter date registrated: ");
 							if (DateTime.TryParse(Console.ReadLine(), out DateTime date))
 								buses.Add(new Bus(regnum, date));
 							else
-								throw new Exception("Date format is ivalid, try dd/mm/yyyy");
+								throw new Exception("Date format is invalid, try dd/mm/yyyy");
 							break;
 						}
 					case Menu.BUS_SELECT:
@@ -88,7 +99,7 @@ namespace dotNet_5781_01_1105_4185
 						}
 					case Menu.EXIT:
 						Console.WriteLine("Bye, bye");
-						return;
+						break;
 				}
 			}
 			else
