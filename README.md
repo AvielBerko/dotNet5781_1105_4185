@@ -2,7 +2,7 @@
 ## By Aviel Berko (211981105) and Meir Klemp (211954185).
 ### Exercises
 - [x] Exercise 0
-- [ ] Exercise 1
+- [x] Exercise 1
 - [ ] Exercise 2
 - [ ] Exercise 3a
 - [ ] Exercise 3b
