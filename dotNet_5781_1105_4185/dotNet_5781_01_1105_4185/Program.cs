@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Names: Aviel Berkovich (211981105), Meir Klemfner(211954185)
+// Project in Windows
+// Exercise 1
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
