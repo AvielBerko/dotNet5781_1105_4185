@@ -36,8 +36,14 @@ namespace dotNet_5781_02_1105_4185
 		public BusStation LastStation => BusRoute[BusRoute.Count - 1];
 		public Areas Area { get; private set; }
 
-		public void InsertStation(BusStation newStation, Station afterStation)
+		public void InsertStation(BusStation newStation, Station afterStation = null)
 		{
+			if (afterStation == null)
+			{
+				BusRoute.Insert(0, newStation);
+				return;
+			}
+
 			var index = BusRoute.FindIndex((item) => item.Station == afterStation);
 			if (index == -1)
 				throw new ArgumentException("Couldn't find station to add after");
@@ -52,6 +58,8 @@ namespace dotNet_5781_02_1105_4185
 		public Bus GetSubRoute(Station start, Station end)
 		{
 			var indices = GetIndex(start, end);
+			if (indices.Item1 >= indices.Item2)
+				throw new ArgumentException("start station shouldn't be after the end station");
 			var length = indices.Item2 - indices.Item1;
 
 			return new Bus(BusLine, Area, Direction, BusRoute.GetRange(indices.Item1, length));
@@ -93,10 +101,6 @@ namespace dotNet_5781_02_1105_4185
 			var secondIdx = BusRoute.FindIndex((item) => item.Station == second);
 			if (secondIdx == -1)
 				throw new ArgumentException("Couldn't find the second station");
-
-			var temp = Math.Max(firstIdx, secondIdx);
-			firstIdx = Math.Min(firstIdx, secondIdx);
-			secondIdx = temp;
 
 			return new Tuple<int, int>(firstIdx, secondIdx);
 		}

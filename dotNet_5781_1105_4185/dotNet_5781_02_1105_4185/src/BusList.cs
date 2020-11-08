@@ -17,7 +17,7 @@ namespace dotNet_5781_02_1105_4185.src
 			{
 				Bus result = buses.Find((bus) => bus.BusLine == line && bus.Direction == dir);
 				if (result == null)
-					throw new ArgumentException("No bus was found with this line number", nameof(line));
+					throw new ArgumentException("No bus was found with this line number");
 				return result;
 			}
 		}
@@ -26,14 +26,14 @@ namespace dotNet_5781_02_1105_4185.src
 		{
 			var all = buses.FindAll((value) => value.BusLine == bus.BusLine);
 			if (all.Count > 1)
-				throw new ArgumentException("2 Buses already exists", nameof(bus));
+				throw new ArgumentException("2 Buses already exists");
 			if (all.Count == 1)
 			{
 				Bus exists = all[0];
 				if (exists.Direction == bus.Direction)
 					throw new ArgumentException($"Bus is already defined for this direction ({exists.Direction})");
 				if (exists.FirstStation != bus.LastStation || exists.LastStation != bus.FirstStation)
-					throw new ArgumentException("Bus exists but not the opposite route", nameof(bus));
+					throw new ArgumentException("Bus exists but not the opposite route");
 			}
 
 			buses.Add(bus);
