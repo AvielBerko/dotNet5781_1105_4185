@@ -43,7 +43,7 @@ namespace dotNet_5781_02_1105_4185.src
 		{
 			return (from bus
 					in buses
-					where bus.BusRoute.Any((station) => station.Code == stationCode)
+					where bus.BusRoute.Any((station) => station.Station.Code == stationCode)
 					select bus).ToList();
 		}
 

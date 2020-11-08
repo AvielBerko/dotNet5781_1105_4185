@@ -28,7 +28,8 @@ namespace dotNet_5781_02_1105_4185
 						throw new ArgumentException("Station code is not unique!", nameof(value));
 					code = value;
 				}
-				throw new ArgumentOutOfRangeException("Station code should be 6 digits!", nameof(value));
+				else
+					throw new ArgumentOutOfRangeException("Station code should be 6 digits!", nameof(value));
 			}
 		}
 		public Location Location { get; private set; }

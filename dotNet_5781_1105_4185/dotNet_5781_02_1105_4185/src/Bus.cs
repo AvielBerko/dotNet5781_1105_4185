@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dotNet_5781_02_1105_4185.src
+namespace dotNet_5781_02_1105_4185
 {
 	enum Areas { General, North, South, Center, Jerusalem, Eilat }
 	class Bus : IComparable<Bus>
@@ -101,7 +101,7 @@ namespace dotNet_5781_02_1105_4185.src
 		public override string ToString()
 		{
 			string result = $"Bus Line: {BusLine}\nArea: {Area}\n";
-			result += string.Join("->", from station in BusRoute select station.Code);
+			result += string.Join("->", from station in BusRoute select station.Station.Code);
 			return result;
 		}
 
