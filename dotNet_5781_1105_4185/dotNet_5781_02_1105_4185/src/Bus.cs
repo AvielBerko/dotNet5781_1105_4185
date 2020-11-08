@@ -8,16 +8,14 @@ using System.Threading.Tasks;
 namespace dotNet_5781_02_1105_4185.src
 {
 	enum Areas { General, North, South, Center, Jerusalem, Eilat }
-	class Bus
+	class Bus : IComparable<Bus>
 	{
 		public Bus(uint line, Areas area, List<BusStation> route)
 		{
 			BusLine = line;
 			Area = area;
 			BusRoute = route;
-			buses.Add(this);
 		}
-		private static List<Bus> buses = new List<Bus>();
 		private List<BusStation> busRoute;
 		public List<BusStation> BusRoute
 		{
@@ -30,17 +28,7 @@ namespace dotNet_5781_02_1105_4185.src
 			}
 		}
 
-		private uint busLine;
-		public uint BusLine
-		{
-			get => busLine;
-			private set
-			{
-				if (buses.Any((bus) => value == bus.busLine))
-					throw new ArgumentException("BusLine number is not unique!", nameof(value));
-				busLine = value;
-			}
-		}
+		public uint BusLine { get; set; }
 		public BusStation FirstStation => BusRoute[0];
 		public BusStation LastStation => BusRoute[BusRoute.Count - 1];
 		public Areas Area { get; private set; }
@@ -57,6 +45,14 @@ namespace dotNet_5781_02_1105_4185.src
 		public void RemoveStation(BusStation station) => BusRoute.Remove(station);
 
 		public bool InRoute(BusStation station) => BusRoute.Contains(station);
+
+		public Bus GetSubRoute(BusStation start, BusStation end)
+		{
+			var indices = GetIndex(start, end);
+			var length = indices.Item2 - indices.Item1;
+
+			return new Bus(BusLine, Area, BusRoute.GetRange(indices.Item1, length));
+		}
 
 		public double RouteDistance(BusStation start, BusStation end)
 		{
@@ -79,6 +75,10 @@ namespace dotNet_5781_02_1105_4185.src
 			}
 
 			return result;
+		}
+		public double RouteTime()
+		{
+			return RouteTime(FirstStation, LastStation);
 		}
 
 		private Tuple<int, int> GetIndex(BusStation first, BusStation second)
@@ -103,6 +103,11 @@ namespace dotNet_5781_02_1105_4185.src
 			string result = $"Bus Line: {BusLine}\nArea: {Area}\n";
 			result += string.Join("->", from station in BusRoute select station.Code);
 			return result;
+		}
+
+		public int CompareTo(Bus other)
+		{
+			return (int)(RouteTime() - other.RouteTime());
 		}
 	}
 }

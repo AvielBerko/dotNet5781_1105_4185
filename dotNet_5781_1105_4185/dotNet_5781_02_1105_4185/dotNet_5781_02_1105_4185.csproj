@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Bus.cs" />
+    <Compile Include="src\BusList.cs" />
     <Compile Include="src\BusStation.cs" />
     <Compile Include="src\Location.cs" />
     <Compile Include="src\Program.cs" />
