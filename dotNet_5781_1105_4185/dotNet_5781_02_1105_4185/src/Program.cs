@@ -10,10 +10,54 @@ namespace dotNet_5781_02_1105_4185
 {
 	class Program
 	{
+		enum Menu { Add = 1, Delete, Search, Print, Exit }
+		enum TwoCases { Case1 = 1, Case2 }
 		static void Main(string[] args)
 		{
 			GenerateStations();
 			var buses = GenerateFirstBuses();
+			Console.WriteLine("1: Add a new bus-line or a new station to an existing bus-line\n" +
+							"2: Delete a bus-line or a station from an existing bus-line\n" +
+							"3: Search bus-lines by station code or buses by route\n" +
+							"4: Print all bus-lines or all stations\n" +
+							"5: Exit");
+			Menu choice = Menu.Exit;
+			do
+			{
+				Console.Write("Select 1-5: ");
+
+				try
+				{
+					Execute(out choice);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.Message);
+				}
+			} while (choice != Menu.Exit);
+		}
+
+		static void Execute(out Menu choice)
+		{
+			if (Enum.TryParse(Console.ReadLine(), out choice))
+			{
+				switch (choice)
+				{
+					case Menu.Add:
+						add();
+						break;
+					case Menu.Delete:
+						break;
+					case Menu.Search:
+						break;
+					case Menu.Print:
+						break;
+					case Menu.Exit:
+						break;
+				}
+			}
+			else
+				throw new InvalidOperationException("Invalid choice");
 		}
 
 		static Station[] stations = new Station[40];
@@ -63,6 +107,26 @@ namespace dotNet_5781_02_1105_4185
 					lst = stations.ToList();
 			}
 			return result;
+		}
+
+		static void add()
+		{
+			Console.WriteLine("Enter 1 to add a new bus-line or 2 to add a station to an existing bus-line");
+			if (Enum.TryParse(Console.ReadLine(), out TwoCases caseChoice))
+			{
+				switch (caseChoice)
+				{
+					case TwoCases.Case1:
+						Console.Write("Enter bus line-number: ");
+						Console.ReadLine();
+
+						break;
+					case TwoCases.Case2:
+						break;
+				}
+			}
+			else
+				throw new InvalidOperationException("Invalid choice");
 		}
 
 		static string[] addresses = new string[]
