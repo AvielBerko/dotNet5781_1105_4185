@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotNet_5781_00_1105_4185", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotNet_5781_01_1105_4185", "dotNet_5781_01_1105_4185\dotNet_5781_01_1105_4185.csproj", "{4D07D31A-BDF3-4A79-B9E2-9272BE2D4967}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotNet_5781_02_1105_4185", "dotNet_5781_02_1105_4185\dotNet_5781_02_1105_4185.csproj", "{E0E247C4-4FDB-408B-9074-325F69DBE788}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4D07D31A-BDF3-4A79-B9E2-9272BE2D4967}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D07D31A-BDF3-4A79-B9E2-9272BE2D4967}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D07D31A-BDF3-4A79-B9E2-9272BE2D4967}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0E247C4-4FDB-408B-9074-325F69DBE788}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0E247C4-4FDB-408B-9074-325F69DBE788}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0E247C4-4FDB-408B-9074-325F69DBE788}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0E247C4-4FDB-408B-9074-325F69DBE788}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
