@@ -11,11 +11,11 @@ namespace dotNet_5781_02_1105_4185.src
 	{
 		private List<Bus> buses = new List<Bus>();
 
-		public Bus this[uint line]
+		public Bus this[uint line, Direction dir = Direction.Go]
 		{
 			get
 			{
-				Bus result = buses.Find((bus) => bus.BusLine == line);
+				Bus result = buses.Find((bus) => bus.BusLine == line && bus.Direction == dir);
 				if (result == null)
 					throw new ArgumentException("No bus was found with this line number", nameof(line));
 				return result;
@@ -30,6 +30,8 @@ namespace dotNet_5781_02_1105_4185.src
 			if (all.Count == 1)
 			{
 				Bus exists = all[0];
+				if (exists.Direction == bus.Direction)
+					throw new ArgumentException($"Bus is already defined for this direction ({exists.Direction})");
 				if (exists.FirstStation != bus.LastStation || exists.LastStation != bus.FirstStation)
 					throw new ArgumentException("Bus exists but not the opposite route", nameof(bus));
 			}
@@ -38,7 +40,12 @@ namespace dotNet_5781_02_1105_4185.src
 		}
 
 		public void RemoveBus(Bus bus) => buses.Remove(bus);
-
+		public void RemoveLine(uint lineNum)
+		{
+			var busesToRemove = buses.FindAll((bus) => bus.BusLine == lineNum);
+			foreach (var bus in busesToRemove)
+				RemoveBus(bus);
+		}
 		public List<Bus> BusesOfStation(uint stationCode)
 		{
 			return (from bus

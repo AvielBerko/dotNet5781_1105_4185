@@ -11,9 +11,9 @@ namespace dotNet_5781_02_1105_4185
 		public Location(double lat, double lon) 
 		{
 			if (lat < -90 && lat > 90)
-				throw new ArgumentOutOfRangeException("Latitude should be between -90 and 90", nameof(lat));
+				throw new ArgumentOutOfRangeException("Latitude should be between -90 and 90");
 			if (lon < -180 && lon > 180)
-				throw new ArgumentOutOfRangeException("Longitude should be between -180 and 180", nameof(lon));
+				throw new ArgumentOutOfRangeException("Longitude should be between -180 and 180");
 
 			Latitude = lat;
 			Longitude = lon;

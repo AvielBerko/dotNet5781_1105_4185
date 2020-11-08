@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_02_1105_4185
 {
-	class Station
+	class Station : IDisposable
 	{
 		public Station(uint code, string address)
 		{
 			Code = code;
 			Location = Location.RandomizeLocation();
 			Address = address;
-			stations.Add(this);
+			Stations.Add(this);
 		}
-		private static List<Station> stations = new List<Station>();
+		public static List<Station> Stations { get; private set; } = new List<Station>();
+
 		private uint code;
 		public uint Code
 		{ 
@@ -24,17 +25,22 @@ namespace dotNet_5781_02_1105_4185
 			{
 				if (value > 99999 && value < 1000000) // 6 digits
 				{
-					if (stations.Any((station) => value == station.Code))
-						throw new ArgumentException("Station code is not unique!", nameof(value));
+					if (Stations.Any((station) => value == station.Code))
+						throw new ArgumentException("Station code is not unique!");
 					code = value;
 				}
 				else
-					throw new ArgumentOutOfRangeException("Station code should be 6 digits!", nameof(value));
+					throw new ArgumentOutOfRangeException("Station code should be 6 digits!");
 			}
 		}
 		public Location Location { get; private set; }
 		public string Address { get; private set; }
 
 		public override string ToString() => $"Bus Station Code: {Code}\nLocation: {Location}\nAddress: {Address} ";
+
+		public void Dispose()
+		{
+			Stations.Remove(this);
+		}
 	}
 }
