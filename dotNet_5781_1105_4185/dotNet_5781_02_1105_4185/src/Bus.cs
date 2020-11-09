@@ -30,7 +30,7 @@ namespace dotNet_5781_02_1105_4185
 			}
 		}
 
-		public uint BusLine { get; set; }
+		public uint BusLine { get; private set; }
 		public Direction Direction { get; private set; }
 		public BusStation FirstStation => BusRoute[0];
 		public BusStation LastStation => BusRoute[BusRoute.Count - 1];
@@ -60,7 +60,7 @@ namespace dotNet_5781_02_1105_4185
 			var indices = GetIndex(start, end);
 			if (indices.Item1 >= indices.Item2)
 				throw new ArgumentException("start station shouldn't be after the end station");
-			var length = indices.Item2 - indices.Item1;
+			var length = indices.Item2 - indices.Item1 + 1;
 
 			return new Bus(BusLine, Area, Direction, BusRoute.GetRange(indices.Item1, length));
 		}
@@ -80,7 +80,7 @@ namespace dotNet_5781_02_1105_4185
 		{
 			var indices = GetIndex(start, end);
 			double result = 0;
-			for (int i = indices.Item1 + 1; i < indices.Item2; i++)
+			for (int i = indices.Item1 + 1; i <= indices.Item2; i++)
 			{
 				result += BusRoute[i].TimeFromLastStation;
 			}

@@ -11,7 +11,7 @@ namespace dotNet_5781_02_1105_4185
 		public Station(uint code, string address)
 		{
 			Code = code;
-			Location = Location.RandomizeLocation();
+			Location = Location.RandomizeIsraelLocation();
 			Address = address;
 			Stations.Add(this);
 		}
@@ -30,7 +30,7 @@ namespace dotNet_5781_02_1105_4185
 					code = value;
 				}
 				else
-					throw new ArgumentOutOfRangeException("Station code should be 6 digits!");
+					throw new ArgumentException("Station code should be 6 digits!");
 			}
 		}
 		public Location Location { get; private set; }
