@@ -23,7 +23,8 @@ namespace dotNet_5781_02_1105_4185
 		static void Main()
 		{
 			GenerateStations();
-			buses = GenerateFirstBuses();
+			GenerateFirstBuses();
+
 			Console.WriteLine("1: Add a new bus-line or a new station to an existing bus-line\n" +
 							"2: Delete a bus-line or a station from an existing bus-line\n" +
 							"3: Search bus-lines by station code or buses by route\n" +
@@ -401,20 +402,25 @@ namespace dotNet_5781_02_1105_4185
 		/// Randomly generates a list of buses.
 		/// </summary>
 		/// <returns>A busList of the created buses.</returns>
-		static BusList GenerateFirstBuses()
+		static void GenerateFirstBuses()
 		{
+			buses = new BusList();
+
 			var lstStations = new List<Station>(Station.Stations);
-			var buses = new BusList();
 			for (int i = 0; i < 10; i++)
 			{
-				Bus bus = new Bus((uint)rand.Next(1, 1000), (Areas)rand.Next(0, 6), Direction.Go, GenerateRoute(ref lstStations));
-				buses.AddBus(bus);
-				// Adds the opposite direction bus
-				var oppositeRoute = new List<BusStation>(bus.Route);
-				oppositeRoute.Reverse();
-				buses.AddBus(new Bus(bus.Line, bus.Area, Direction.Return, oppositeRoute));
+				try
+				{
+					Bus bus = new Bus((uint)rand.Next(1, 1000), (Areas)rand.Next(0, 6), Direction.Go, GenerateRoute(ref lstStations));
+					buses.AddBus(bus);
+					// Adds the opposite direction bus
+					var oppositeRoute = new List<BusStation>(bus.Route);
+					oppositeRoute.Reverse();
+					buses.AddBus(new Bus(bus.Line, bus.Area, Direction.Return, oppositeRoute));
+				}
+				// Retry to generate a bus when a bus with the same line already exists.
+				catch { i--; }
 			}
-			return buses;
 		}
 
 		/// <summary>
