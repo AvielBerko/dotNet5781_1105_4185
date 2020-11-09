@@ -30,7 +30,7 @@ namespace dotNet_5781_02_1105_4185
 			{
 				Bus result = buses.Find((bus) => bus.Line == line && bus.Direction == dir);
 				if (result == null)
-					throw new ArgumentException("No bus was found with this line number");
+					throw new ArgumentException("No bus was found with this line number and direction");
 				return result;
 			}
 		}

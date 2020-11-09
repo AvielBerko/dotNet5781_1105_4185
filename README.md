@@ -3,6 +3,6 @@
 ### Exercises
 - [x] Exercise 0
 - [x] Exercise 1
-- [ ] Exercise 2
+- [x] Exercise 2
 - [ ] Exercise 3a
 - [ ] Exercise 3b

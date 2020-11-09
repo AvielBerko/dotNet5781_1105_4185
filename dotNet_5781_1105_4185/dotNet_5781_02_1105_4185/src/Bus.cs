@@ -102,7 +102,13 @@ namespace dotNet_5781_02_1105_4185
 		/// Removes from the route all bus stations with a given station.
 		/// </summary>
 		/// <param name="station">Station to remove.</param>
-		public void RemoveStation(Station station) => Route.RemoveAll((item) => item.Station == station);
+		/// <exception cref="InvalidOperationException" ></exception>
+		public void RemoveStation(Station station)
+		{
+			if (Route.Count((item) => item.Station != station) <= 2)
+				throw new InvalidOperationException("Bus cannot contaion less than 2 stations");
+			Route.RemoveAll((item) => item.Station == station);
+		}
 
 		/// <summary>
 		/// Checks if a given station is in the bus' route.

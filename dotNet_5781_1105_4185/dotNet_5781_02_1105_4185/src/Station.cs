@@ -9,7 +9,7 @@ namespace dotNet_5781_02_1105_4185
 	/// <summary>
 	/// Class for storing a unique station.
 	/// </summary>
-	class Station : IDisposable
+	class Station
 	{
 		/// <summary>
 		/// Creates new instance of a unique station.
@@ -61,9 +61,5 @@ namespace dotNet_5781_02_1105_4185
 
 		public override string ToString() => $"Bus Station Code: {Code}\nLocation: {Location}\nAddress: {Address} ";
 
-		public void Dispose()
-		{
-			Stations.Remove(this);
-		}
 	}
 }

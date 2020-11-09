@@ -6,13 +6,21 @@ namespace dotNet_5781_02_1105_4185
 {
 	class Program
 	{
+		/// <summary>
+		/// Menu of actions for the buses list.
+		/// </summary>
 		enum Menu { Add = 1, Delete, Search, Print, Exit }
+		/// <summary>
+		/// Two cases for each choice in the menu.
+		/// </summary>
 		enum TwoCases { Case1 = 1, Case2 }
-
+		/// <summary>
+		/// BusList collection of all buses.
+		/// </summary>
 		static BusList buses;
 		static Random rand = new Random();
 
-		static void Main(string[] args)
+		static void Main()
 		{
 			GenerateStations();
 			buses = GenerateFirstBuses();
@@ -37,6 +45,10 @@ namespace dotNet_5781_02_1105_4185
 			} while (choice != Menu.Exit);
 		}
 
+		/// <summary>
+		/// Handles the menu of actions.
+		/// </summary>
+		/// <param name="choice">User's action of choice.</param>
 		static void Execute(out Menu choice)
 		{
 			if (Enum.TryParse(Console.ReadLine(), out choice))
@@ -66,6 +78,9 @@ namespace dotNet_5781_02_1105_4185
 				throw new InvalidOperationException("Invalid choice");
 		}
 
+		/// <summary>
+		/// Adds a new bus-line to the list or adds a station to an existing bus-line. 
+		/// </summary>
 		static void Add()
 		{
 			Console.Write("Enter 1 to add a new bus-line or 2 to add a station to an existing bus-line: ");
@@ -73,60 +88,72 @@ namespace dotNet_5781_02_1105_4185
 			{
 				switch (caseChoice)
 				{
+					// Adds a new bus-line to the list
 					case TwoCases.Case1:
 						{
-							Console.Write("Enter bus line-number: ");
-							if (!uint.TryParse(Console.ReadLine(), out uint lineNum))
-								throw new ArgumentException("Couldn't parse line number");
+							GetBusIdentifier(out uint lineNum, out Direction dir);
 							Console.Write("Enter bus area (0 - General, 1 - North, 2 - South, 3 - Center, 4 - Jerusalem, 5 - Eilat): ");
 							if (!Enum.TryParse(Console.ReadLine(), out Areas area))
 								throw new ArgumentException("Couldn't parse area");
-							Console.Write("Enter bus direction (1 - Go, 2 - Return): ");
-							if (!Enum.TryParse(Console.ReadLine(), out Direction dir))
-								throw new ArgumentException("Couldn't parse direction");
 
+							Console.WriteLine("Enter route of stations:\n");
+							// A list of bus-stations for the new bus
 							List<BusStation> busStations = new List<BusStation>();
 							string input = string.Empty;
 							do
 							{
+								// Keeps the loop of getting bus station going (in case of an error)
 								try
 								{
-									busStations.Add(CreateBusStation());
+									// Adds a station to bus' route
+									// For the first station - no need for distance and time from last station
+									busStations.Add(ReceiveBusStation(busStations.Count == 0));
 								}
 								catch (ArgumentException e)
 								{
 									PrintError(e);
 								}
-								do
+								Console.WriteLine();
+								// Mininum 2 station - ask the user for more (Optional)
+								if (busStations.Count >= 2)
 								{
-									Console.Write("Add more stations? [Y/n]: ");
-									input = Console.ReadLine().ToLower();
-								} while (input != "y" && input != "n");
+									do
+									{
+										Console.Write("Add another station? [Y/n]: ");
+										input = Console.ReadLine().ToLower();
+									} while (input != "y" && input != "n");
+								}
 							} while (input != "n");
 
+							// Adds the bus to the busList
 							buses.AddBus(new Bus(lineNum, area, dir, busStations));
 							Console.WriteLine("Added Seccessfuly");
 							break;
 						}
-
+					//adds a station to an existing bus-line
 					case TwoCases.Case2:
 						{
-							Console.Write("Enter bus line-number: ");
-							if (!uint.TryParse(Console.ReadLine(), out uint lineNum))
-								throw new ArgumentException("Couldn't parse line number");
-							Console.Write("Enter bus direction (1 - Go, 2 - Return): ");
-							if (!Enum.TryParse(Console.ReadLine(), out Direction dir))
-								throw new ArgumentException("Couldn't parse direction");
+							GetBusIdentifier(out uint lineNum, out Direction dir);
+							var bus = buses[lineNum, dir];
 
 							Console.Write("Enter station code to add after (Keep empty to add as the first station): ");
-							if (!uint.TryParse(Console.ReadLine(), out uint code))
-								throw new ArgumentException("Couldn't parse Code");
-							Station afterStation = Station.Stations.Find((item) => item.Code == code);
+							string codeInput = Console.ReadLine();
+							// If afterStation is null - inserts the station at the begining of the route
+							Station afterStation = null;
+							// if the input is empty - no ask for afterStation
+							if (codeInput != string.Empty)
+							{
+								if (!uint.TryParse(codeInput, out uint code))
+									throw new ArgumentException("Couldn't parse Code");
 
-							Console.Write("Enter station code for bus route: ");
-							BusStation newStation = CreateBusStation();
+								// Finds the station to add after - if null add first
+								afterStation = Station.Stations.Find((item) => item.Code == code);
+							}
 
-							buses[lineNum, dir].InsertStation(newStation, afterStation);
+							// Receive a new station and insert it to bus' route
+							BusStation newStation = ReceiveBusStation(afterStation == null);
+							bus.InsertStation(newStation, afterStation);
+
 							Console.WriteLine("Added Seccessfuly");
 							break;
 						}
@@ -138,6 +165,9 @@ namespace dotNet_5781_02_1105_4185
 				throw new InvalidOperationException("Invalid choice");
 		}
 
+		/// <summary>
+		/// Deletes an existing bus-line or removes a station from an existing bus-line. 
+		/// </summary>
 		static void Delete()
 		{
 			Console.Write("Enter 1 to delete a bus-line or 2 to remove a station from an existing bus-line: ");
@@ -145,34 +175,34 @@ namespace dotNet_5781_02_1105_4185
 			{
 				switch (caseChoice)
 				{
+					// Deletes an existing bus-line.
 					case TwoCases.Case1:
 						{
-							Console.Write("Enter bus line-number: ");
-							if (!uint.TryParse(Console.ReadLine(), out uint lineNum))
-								throw new ArgumentException("Couldn't parse line number");
-							Console.Write("Enter bus direction (1 - Go, 2 - Return): ");
-							if (!Enum.TryParse(Console.ReadLine(), out Direction dir))
-								throw new ArgumentException("Couldn't parse direction");
+							GetBusIdentifier(out uint lineNum, out Direction dir);
+
+							// Removes the bus from buses list
 							buses.RemoveBus(buses[lineNum, dir]);
 							Console.WriteLine("Deleted Seccessfuly");
 							break;
 						}
 
+					// Removes a station from an existing bus-line. 
 					case TwoCases.Case2:
 						{
-							Console.Write("Enter bus line-number: ");
-							if (!uint.TryParse(Console.ReadLine(), out uint lineNum))
-								throw new ArgumentException("Couldn't parse line number");
-							Console.Write("Enter bus direction (1 - Go, 2 - Return): ");
-							if (!Enum.TryParse(Console.ReadLine(), out Direction dir))
-								throw new ArgumentException("Couldn't parse direction");
+							GetBusIdentifier(out uint lineNum, out Direction dir);
 
 							Console.Write("Enter station code to remove: ");
 							if (!uint.TryParse(Console.ReadLine(), out uint code))
 								throw new ArgumentException("Couldn't parse Code");
-							Station station = Station.Stations.Find((item) => item.Code == code);
 
+							// Finds the station and removes it
+							Station station = Station.Stations.Find((item) => item.Code == code);
 							buses[lineNum, dir].RemoveStation(station);
+
+							// If station has no buses - remove it from stations list
+							if (buses.BusesOfStation(station).Count == 0)
+								Station.Stations.Remove(station);
+
 							Console.WriteLine("Removed Seccessfuly");
 							break;
 						}
@@ -184,6 +214,9 @@ namespace dotNet_5781_02_1105_4185
 				throw new InvalidOperationException("Invalid choice");
 		}
 
+		/// <summary>
+		/// Finds all buses stoping at a station or search a bus for a route (listed by time).
+		/// </summary>
 		static void Search()
 		{
 			Console.Write("Enter 1 to find buses stoping at a station or 2 to search a bus for a route: ");
@@ -191,29 +224,23 @@ namespace dotNet_5781_02_1105_4185
 			{
 				switch (caseChoice)
 				{
+					// Finds all buses stoping at a station
 					case TwoCases.Case1:
 						{
 							Console.Write("Enter station code: ");
 							if (!uint.TryParse(Console.ReadLine(), out uint code))
 								throw new ArgumentException("Couldn't parse Code");
 
+							// Gets all buses lines stoping at the station
 							var stationBuses = buses.BusesOfStation(code);
 							var lines = (from bus in stationBuses select bus.Line).ToArray();
 
-							if (lines.Length > 0)
-							{
-								Console.Write("Buses: ");
-								Console.WriteLine(string.Join(", ", lines));
-							}
-							else
-							{
-								Console.WriteLine("No buses");
-							}
-
-							Console.WriteLine();
+							Console.Write("Buses: ");
+							Console.WriteLine(string.Join(", ", lines) + "\n");
 							break;
 						}
 
+					// Search a bus for a route (listed by time)
 					case TwoCases.Case2:
 						{
 							Console.Write("Enter starting station code: ");
@@ -227,8 +254,11 @@ namespace dotNet_5781_02_1105_4185
 							Station endingStation = Station.Stations.Find((item) => item.Code == endingCode);
 
 							var routes = new BusList();
+
+							// Adds all buses with subroute between the 2 station
 							foreach (Bus bus in buses)
 							{
+								// If there is no subroute - don't break
 								try
 								{
 									routes.AddBus(bus.GetSubRoute(startingStation, endingStation));
@@ -248,6 +278,9 @@ namespace dotNet_5781_02_1105_4185
 				throw new InvalidOperationException("Invalid choice");
 		}
 
+		/// <summary>
+		/// Prints all bus lines or all stations data.
+		/// </summary>
 		static void Print()
 		{
 			Console.Write("Enter 1 to print all bus-lines or 2 to print all stations data: ");
@@ -255,6 +288,7 @@ namespace dotNet_5781_02_1105_4185
 			{
 				switch (caseChoice)
 				{
+					// Print all bus lines
 					case TwoCases.Case1:
 						{
 							Console.WriteLine();
@@ -262,7 +296,7 @@ namespace dotNet_5781_02_1105_4185
 								Console.WriteLine(bus + "\n");
 							break;
 						}
-
+					// Print all stations data
 					case TwoCases.Case2:
 						{
 							Console.WriteLine();
@@ -270,20 +304,11 @@ namespace dotNet_5781_02_1105_4185
 							{
 								Console.WriteLine(station);
 
+								// List of buses stoping at the station
 								var stationBuses = buses.BusesOfStation(station);
 								var lines = (from bus in stationBuses select bus.Line).ToArray();
-
-								if (lines.Length > 0)
-								{
-									Console.Write("Buses: ");
-									Console.WriteLine(string.Join(", ", lines));
-								}
-								else
-								{
-									Console.WriteLine("No buses");
-								}
-
-								Console.WriteLine();
+								Console.Write("Buses: ");
+								Console.WriteLine(string.Join(", ", lines) + "\n");
 							}
 							break;
 						}
@@ -295,6 +320,10 @@ namespace dotNet_5781_02_1105_4185
 				throw new InvalidOperationException("Invalid choice");
 		}
 
+		/// <summary>
+		/// Prints an error to the console (Red)
+		/// </summary>
+		/// <param name="e">An exeption to print</param>
 		static void PrintError(Exception e)
 		{
 			var temp = Console.ForegroundColor;
@@ -303,25 +332,55 @@ namespace dotNet_5781_02_1105_4185
 			Console.ForegroundColor = temp;
 		}
 
-		static BusStation CreateBusStation()
+		/// <summary>
+		/// Receives from the user a bus' line and direction
+		/// </summary>
+		/// <param name="lineNum">Bus' line number</param>
+		/// <param name="dir">Bus' direction</param>
+		private static void GetBusIdentifier(out uint lineNum, out Direction dir)
+		{
+			Console.Write("Enter bus line-number: ");
+			if (!uint.TryParse(Console.ReadLine(), out lineNum))
+				throw new ArgumentException("Couldn't parse line number");
+			Console.Write("Enter bus direction (1 - Go, 2 - Return): ");
+			if (!Enum.TryParse(Console.ReadLine(), out dir))
+				throw new ArgumentException("Couldn't parse direction");
+		}
+
+		/// <summary>
+		/// Receives a bus station from the user.
+		/// </summary>
+		/// <param name="isFirst">If station is the first in the route</param>
+		/// <returns></returns>
+		static BusStation ReceiveBusStation(bool isFirst = false)
 		{
 			Console.Write("Enter station code: ");
 			if (!uint.TryParse(Console.ReadLine(), out uint code))
 				throw new ArgumentException("Couldn't parse Code");
 
+			// If station doesn't exist - creates a new one
 			Station station = Station.Stations.Find((item) => item.Code == code)
 				?? new Station(code, addresses[rand.Next(0, addresses.Length)]);
 
-			Console.Write("Enter distance to last station (Meters): ");
-			if (!double.TryParse(Console.ReadLine(), out double distance))
-				throw new ArgumentException("Couldn't parse Distance");
-			Console.Write("Enter time to last station (Minutes): ");
-			if (!double.TryParse(Console.ReadLine(), out double time))
-				throw new ArgumentException("Couldn't parse Time");
+			// If the station is first - no ask for distance and time
+			if (!isFirst)
+			{
+				Console.Write("Enter distance to last station (Meters): ");
+				if (!double.TryParse(Console.ReadLine(), out double distance))
+					throw new ArgumentException("Couldn't parse Distance");
+				Console.Write("Enter time to last station (Minutes): ");
+				if (!double.TryParse(Console.ReadLine(), out double time))
+					throw new ArgumentException("Couldn't parse Time");
+				return new BusStation(station, distance, time);
+			}
+			else
+				return new BusStation(station, 0, 0);
 
-			return new BusStation(station, distance, time);
 		}
 
+		/// <summary>
+		/// Randomly generates a list of stations.
+		/// </summary>
 		static void GenerateStations()
 		{
 			int numOfStations = rand.Next(40, 60);
@@ -338,6 +397,10 @@ namespace dotNet_5781_02_1105_4185
 			}
 		}
 
+		/// <summary>
+		/// Randomly generates a list of buses.
+		/// </summary>
+		/// <returns>A busList of the created buses.</returns>
 		static BusList GenerateFirstBuses()
 		{
 			var lstStations = new List<Station>(Station.Stations);
@@ -346,6 +409,7 @@ namespace dotNet_5781_02_1105_4185
 			{
 				Bus bus = new Bus((uint)rand.Next(1, 1000), (Areas)rand.Next(0, 6), Direction.Go, GenerateRoute(ref lstStations));
 				buses.AddBus(bus);
+				// Adds the opposite direction bus
 				var oppositeRoute = new List<BusStation>(bus.Route);
 				oppositeRoute.Reverse();
 				buses.AddBus(new Bus(bus.Line, bus.Area, Direction.Return, oppositeRoute));
@@ -353,6 +417,11 @@ namespace dotNet_5781_02_1105_4185
 			return buses;
 		}
 
+		/// <summary>
+		/// Generates a random route to a bus.
+		/// </summary>
+		/// <param name="lst">List of least used stations</param>
+		/// <returns>Route (list of bus stations)</returns>
 		static List<BusStation> GenerateRoute(ref List<Station> lst)
 		{
 			var numOfStations = rand.Next(10, 20);
@@ -368,6 +437,9 @@ namespace dotNet_5781_02_1105_4185
 			return result;
 		}
 
+		/// <summary>
+		/// Array of addresses.
+		/// </summary>
 		static string[] addresses = new string[]
 		{
 			"777 Brockton Avenue, Abington MA 2351",
