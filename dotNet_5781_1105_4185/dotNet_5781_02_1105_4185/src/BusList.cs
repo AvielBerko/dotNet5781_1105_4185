@@ -66,12 +66,7 @@ namespace dotNet_5781_02_1105_4185
 		/// Removes all buses with the line number.
 		/// </summary>
 		/// <param name="lineNum">The buses line number</param>
-		public void RemoveLine(uint lineNum)
-		{
-			var busesToRemove = buses.FindAll((bus) => bus.Line == lineNum);
-			foreach (var bus in busesToRemove)
-				RemoveBus(bus);
-		}
+		public void RemoveLine(uint lineNum) => buses.RemoveAll((bus) => bus.Line == lineNum);
 
 		/// <summary>
 		/// Finds all buses stopping at a station by a given code.
