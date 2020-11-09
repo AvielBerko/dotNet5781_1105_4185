@@ -6,8 +6,17 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_02_1105_4185
 {
+	/// <summary>
+	/// Struct for storing location data with longtitude and latitude.
+	/// </summary>
 	readonly struct Location
 	{
+		/// <summary>
+		/// Creates an instance of Location.
+		/// </summary>
+		/// <param name="lat">Location's latitude</param>
+		/// <param name="lon">Location's longtitude</param>
+		/// <exception cref="ArgumentException">When lat or lon are out of range.</exception>
 		public Location(double lat, double lon) 
 		{
 			if (lat < -90 && lat > 90)
@@ -23,6 +32,11 @@ namespace dotNet_5781_02_1105_4185
 		public double Longitude { get; }
 
 		private static Random rand = new Random();
+
+		/// <summary>
+		/// Creates an instance of Location with random location in Israel.
+		/// </summary>
+		/// <returns>The generated location</returns>
 		public static Location RandomizeIsraelLocation()
 		{
 			return new Location(31 + 2.3 * rand.NextDouble(), 34.3 + 1.2 * rand.NextDouble());
