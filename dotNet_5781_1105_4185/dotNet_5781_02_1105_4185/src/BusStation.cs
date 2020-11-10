@@ -11,7 +11,7 @@ namespace dotNet_5781_02_1105_4185
 	/// <summary>
 	/// A station wrapper for saving more bus specific information.
 	/// </summary>
-	class BusStation
+	struct BusStation
 	{
 		/// <summary>
 		/// Creates an instance of BusStation.
@@ -37,5 +37,8 @@ namespace dotNet_5781_02_1105_4185
 		/// Time in minutes from last station.
 		/// </summary>
 		public double TimeFromLastStation { get; private set; }
+
+		public static bool operator==(BusStation A, BusStation B) => A.Station == B.Station;
+		public static bool operator !=(BusStation A, BusStation B) => !(A == B);
 	}
 }
