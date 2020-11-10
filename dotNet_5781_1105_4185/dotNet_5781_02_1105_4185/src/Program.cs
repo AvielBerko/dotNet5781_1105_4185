@@ -94,7 +94,8 @@ namespace dotNet_5781_02_1105_4185
 						{
 							GetBusIdentifier(out uint lineNum, out Direction dir);
 							Console.Write("Enter bus area (0 - General, 1 - North, 2 - South, 3 - Center, 4 - Jerusalem, 5 - Eilat): ");
-							if (!Enum.TryParse(Console.ReadLine(), out Areas area))
+							if (!Enum.TryParse(Console.ReadLine(), out Areas area) ||
+								!Enum.IsDefined(typeof(Areas), area))
 								throw new ArgumentException("Couldn't parse area");
 
 							Console.WriteLine("Enter route of stations:\n");
@@ -115,6 +116,7 @@ namespace dotNet_5781_02_1105_4185
 									PrintError(e);
 								}
 								Console.WriteLine();
+
 								// Mininum 2 station - ask the user for more (Optional)
 								if (busStations.Count >= 2)
 								{
@@ -128,7 +130,7 @@ namespace dotNet_5781_02_1105_4185
 
 							// Adds the bus to the busList
 							buses.AddBus(new Bus(lineNum, area, dir, busStations));
-							Console.WriteLine("Added Seccessfuly");
+							Console.WriteLine("Added Successfuly");
 							break;
 						}
 					//adds a station to an existing bus-line
@@ -153,9 +155,14 @@ namespace dotNet_5781_02_1105_4185
 
 							// Receive a new station and insert it to bus' route
 							BusStation newStation = ReceiveBusStation(afterStation == null);
-							bus.InsertStation(newStation, afterStation);
-
-							Console.WriteLine("Added Seccessfuly");
+							if (buses.AddStationToBus(bus, newStation, afterStation))
+							{
+								Console.WriteLine("Added successfuly for both directions");
+							}
+							else
+							{
+								Console.WriteLine("Added Successfuly");
+							}
 							break;
 						}
 					default:
@@ -183,7 +190,7 @@ namespace dotNet_5781_02_1105_4185
 
 							// Removes the bus from buses list
 							buses.RemoveBus(buses[lineNum, dir]);
-							Console.WriteLine("Deleted Seccessfuly");
+							Console.WriteLine("Deleted Successfuly");
 							break;
 						}
 
@@ -197,14 +204,14 @@ namespace dotNet_5781_02_1105_4185
 								throw new ArgumentException("Couldn't parse Code");
 
 							// Finds the station and removes it
-							Station station = Station.Stations.Find((item) => item.Code == code);
-							buses[lineNum, dir].RemoveStation(station);
+							Station station = GetStation(code);
+							buses.RemoveStationFromBus(buses[lineNum, dir], station);
 
 							// If station has no buses - remove it from stations list
 							if (buses.BusesOfStation(station).Count == 0)
 								Station.Stations.Remove(station);
 
-							Console.WriteLine("Removed Seccessfuly");
+							Console.WriteLine("Removed Successfuly");
 							break;
 						}
 					default:
@@ -343,9 +350,25 @@ namespace dotNet_5781_02_1105_4185
 			Console.Write("Enter bus line-number: ");
 			if (!uint.TryParse(Console.ReadLine(), out lineNum))
 				throw new ArgumentException("Couldn't parse line number");
+
 			Console.Write("Enter bus direction (1 - Go, 2 - Return): ");
-			if (!Enum.TryParse(Console.ReadLine(), out dir))
+			if (!Enum.TryParse(Console.ReadLine(), out dir) ||
+				!Enum.IsDefined(typeof(Direction), dir))
 				throw new ArgumentException("Couldn't parse direction");
+		}
+
+		/// <summary>
+		/// Finds a station by its code.
+		/// </summary>
+		/// <param name="code">The station's code.</param>
+		/// <returns>The found station.</returns>
+		/// <exception cref="ArgumentException">When no station was found.</exception>
+		private static Station GetStation(uint code)
+		{
+			var result = Station.Stations.Find((item) => item.Code == code);
+			if (result == null)
+				throw new ArgumentException("Coudln't find code");
+			return result;
 		}
 
 		/// <summary>

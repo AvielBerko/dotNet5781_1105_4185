@@ -29,7 +29,7 @@ namespace dotNet_5781_02_1105_4185
 		/// <param name="direction">Bus' direction.</param>
 		/// <param name="route">Bus' route</param>
 		/// <exception cref="ArgumentException">When route has less than 2 stations</exception>
-		public Bus(uint line, Areas area, Direction direction,List<BusStation> route)
+		public Bus(uint line, Areas area, Direction direction, List<BusStation> route)
 		{
 			Line = line;
 			Area = area;
@@ -59,11 +59,31 @@ namespace dotNet_5781_02_1105_4185
 		/// <summary>
 		/// Bus' operation area.
 		/// </summary>
-		public Areas Area { get; private set; }
+		public Areas Area
+		{
+			get => area;
+			private set
+			{
+				if (!Enum.IsDefined(typeof(Areas), value))
+					throw new ArgumentOutOfRangeException();
+				area = value;
+			}
+		}
+		private Areas area;
 		/// <summary>
 		/// Bus' direction.
 		/// </summary>
-		public Direction Direction { get; private set; }
+		public Direction Direction
+		{
+			get => direction;
+			private set
+			{
+				if (!Enum.IsDefined(typeof(Direction), value))
+					throw new ArgumentOutOfRangeException();
+				direction = value;
+			}
+		}
+		private Direction direction;
 		/// <summary>
 		/// Bus' first station in the route.
 		/// </summary>
@@ -105,7 +125,7 @@ namespace dotNet_5781_02_1105_4185
 		/// <exception cref="InvalidOperationException" ></exception>
 		public void RemoveStation(Station station)
 		{
-			if (Route.Count((item) => item.Station != station) <= 2)
+			if (Route.Count((item) => item.Station != station) < 2)
 				throw new InvalidOperationException("Bus cannot contaion less than 2 stations");
 			Route.RemoveAll((item) => item.Station == station);
 		}

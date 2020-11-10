@@ -87,14 +87,10 @@ namespace dotNet_5781_02_1105_4185
 		/// </summary>
 		/// <param name="station">The station.</param>
 		/// <returns>List of the found buses.</returns>
-		/// <exception cref="ArgumentNullException">station is null.</exception>
 		public List<Bus> BusesOfStation(Station station)
 		{
-			if (station == null)
-				throw new ArgumentNullException(nameof(station));
-
 			return (from bus
-					in buses
+			in buses
 					where bus.InRoute(station)
 					group bus by bus.Line into lines
 					select lines.First()).ToList();
@@ -109,6 +105,69 @@ namespace dotNet_5781_02_1105_4185
 			var result = (from bus in buses select bus).ToList();
 			result.Sort(); // using ICompareable.
 			return result;
+		}
+
+		/// <summary>
+		/// Adds the station to the bus.<br />
+		/// Also, checks the opposite direction (Adds to both directions if needed).
+		/// </summary>
+		/// <param name="bus">The bus to add to.</param>
+		/// <param name="station">The station to add.</param>
+		/// <param name="afterStation">The station to add after.</param>
+		/// <returns>True if added to the opposite direction. Else, false</returns>
+		public bool AddStationToBus(Bus bus, BusStation station, Station afterStation)
+		{
+			var addedBothDir = false;
+			if (afterStation == null || bus.LastStation.Station == afterStation)
+			{
+				try
+				{
+					var oppositeBus = this[bus.Line, 3 - bus.Direction];
+
+					// Adding to the opposite position.
+					if (afterStation == null)
+						oppositeBus.InsertStation(station, oppositeBus.LastStation.Station);
+					else
+						oppositeBus.InsertStation(station);
+
+					addedBothDir = true;
+				}
+				// In case the opposite bus doesn't exist.
+				catch { }
+			}
+
+			bus.InsertStation(station, afterStation);
+			return addedBothDir;
+		}
+
+		/// <summary>
+		/// Removes the station from the bus.<br />
+		/// Also, checks the opposite direction (Won't add if can't).
+		/// </summary>
+		/// <param name="bus">The bus to add to.</param>
+		/// <param name="station">The station to add.</param>
+		/// <param name="afterStation">The station to add after.</param>
+		public void RemoveStationFromBus(Bus bus, Station station)
+		{
+			if (bus.FirstStation.Station == station || bus.LastStation.Station == station)
+			{
+				try
+				{
+					var oppositeBus = this[bus.Line, 3 - bus.Direction];
+					throw new InvalidOperationException(
+						"Can't remove the first or the last station a line that has go and return.\n" +
+						"Try adding a station to the end or the begining of the bus' route.");
+				}
+				// In case the opposite bus doesn't exist.
+				catch (ArgumentException)
+				{
+					bus.RemoveStation(station);
+				}
+			}
+			else
+			{
+				bus.RemoveStation(station);
+			}
 		}
 
 		public IEnumerator GetEnumerator()
