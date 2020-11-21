@@ -4,5 +4,5 @@
 - [x] Exercise 0
 - [x] Exercise 1
 - [x] Exercise 2
-- [ ] Exercise 3a
+- [x] Exercise 3a
 - [ ] Exercise 3b

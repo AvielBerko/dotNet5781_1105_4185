@@ -10,16 +10,16 @@ namespace dotNet_5781_02_1105_4185
 	/// <summary>
 	/// Buses' areas of operation.
 	/// </summary>
-	enum Areas { General, North, South, Center, Jerusalem, Eilat }
+	public enum Areas { General, North, South, Center, Jerusalem, Eilat }
 	/// <summary>
 	/// Buses' driving direction.
 	/// </summary>
-	enum Direction { Go = 1, Return }
+	public enum Direction { Go = 1, Return }
 
 	/// <summary>
 	/// Class for storing bus data.
 	/// </summary>
-	class Bus : IComparable<Bus>
+	public class Bus : IComparable<Bus>
 	{
 		/// <summary>
 		/// Creates new instance of a bus.
@@ -62,7 +62,7 @@ namespace dotNet_5781_02_1105_4185
 		public Areas Area
 		{
 			get => area;
-			private set
+			set
 			{
 				if (!Enum.IsDefined(typeof(Areas), value))
 					throw new ArgumentOutOfRangeException();
@@ -76,7 +76,7 @@ namespace dotNet_5781_02_1105_4185
 		public Direction Direction
 		{
 			get => direction;
-			private set
+			set
 			{
 				if (!Enum.IsDefined(typeof(Direction), value))
 					throw new ArgumentOutOfRangeException();

@@ -9,7 +9,7 @@ namespace dotNet_5781_02_1105_4185
 	/// <summary>
 	/// Struct for storing location data with longtitude and latitude.
 	/// </summary>
-	readonly struct Location
+	public readonly struct Location
 	{
 		/// <summary>
 		/// Creates an instance of Location.

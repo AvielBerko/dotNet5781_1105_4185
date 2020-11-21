@@ -10,7 +10,7 @@ namespace dotNet_5781_02_1105_4185
 	/// <summary>
 	/// Collection of buses.
 	/// </summary>
-	class BusList : IEnumerable
+	public class BusList : IEnumerable
 	{
 		/// <summary>
 		/// List of all existing buses.

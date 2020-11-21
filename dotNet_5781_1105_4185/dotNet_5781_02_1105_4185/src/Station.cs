@@ -9,7 +9,7 @@ namespace dotNet_5781_02_1105_4185
 	/// <summary>
 	/// Class for storing a unique station.
 	/// </summary>
-	class Station
+	public class Station
 	{
 		/// <summary>
 		/// Creates new instance of a unique station.
