@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,30 +18,63 @@ using System.Windows.Shapes;
 
 namespace dotNet_5781_03B_1105_4185
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
-    {
-        //ObservableCollection<Bus> buses = new ObservableCollection<Bus>();
-        List<Bus> buses = new List<Bus>();
-        public MainWindow()
-        {
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window
+	{
+		ObservableCollection<Bus> buses = new ObservableCollection<Bus>();
+		//List<Bus> buses = new List<Bus>();
+		public MainWindow()
+		{
 			GenerateFirstBuses();
-            InitializeComponent();
-            this.DataContext = buses;
-        }
+			InitializeComponent();
+
+			lstBuses.DataContext = buses;
+		}
+
+		private void AddBusClick(object sender, RoutedEventArgs e)
+		{
+			var dialog = new AddBusDialog();
+			dialog.Owner = this;
+			if (dialog.ShowDialog() ?? false)
+			{
+				buses.Add(dialog.Bus);
+			}
+		}
+
+		private void ListDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			var bus = ((FrameworkElement)e.OriginalSource).DataContext as Bus;
+			if (bus != null)
+			{
+				var information = new BusInformation(bus);
+				information.Owner = this;
+				information.Show();
+			}
+		}
+
+		private void DriveClick(object sender, RoutedEventArgs e)
+		{
+			var bus = ((Button)sender).DataContext as Bus;
+		}
+
+		private void RefuelClick(object sender, RoutedEventArgs e)
+		{
+			var bus = ((Button)sender).DataContext as Bus;
+		}
+
 		void GenerateFirstBuses()
 		{
-            // Randomize first buses
+			// Randomize first buses
 
-            buses.Add(new Bus(new Registration(11111111, DateTime.Now)));
-            buses.Add(new Bus(new Registration(22222222, DateTime.Now)));
-            buses.Add(new Bus(new Registration(33333333, DateTime.Now)));
-            buses.Add(new Bus(new Registration(44444444, DateTime.Now)));
-            buses.Add(new Bus(new Registration(1234567, DateTime.Now.AddYears(-4))));
-            buses.Add(new Bus(new Registration(2345678, DateTime.Now.AddYears(-4))));
-            buses.Add(new Bus(new Registration(3456789, DateTime.Now.AddYears(-4))));
-        }
-    }
+			buses.Add(new Bus(new Registration(11111111, DateTime.Now)));
+			buses.Add(new Bus(new Registration(22222222, DateTime.Now)));
+			buses.Add(new Bus(new Registration(33333333, DateTime.Now)));
+			buses.Add(new Bus(new Registration(44444444, DateTime.Now)));
+			buses.Add(new Bus(new Registration(1234567, DateTime.Now.AddYears(-4))));
+			buses.Add(new Bus(new Registration(2345678, DateTime.Now.AddYears(-4))));
+			buses.Add(new Bus(new Registration(3456789, DateTime.Now.AddYears(-4))));
+		}
+	}
 }

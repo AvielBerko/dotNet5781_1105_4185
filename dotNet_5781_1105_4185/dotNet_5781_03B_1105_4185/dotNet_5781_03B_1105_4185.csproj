@@ -55,7 +55,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddBusDialog.xaml.cs">
+      <DependentUpon>AddBusDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusInformation.xaml.cs">
+      <DependentUpon>BusInformation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Registration.cs" />
+    <Page Include="AddBusDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusInformation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

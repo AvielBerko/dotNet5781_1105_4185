@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_03B_1105_4185
 {
-	readonly struct Registration
+	public readonly struct Registration
 	{
 		public uint Number { get; }
 		public DateTime Date { get; }

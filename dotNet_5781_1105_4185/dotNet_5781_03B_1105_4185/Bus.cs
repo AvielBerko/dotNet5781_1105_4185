@@ -8,13 +8,16 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_03B_1105_4185
 {
-	enum Status { Ready, Driving, Refueling, InTreatment };
-	class Bus : INotifyPropertyChanged
+	public enum Status { Ready, Driving, Refueling, InTreatment };
+	public class Bus : INotifyPropertyChanged
 	{
 		public Bus(Registration reg)
 		{
 			Registration = reg;
 			KmToRefuel = 1200;
+
+			maintance = new Maintance();
+			maintance.Date = DateTime.Now;
 		}
 
 		public uint Kilometrage { get; private set; }
@@ -26,7 +29,7 @@ namespace dotNet_5781_03B_1105_4185
 		public bool TreatmentNeeded => (Kilometrage - maintance.Km > 20000) || ((DateTime.Now - maintance.Date).TotalDays > 365);
 		private uint kmToRefuel;
 		public uint KmToRefuel { get => kmToRefuel; private set { kmToRefuel = value; OnPropertyChanged(nameof(KmToRefuel)); } }
-		public double FuelLeft => (KmToRefuel/1200)*100;
+		public double FuelLeft => ((double)KmToRefuel/1200)*100;
 		public void StartTreatment()
 		{
 			if (Status == Status.Driving)
