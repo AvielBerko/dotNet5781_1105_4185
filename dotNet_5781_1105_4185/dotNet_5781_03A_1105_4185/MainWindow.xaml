@@ -28,7 +28,7 @@
 			<Viewbox Grid.Column="2">
 				<Label Name="lblDirection" Content="Direction: " HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontFamily="Narkisim"/>
 			</Viewbox>
-			<TextBox x:Name="tbDirection" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="{Binding Path=Direction}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5,5,5,5" FontFamily="Narkisim"/>
+			<TextBox x:Name="tbDirection" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5,5,5,5" FontFamily="Narkisim"/>
 			<Viewbox Grid.Column="4">
 				<Label Name="lblArea" Content="Area: " HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontFamily="Narkisim"/>
 			</Viewbox>
