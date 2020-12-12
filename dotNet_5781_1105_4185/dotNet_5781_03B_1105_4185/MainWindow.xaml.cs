@@ -37,7 +37,7 @@ namespace dotNet_5781_03B_1105_4185
 		{
 			var dialog = new AddBusDialog();
 			dialog.Owner = this;
-			if (dialog.ShowDialog() ?? false)
+			if (dialog.ShowDialog() == true)
 			{
 				buses.Add(dialog.Bus);
 			}
@@ -57,11 +57,24 @@ namespace dotNet_5781_03B_1105_4185
 		private void DriveClick(object sender, RoutedEventArgs e)
 		{
 			var bus = ((Button)sender).DataContext as Bus;
+
+			var dialog = new BusDriveDialog(bus);
+			dialog.Owner = this;
+			if (dialog.ShowDialog() == true)
+			{
+				//buses.Add(dialog.Bus);
+			}
 		}
 
 		private void RefuelClick(object sender, RoutedEventArgs e)
 		{
 			var bus = ((Button)sender).DataContext as Bus;
+		}
+
+		private void RemoveClick(object sender, RoutedEventArgs e)
+		{
+			var bus = ((Button)sender).DataContext as Bus;
+			buses.Remove(bus);
 		}
 
 		void GenerateFirstBuses()
@@ -76,5 +89,6 @@ namespace dotNet_5781_03B_1105_4185
 			buses.Add(new Bus(new Registration(2345678, DateTime.Now.AddYears(-4))));
 			buses.Add(new Bus(new Registration(3456789, DateTime.Now.AddYears(-4))));
 		}
+
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,8 +23,33 @@ namespace dotNet_5781_03B_1105_4185
 		public AddBusDialog()
 		{
 			InitializeComponent();
+
+			DataContext = this;
+		}
+		public Bus Bus => new Bus(new Registration(RegNum, RegDate));
+
+		public uint RegNum { get; set; }
+		public DateTime RegDate { get; set; }
+
+		private void OkButtonClicked(object sender, RoutedEventArgs e)
+		{
+			if (!IsValid()) return;
+
+			DialogResult = true;
 		}
 
-		public Bus Bus { get; set; }
+		private bool IsValid()
+		{
+			try
+			{
+				new Registration(RegNum, RegDate);
+				return true;
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message, "Cannot create bus", MessageBoxButton.OK, MessageBoxImage.Error);
+				return false;
+			}
+		}
 	}
 }

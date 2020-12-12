@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_03B_1105_4185
 {
-	public enum Status { Ready, Driving, Refueling, InTreatment };
 	public class Bus : INotifyPropertyChanged
 	{
 		public Bus(Registration reg)
@@ -30,52 +29,46 @@ namespace dotNet_5781_03B_1105_4185
 		private uint kmToRefuel;
 		public uint KmToRefuel { get => kmToRefuel; private set { kmToRefuel = value; OnPropertyChanged(nameof(KmToRefuel)); } }
 		public double FuelLeft => ((double)KmToRefuel/1200)*100;
+		public bool CanDrive(uint distance) => kmToRefuel - distance >= 0;
+		public void UpdateStatusProgress(double progress)
+		{
+			Status = new Status(Status.Stage, progress);
+		}
 		public void StartTreatment()
 		{
-			if (Status == Status.Driving)
+			if (Status.Stage != Stage.Ready)
 				throw new Exception();
-			Status = Status.InTreatment;
+			Status = new Status(Stage.InTreatment);
 		}
 		public void DoneTreatment()
 		{
 			maintance.Date = DateTime.Now;
 			maintance.Km = Kilometrage;
-			Status = Status.Ready;
+			Status = new Status(Stage.Ready);
 		}
 		public void StartRefueling()
 		{
-			if (Status == Status.Driving)
+			if (Status.Stage != Stage.Ready)
 				throw new Exception();
-			Status = Status.Refueling;
+			Status = new Status(Stage.Refueling);
 		}
 		public void DoneRefueling()
 		{
 			KmToRefuel = 1200;
-			Status = Status.Ready;
+			Status = new Status(Stage.Ready);
 		}
 		public void StartDriving()
 		{
-			if (TreatmentNeeded)
+			if (TreatmentNeeded || Status.Stage != Stage.Ready)
 				throw new Exception();
-			Status = Status.Driving;
+			Status = new Status(Stage.Driving);
 		}
 		public void DoneDriving(uint km)
 		{
 			KmToRefuel -= km;
 			Kilometrage += km;
-			Status = Status.Ready;
+			Status = new Status(Stage.Ready);
 		}
-		/*public override string ToString()
-		{
-			string fmtReg = (DateRegistered.Year >= 2018) ? "000-00-000" : "00-000-00";
-			/*if (DateRegistered.Year >= 2018)
-				fmtReg = registration.ToString("000-00-000");
-			//$"{registration.Substring(0, 3)}-{registration.Substring(3, 2)}-{ registration.Substring(5, 3)}";
-			else
-				fmtReg = registration.ToString("00-000-00");
-			//$"{registration.Substring(0, 2)}-{registration.Substring(2, 3)}-{ registration.Substring(5, 2)}";
-			return $"Registration Number: {registration:fmtReg}, Km since last treatment: {Kilometrage - maintance.Km}";
-		}*/
 		public event PropertyChangedEventHandler PropertyChanged;
 		virtual protected void OnPropertyChanged(String propertyName)
 		{

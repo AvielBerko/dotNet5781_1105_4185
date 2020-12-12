@@ -18,7 +18,7 @@
 			<ListView.View>
 				<GridView x:Name="busgrigview">
 					<GridViewColumn Header="Bus Registration" DisplayMemberBinding="{Binding Registration}" />
-					<GridViewColumn Header="Status"  DisplayMemberBinding="{Binding Status}" />
+					<GridViewColumn Header="Status"  DisplayMemberBinding="{Binding Status.Stage}" />
 					<GridViewColumn Header="Drive">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
@@ -34,6 +34,15 @@
 								<Button Content="Refuel" Margin="0"
 								VerticalAlignment="Center"
 								Click="RefuelClick" />
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Header="Remove">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<Button Content="Remove" Margin="0"
+								VerticalAlignment="Center"
+								Click="RemoveClick" />
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>

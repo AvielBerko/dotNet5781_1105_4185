@@ -18,7 +18,7 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 		<Label Content="{Binding Registration}" ContentStringFormat="Registration Number: {0}"/>
-		<Label Grid.Row="1" Content="{Binding Registration.Date}" ContentStringFormat="Registration Date: {0:MMMM yyyy}"/>
+		<Label Grid.Row="1" Content="{Binding Registration.Date}" ContentStringFormat="Registration Date: {0:dd MMMM yyyy}"/>
 		<Label Grid.Row="2" Content="{Binding Kilometrage}" ContentStringFormat="Kilometrage: {0} km"/>
 		<StackPanel Grid.Row="3" Orientation="Horizontal">
 			<Label Content="{Binding FuelLeft}" ContentStringFormat="Fuel Left: {0:n2}%"/>
@@ -26,21 +26,21 @@
 		</StackPanel>
 		<Label Grid.Row="4">
 			<Label.Style>
-                <Style TargetType="{x:Type Label}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding TreatmentNeeded}" Value="True">
-                            <Setter Property="Content" Value="Need treatment" />
-                            <Setter Property="Foreground" Value="Red"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding TreatmentNeeded}" Value="False">
-                            <Setter Property="Content" Value="Doesn't need treatment" />
-                            <Setter Property="Foreground" Value="Green"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Label.Style>
+				<Style TargetType="{x:Type Label}">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding TreatmentNeeded}" Value="True">
+							<Setter Property="Content" Value="Need treatment" />
+							<Setter Property="Foreground" Value="Red"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding TreatmentNeeded}" Value="False">
+							<Setter Property="Content" Value="Doesn't need treatment" />
+							<Setter Property="Foreground" Value="Green"/>
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</Label.Style>
 		</Label>
-		<Label Grid.Row="5" Content="{Binding Status}" ContentStringFormat="Status: {0}"/>
+		<Label Grid.Row="5" Content="{Binding Status.Stage}" ContentStringFormat="Status: {0}"/>
 		<StackPanel Grid.Row="6" Orientation="Horizontal">
 			<Button Margin="5" Width="75" Click="RefuelClick">Refuel</Button>
 			<Button Margin="5" Width="75" Click="TreatmentClick">Treatment</Button>

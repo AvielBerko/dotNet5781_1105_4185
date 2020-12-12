@@ -5,9 +5,28 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:dotNet_5781_03B_1105_4185"
 		mc:Ignorable="d"
-		Title="Add a new bus" Height="450" Width="800"
-		ResizeMode="CanMinimize" WindowStartupLocation="CenterOwner">
+		Title="Add a new bus" Height="200" Width="400"
+		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
 	<Grid>
-		
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<StackPanel Orientation="Horizontal" Margin="5">
+			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Registration Number:</Label>
+			<TextBox Width="175" FontSize="17" Text="{Binding RegNum, Mode=TwoWay}"/>
+		</StackPanel>
+
+		<StackPanel Grid.Row ="1" Orientation="Horizontal" Margin="5">
+			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Registration Date:</Label>
+			<DatePicker SelectedDate="{Binding RegDate, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center"/>
+		</StackPanel>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+			<Button Width="75" Click="OkButtonClicked" IsDefault="True" Margin="0,0,5,0">OK</Button>
+			<Button Width="75" IsCancel="True">Cancel</Button>
+		</StackPanel>
 	</Grid>
 </Window>
