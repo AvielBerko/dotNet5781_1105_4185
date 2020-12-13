@@ -24,7 +24,9 @@ namespace dotNet_5781_03B_1105_4185
 			InitializeComponent();
 
 			DataContext = this;
+
 			this.bus = bus;
+			Title = bus.Registration.ToString();
 		}
 
 		private Bus bus;
@@ -34,18 +36,20 @@ namespace dotNet_5781_03B_1105_4185
 		{
 			if (!bus.CanDrive(Distance))
 			{
-				MessageBox.Show("Cannot drive this distance!");
+				MessageBox.Show("Cannot drive this distance!\n" +
+					$"Can drive {bus.KmToRefuel} km until fuel tank is empty",
+					"", MessageBoxButton.OK, MessageBoxImage.Error);
 				return;
 			}
-			
+
 			DialogResult = true;
 		}
 
-		private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		private void TextBoxDigitOnly(object sender, TextCompositionEventArgs e)
 		{
 			var regex = new System.Text.RegularExpressions.Regex("[^0-9]+");
-			bool isNotValid = regex.IsMatch(e.Text);
-			e.Handled = isNotValid;
+			bool isDigitOnly = !regex.IsMatch(e.Text);
+			e.Handled = !isDigitOnly;
 		}
 	}
 }

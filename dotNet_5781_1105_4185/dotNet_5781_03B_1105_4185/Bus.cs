@@ -8,71 +8,132 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_03B_1105_4185
 {
+	public enum Status { Ready, Driving, Refueling, InTreatment };
 	public class Bus : INotifyPropertyChanged
 	{
-		public Bus(Registration reg)
+		public Bus(Registration reg, uint kilometrage = 0)
 		{
 			Registration = reg;
 			KmToRefuel = 1200;
+			Kilometrage = kilometrage;
 
-			maintance = new Maintance();
-			maintance.Date = DateTime.Now;
+			lastTreatment = new LastTreatment() { Date = DateTime.Now };
 		}
 
-		public uint Kilometrage { get; private set; }
-
-		private Maintance maintance;
-		private Status status;
 		public Registration Registration { get; }
-		public Status Status { get => status; private set { status = value; OnPropertyChanged(nameof(Status));} }
-		public bool TreatmentNeeded => (Kilometrage - maintance.Km > 20000) || ((DateTime.Now - maintance.Date).TotalDays > 365);
-		private uint kmToRefuel;
-		public uint KmToRefuel { get => kmToRefuel; private set { kmToRefuel = value; OnPropertyChanged(nameof(KmToRefuel)); } }
-		public double FuelLeft => ((double)KmToRefuel/1200)*100;
-		public bool CanDrive(uint distance) => kmToRefuel - distance >= 0;
-		public void UpdateStatusProgress(double progress)
+
+		private uint kilometrage;
+		public uint Kilometrage
 		{
-			Status = new Status(Status.Stage, progress);
+			get => kilometrage;
+			private set
+			{
+				kilometrage = value;
+				OnPropertyChanged(nameof(Kilometrage));
+			}
+		}
+
+		private Status status;
+		public Status Status
+		{
+			get => status;
+			private set
+			{
+				status = value;
+				OnPropertyChanged(nameof(Status));
+			}
+		}
+
+		private Operation operation;
+		public Operation Operation {
+			get => operation;
+			set
+			{
+				operation = value;
+				OnPropertyChanged(nameof(Operation));
+			}
+		}
+
+		private LastTreatment lastTreatment;
+		public bool TreatmentNeeded => (Kilometrage - lastTreatment.Km > 20000)
+			|| ((DateTime.Now - lastTreatment.Date).TotalDays > 365);
+
+		private int kmToRefuel;
+		public int KmToRefuel
+		{
+			get => kmToRefuel;
+			private set
+			{
+				kmToRefuel = value;
+				OnPropertyChanged(nameof(KmToRefuel));
+				OnPropertyChanged(nameof(FuelLeft));
+			}
+		}
+		public double FuelLeft => ((double)KmToRefuel / 1200) * 100;
+		public bool CanDrive(uint distance) => kmToRefuel - distance >= 0;
+
+		public void UpdateOperationTimeLeft(TimeSpan timeLeft)
+		{
+			if (Status == Status.Ready) throw new Exception();
+
+			Operation.TimeLeft = timeLeft;
+			OnPropertyChanged(nameof(Operation));
 		}
 		public void StartTreatment()
 		{
-			if (Status.Stage != Stage.Ready)
+			if (Status != Status.Ready)
 				throw new Exception();
-			Status = new Status(Stage.InTreatment);
+
+			Status = Status.InTreatment;
+			Operation = new TreatmentOperation();
 		}
 		public void DoneTreatment()
 		{
-			maintance.Date = DateTime.Now;
-			maintance.Km = Kilometrage;
-			Status = new Status(Stage.Ready);
+			lastTreatment.Date = DateTime.Now;
+			lastTreatment.Km = Kilometrage;
+			if (kmToRefuel == 0) KmToRefuel = 1200;
+
+			Status = Status.Ready;
+			Operation = null;
 		}
 		public void StartRefueling()
 		{
-			if (Status.Stage != Stage.Ready)
+			if (Status != Status.Ready)
 				throw new Exception();
-			Status = new Status(Stage.Refueling);
+
+			Status = Status.Refueling;
+			Operation = new RefuelingOperation();
 		}
 		public void DoneRefueling()
 		{
 			KmToRefuel = 1200;
-			Status = new Status(Stage.Ready);
+
+			Status = Status.Ready;
+			Operation = null;
 		}
-		public void StartDriving()
+		public void StartDriving(uint km)
 		{
-			if (TreatmentNeeded || Status.Stage != Stage.Ready)
+			if (TreatmentNeeded || Status != Status.Ready)
 				throw new Exception();
-			Status = new Status(Stage.Driving);
+
+			uint kmPerHour = (uint)rnd.Next(40, 80);
+			Status = Status.Driving;
+			Operation = new DrivingOperation { Distance = km, Speed = kmPerHour };
 		}
-		public void DoneDriving(uint km)
+		public void DoneDriving()
 		{
-			KmToRefuel -= km;
-			Kilometrage += km;
-			Status = new Status(Stage.Ready);
+			var drivingData = (DrivingOperation)Operation;
+			KmToRefuel -= (int)drivingData.Distance;
+			Kilometrage += drivingData.Distance;
+			Status = Status.Ready;
 		}
+
 		public event PropertyChangedEventHandler PropertyChanged;
-		virtual protected void OnPropertyChanged(String propertyName)
+		virtual protected void OnPropertyChanged(string propertyName)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		private static Random rnd = new Random();
 	}
 }

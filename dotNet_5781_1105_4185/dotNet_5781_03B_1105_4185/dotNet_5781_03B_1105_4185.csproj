@@ -64,8 +64,10 @@
     <Compile Include="BusInformation.xaml.cs">
       <DependentUpon>BusInformation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusOperationSimulation.cs" />
+    <Compile Include="Operation.cs" />
     <Compile Include="Registration.cs" />
-    <Compile Include="Status.cs" />
+    <Compile Include="Converters.cs" />
     <Page Include="AddBusDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -87,7 +89,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bus.cs" />
-    <Compile Include="Maintance.cs" />
+    <Compile Include="LastTreatment.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

@@ -24,7 +24,7 @@ namespace dotNet_5781_03B_1105_4185
 	public partial class MainWindow : Window
 	{
 		ObservableCollection<Bus> buses = new ObservableCollection<Bus>();
-		//List<Bus> buses = new List<Bus>();
+
 		public MainWindow()
 		{
 			GenerateFirstBuses();
@@ -62,13 +62,14 @@ namespace dotNet_5781_03B_1105_4185
 			dialog.Owner = this;
 			if (dialog.ShowDialog() == true)
 			{
-				//buses.Add(dialog.Bus);
+				bus.Drive(dialog.Distance);
 			}
 		}
 
 		private void RefuelClick(object sender, RoutedEventArgs e)
 		{
 			var bus = ((Button)sender).DataContext as Bus;
+			bus.Refuel();
 		}
 
 		private void RemoveClick(object sender, RoutedEventArgs e)

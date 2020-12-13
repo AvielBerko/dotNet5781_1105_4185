@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_03B_1105_4185
 {
-	struct Maintance
+	struct LastTreatment
 	{
 		public uint Km { get; set; }
 		public DateTime Date { get; set; }

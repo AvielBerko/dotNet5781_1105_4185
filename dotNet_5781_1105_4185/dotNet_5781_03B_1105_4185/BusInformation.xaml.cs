@@ -28,12 +28,14 @@ namespace dotNet_5781_03B_1105_4185
 
 		private void RefuelClick(object sender, RoutedEventArgs e)
 		{
-
+			var bus = ((Button)sender).DataContext as Bus;
+			bus.Refuel();
 		}
 
 		private void TreatmentClick(object sender, RoutedEventArgs e)
 		{
-
+			var bus = ((Button)sender).DataContext as Bus;
+			bus.Treate();
 		}
 	}
 }

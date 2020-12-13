@@ -26,10 +26,11 @@ namespace dotNet_5781_03B_1105_4185
 
 			DataContext = this;
 		}
-		public Bus Bus => new Bus(new Registration(RegNum, RegDate));
+		public Bus Bus => new Bus(new Registration(RegNum, RegDate), Kilometrage);
 
 		public uint RegNum { get; set; }
 		public DateTime RegDate { get; set; }
+		public uint Kilometrage { get; set; }
 
 		private void OkButtonClicked(object sender, RoutedEventArgs e)
 		{
@@ -50,6 +51,12 @@ namespace dotNet_5781_03B_1105_4185
 				MessageBox.Show(e.Message, "Cannot create bus", MessageBoxButton.OK, MessageBoxImage.Error);
 				return false;
 			}
+		}
+		private void TextBoxDigitOnly(object sender, TextCompositionEventArgs e)
+		{
+			var regex = new System.Text.RegularExpressions.Regex("[^0-9]+");
+			bool isDigitOnly = !regex.IsMatch(e.Text);
+			e.Handled = !isDigitOnly;
 		}
 	}
 }

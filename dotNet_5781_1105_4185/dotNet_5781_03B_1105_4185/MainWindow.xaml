@@ -18,7 +18,7 @@
 			<ListView.View>
 				<GridView x:Name="busgrigview">
 					<GridViewColumn Header="Bus Registration" DisplayMemberBinding="{Binding Registration}" />
-					<GridViewColumn Header="Status"  DisplayMemberBinding="{Binding Status.Stage}" />
+					<GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" />
 					<GridViewColumn Header="Drive">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>

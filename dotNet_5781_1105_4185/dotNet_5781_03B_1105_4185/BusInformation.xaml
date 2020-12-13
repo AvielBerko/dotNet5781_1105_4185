@@ -7,6 +7,11 @@
 		mc:Ignorable="d"
 		Title="Bus Information" Height="250" Width="300"
 		ResizeMode="CanMinimize" WindowStartupLocation="CenterOwner">
+	<Window.Resources>
+		<local:ShowProgressConverter x:Key="ShowProgressConverter"/>
+		<local:RedFuelBarConverter x:Key="RedFuelBarConverter"/>
+		<local:TimeSpanToString x:Key="TimeSpanToString"/>
+	</Window.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
@@ -20,10 +25,25 @@
 		<Label Content="{Binding Registration}" ContentStringFormat="Registration Number: {0}"/>
 		<Label Grid.Row="1" Content="{Binding Registration.Date}" ContentStringFormat="Registration Date: {0:dd MMMM yyyy}"/>
 		<Label Grid.Row="2" Content="{Binding Kilometrage}" ContentStringFormat="Kilometrage: {0} km"/>
+
 		<StackPanel Grid.Row="3" Orientation="Horizontal">
 			<Label Content="{Binding FuelLeft}" ContentStringFormat="Fuel Left: {0:n2}%"/>
-			<ProgressBar Value="{Binding FuelLeft, Mode=OneWay}" Width="100" Margin="5"/>
+			<ProgressBar Value="{Binding FuelLeft, Mode=OneWay}" Width="100" Margin="5">
+				<ProgressBar.Style>
+					<Style TargetType="{x:Type ProgressBar}">
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding FuelLeft, Converter={StaticResource RedFuelBarConverter}}" Value="True">
+								<Setter Property="Foreground" Value="Red"/>
+							</DataTrigger>
+							<DataTrigger Binding="{Binding FuelLeft, Converter={StaticResource RedFuelBarConverter}}" Value="False">
+								<Setter Property="Foreground" Value="Green"/>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ProgressBar.Style>
+			</ProgressBar>
 		</StackPanel>
+
 		<Label Grid.Row="4">
 			<Label.Style>
 				<Style TargetType="{x:Type Label}">
@@ -40,7 +60,43 @@
 				</Style>
 			</Label.Style>
 		</Label>
-		<Label Grid.Row="5" Content="{Binding Status.Stage}" ContentStringFormat="Status: {0}"/>
+
+		<StackPanel Grid.Row="5" Orientation="Horizontal">
+			<Label Content="{Binding Status}" ContentStringFormat="Status: {0}"/>
+			<ProgressBar Width="100" Margin="10">
+				<ProgressBar.Style>
+					<Style TargetType="{x:Type ProgressBar}">
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding Status, Converter={StaticResource ShowProgressConverter}}" Value="True">
+								<Setter Property="Visibility" Value="Visible"/>
+								<Setter Property="Value" Value="{Binding Operation.Progress, Mode=OneWay}"/>
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Status, Converter={StaticResource ShowProgressConverter}}" Value="False">
+								<Setter Property="Visibility" Value="Hidden"/>
+								<Setter Property="Value" Value="0"/>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ProgressBar.Style>
+			</ProgressBar>
+			<Label ContentStringFormat="dd\:hh\:mm">
+				<Label.Style>
+					<Style TargetType="{x:Type Label}">
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding Status, Converter={StaticResource ShowProgressConverter}}" Value="True">
+								<Setter Property="Visibility" Value="Visible"/>
+								<Setter Property="Content" Value="{Binding Operation.TimeLeft, Mode=OneWay, Converter={StaticResource TimeSpanToString}}"/>
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Status, Converter={StaticResource ShowProgressConverter}}" Value="False">
+								<Setter Property="Visibility" Value="Hidden"/>
+								<Setter Property="Content" Value=""/>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</Label.Style>
+			</Label>
+		</StackPanel>
+
 		<StackPanel Grid.Row="6" Orientation="Horizontal">
 			<Button Margin="5" Width="75" Click="RefuelClick">Refuel</Button>
 			<Button Margin="5" Width="75" Click="TreatmentClick">Treatment</Button>

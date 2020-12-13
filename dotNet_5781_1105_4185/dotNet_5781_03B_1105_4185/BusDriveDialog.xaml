@@ -5,7 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:dotNet_5781_03B_1105_4185"
 		mc:Ignorable="d"
-		Title="{Binding Registration}" Height="200" Width="400"
+		Height="130" Width="300"
 		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -15,7 +15,7 @@
 
 		<StackPanel Orientation="Horizontal" Margin="5">
 			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Driving Distance:</Label>
-			<TextBox Width="175" FontSize="17" Text="{Binding Distance, Mode=TwoWay}" PreviewTextInput="TextBox_PreviewTextInput"/>
+			<TextBox Width="125" FontSize="17" Text="{Binding Distance, Mode=TwoWay}" PreviewTextInput="TextBoxDigitOnly"/>
 		</StackPanel>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
