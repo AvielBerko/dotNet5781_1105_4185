@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -8,16 +9,26 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_03B_1105_4185
 {
-	public enum Status { Ready, Driving, Refueling, InTreatment };
+	public enum Status { Ready, NeedTreatment, Driving, Refueling, InTreatment };
 	public class Bus : INotifyPropertyChanged
 	{
-		public Bus(Registration reg, uint kilometrage = 0)
+		public static ObservableCollection<Bus> Buses { get; } = new ObservableCollection<Bus>();
+
+		public Bus(Registration reg, uint kilometrage = 0, uint kmToRefuel = 1200, LastTreatment? lastTreatment = null)
 		{
+			this.lastTreatment = lastTreatment ?? new LastTreatment(0, DateTime.Now);
+
 			Registration = reg;
-			KmToRefuel = 1200;
+			KmToRefuel = kmToRefuel;
 			Kilometrage = kilometrage;
 
-			lastTreatment = new LastTreatment() { Date = DateTime.Now };
+			SetStatusReadyOrNeedTreatment();
+
+			Bus existing = Buses.FirstOrDefault((bus) => bus.Registration.Number == reg.Number);
+			if (existing != null)
+				throw new BusExistingException(existing);
+
+			Buses.Add(this);
 		}
 
 		public Registration Registration { get; }
@@ -43,9 +54,11 @@ namespace dotNet_5781_03B_1105_4185
 				OnPropertyChanged(nameof(Status));
 			}
 		}
+		public bool InOperation => Status != Status.Ready && Status != Status.NeedTreatment;
 
 		private Operation operation;
-		public Operation Operation {
+		public Operation Operation
+		{
 			get => operation;
 			set
 			{
@@ -55,11 +68,20 @@ namespace dotNet_5781_03B_1105_4185
 		}
 
 		private LastTreatment lastTreatment;
-		public bool TreatmentNeeded => (Kilometrage - lastTreatment.Km > 20000)
-			|| ((DateTime.Now - lastTreatment.Date).TotalDays > 365);
+		public LastTreatment LastTreatment
+		{
+			get => lastTreatment;
+			private set
+			{
+				lastTreatment = value;
+				OnPropertyChanged(nameof(LastTreatment));
+			}
+		}
+		public bool TreatmentNeeded => (Kilometrage - LastTreatment.Km > 20000)
+			|| ((DateTime.Now - LastTreatment.Date).TotalDays > 365);
 
-		private int kmToRefuel;
-		public int KmToRefuel
+		private uint kmToRefuel;
+		public uint KmToRefuel
 		{
 			get => kmToRefuel;
 			private set
@@ -70,51 +92,59 @@ namespace dotNet_5781_03B_1105_4185
 			}
 		}
 		public double FuelLeft => ((double)KmToRefuel / 1200) * 100;
-		public bool CanDrive(uint distance) => kmToRefuel - distance >= 0;
+		public bool CanDriveDistance(uint distance) => kmToRefuel >= distance;
 
 		public void UpdateOperationTimeLeft(TimeSpan timeLeft)
 		{
-			if (Status == Status.Ready) throw new Exception();
+			if (!InOperation)
+				throw new BusException($"Cannot update TimeLeft when the bus status is {Status}", this);
 
 			Operation.TimeLeft = timeLeft;
 			OnPropertyChanged(nameof(Operation));
 		}
 		public void StartTreatment()
 		{
-			if (Status != Status.Ready)
-				throw new Exception();
+			if (InOperation)
+				throw new BusException($"Cannot start treatment if the bus status is {Status}", this);
 
 			Status = Status.InTreatment;
 			Operation = new TreatmentOperation();
 		}
 		public void DoneTreatment()
 		{
-			lastTreatment.Date = DateTime.Now;
-			lastTreatment.Km = Kilometrage;
-			if (kmToRefuel == 0) KmToRefuel = 1200;
+			if (Status != Status.InTreatment)
+				throw new BusException("Tried to finish treatment before started.", this);
 
-			Status = Status.Ready;
-			Operation = null;
+			LastTreatment = new LastTreatment(Kilometrage, DateTime.Now);
+			KmToRefuel = 1200;
+
+			SetStatusReadyOrNeedTreatment();
 		}
 		public void StartRefueling()
 		{
-			if (Status != Status.Ready)
-				throw new Exception();
+			if (InOperation)
+				throw new BusException($"Cannot start refueling if the bus status is {Status}", this);
 
 			Status = Status.Refueling;
 			Operation = new RefuelingOperation();
 		}
 		public void DoneRefueling()
 		{
+			if (Status != Status.Refueling)
+				throw new BusException("Tried to finish refueling before started.", this);
+
 			KmToRefuel = 1200;
 
-			Status = Status.Ready;
-			Operation = null;
+			SetStatusReadyOrNeedTreatment();
 		}
 		public void StartDriving(uint km)
 		{
-			if (TreatmentNeeded || Status != Status.Ready)
-				throw new Exception();
+			if (Status != Status.Ready)
+				throw new BusException("Cannot start driving if the bus is not ready", this);
+			if (TreatmentNeeded)
+				throw new BusException("Cannot start driving if the bus need a treatment", this);
+			if (!CanDriveDistance(km))
+				throw new BusException("The bus don't have enough fuel to drive this distance", this);
 
 			uint kmPerHour = (uint)rnd.Next(40, 80);
 			Status = Status.Driving;
@@ -122,16 +152,49 @@ namespace dotNet_5781_03B_1105_4185
 		}
 		public void DoneDriving()
 		{
+			if (Status != Status.Driving)
+				throw new BusException("Tried to finish driving before started.", this);
+
 			var drivingData = (DrivingOperation)Operation;
-			KmToRefuel -= (int)drivingData.Distance;
+			KmToRefuel -= drivingData.Distance;
 			Kilometrage += drivingData.Distance;
-			Status = Status.Ready;
+
+			SetStatusReadyOrNeedTreatment();
+		}
+
+		private void SetStatusReadyOrNeedTreatment()
+		{
+			Status = TreatmentNeeded ? Status.NeedTreatment : Status.Ready;
+			Operation = null;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		virtual protected void OnPropertyChanged(string propertyName)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public static Bus Random(bool needTreatmentForTime = false,
+								bool needTreatmentForDistance = false,
+								bool lowFuel = false)
+		{
+			int kilometrage = rnd.Next(20000, 250000);
+			int lastTreatmentKm =
+				needTreatmentForDistance
+				? rnd.Next(0, kilometrage - 19999)
+				: rnd.Next(kilometrage - 19999, kilometrage);
+
+			return new Bus(
+				Registration.Random(),
+				(uint)kilometrage,
+				(uint)(lowFuel ? rnd.Next(0, 361) : rnd.Next(361, 1200)),
+				new LastTreatment
+				(
+					km: (uint)lastTreatmentKm,
+					date: needTreatmentForTime
+						? DateTime.Now.AddDays(rnd.Next(-1200, -365))
+						: DateTime.Now.AddDays(rnd.Next(-364, 1))
+				));
 		}
 
 		private static Random rnd = new Random();

@@ -23,19 +23,36 @@ namespace dotNet_5781_03B_1105_4185
 		{
 			InitializeComponent();
 
+			Bus = bus;
 			DataContext = bus;
 		}
+
+		public Bus Bus { get; }
 
 		private void RefuelClick(object sender, RoutedEventArgs e)
 		{
 			var bus = ((Button)sender).DataContext as Bus;
-			bus.Refuel();
+			try
+			{
+				bus.Refuel();
+			}
+			catch (BusException be)
+			{
+				MessageBox.Show(be.Message, "Bus Cannot Drive", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 
 		private void TreatmentClick(object sender, RoutedEventArgs e)
 		{
 			var bus = ((Button)sender).DataContext as Bus;
-			bus.Treate();
+			try
+			{
+				bus.Treate();
+			}
+			catch (BusException be)
+			{
+				MessageBox.Show(be.Message, "Bus Cannot Drive", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 	}
 }

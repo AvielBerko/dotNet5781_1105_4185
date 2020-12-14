@@ -6,9 +6,17 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_03B_1105_4185
 {
-	struct LastTreatment
+	public readonly struct LastTreatment
 	{
-		public uint Km { get; set; }
-		public DateTime Date { get; set; }
+		public LastTreatment(uint km, DateTime date)
+		{
+			Km = km;
+			Date = date;
+		}
+
+		public uint Km { get; }
+		public DateTime Date { get; }
+
+		public override string ToString() => $"The last treatment was at {Date:dd MMMM yyyy} with kilometrage {Km} km";
 	}
 }

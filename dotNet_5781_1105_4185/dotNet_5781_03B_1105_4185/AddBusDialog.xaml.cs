@@ -26,7 +26,7 @@ namespace dotNet_5781_03B_1105_4185
 
 			DataContext = this;
 		}
-		public Bus Bus => new Bus(new Registration(RegNum, RegDate), Kilometrage);
+		private void GenerateBus() => new Bus(new Registration(RegNum, RegDate), Kilometrage);
 
 		public uint RegNum { get; set; }
 		public DateTime RegDate { get; set; }
@@ -43,10 +43,15 @@ namespace dotNet_5781_03B_1105_4185
 		{
 			try
 			{
-				new Registration(RegNum, RegDate);
+				GenerateBus();
 				return true;
 			}
-			catch (Exception e)
+			catch (RegistrationException e)
+			{
+				MessageBox.Show(e.Message, "Cannot create bus", MessageBoxButton.OK, MessageBoxImage.Error);
+				return false;
+			}
+			catch (BusExistingException e)
 			{
 				MessageBox.Show(e.Message, "Cannot create bus", MessageBoxButton.OK, MessageBoxImage.Error);
 				return false;

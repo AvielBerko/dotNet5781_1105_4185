@@ -34,7 +34,7 @@ namespace dotNet_5781_03B_1105_4185
 
 		private void OkButtonClick(object sender, RoutedEventArgs e)
 		{
-			if (!bus.CanDrive(Distance))
+			if (!bus.CanDriveDistance(Distance))
 			{
 				MessageBox.Show("Cannot drive this distance!\n" +
 					$"Can drive {bus.KmToRefuel} km until fuel tank is empty",

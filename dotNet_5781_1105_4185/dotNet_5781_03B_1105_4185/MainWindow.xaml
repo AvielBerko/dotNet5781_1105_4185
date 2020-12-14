@@ -5,7 +5,12 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:dotNet_5781_03B_1105_4185"
 		mc:Ignorable="d"
-		Title="MainWindow" Height="450" Width="800">
+		Title="Bus Station" Height="450" Width="800">
+	<Window.Resources>
+		<local:IsStatusReadyConverter x:Key="IsStatusReadyConverter"/>
+		<local:StatusToStringConverter x:Key="StatusToStringConverter"/>
+	</Window.Resources>
+
 	<Grid Margin="10">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
@@ -18,36 +23,63 @@
 			<ListView.View>
 				<GridView x:Name="busgrigview">
 					<GridViewColumn Header="Bus Registration" DisplayMemberBinding="{Binding Registration}" />
-					<GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" />
+					<GridViewColumn Header="Status" Width="300">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<Label Content="{Binding Status, Converter={StaticResource StatusToStringConverter}}"/>
+									<local:OperationProgressBar Bus="{Binding}"/>
+								</StackPanel>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
 					<GridViewColumn Header="Drive">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
-								<Button Content="Drive" Margin="0"
-								VerticalAlignment="Center"
-								Click="DriveClick" />
+								<Button Margin="0" Background="Transparent"
+										BorderThickness="0" VerticalAlignment="Center"
+										Click="DriveClick">
+									<Image Source="/Resources/drive-bus-48px.png"/>
+								</Button>
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>
 					<GridViewColumn Header="Refuel">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
-								<Button Content="Refuel" Margin="0"
-								VerticalAlignment="Center"
-								Click="RefuelClick" />
+								<Button Margin="0" Background="Transparent"
+										BorderThickness="0" VerticalAlignment="Center"
+										Click="RefuelClick">
+									<Image Source="/Resources/refuel-bus-48px.png"/>
+								</Button>
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>
 					<GridViewColumn Header="Remove">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
-								<Button Content="Remove" Margin="0"
-								VerticalAlignment="Center"
-								Click="RemoveClick" />
+								<Button Margin="0" Background="Transparent"
+										BorderThickness="0" VerticalAlignment="Center"
+										Click="RemoveClick">
+									<Image Source="/Resources/delete-bus-48px.png"/>
+								</Button>
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>
 				</GridView>
 			</ListView.View>
+			<ListView.Resources>
+				<Style TargetType="{x:Type ListViewItem}">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding Status, Converter={StaticResource IsStatusReadyConverter}}" Value="True">
+							<Setter Property="Background" Value="LightGreen" />
+						</DataTrigger>
+						<DataTrigger Binding="{Binding Status, Converter={StaticResource IsStatusReadyConverter}}" Value="False">
+							<Setter Property="Background" Value="LightSalmon" />
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</ListView.Resources>
 		</ListView>
 	</Grid>
 </Window>

@@ -7,7 +7,7 @@
 		mc:Ignorable="d"
 		Height="130" Width="300"
 		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
-	<Grid>
+	<Grid FocusManager.FocusedElement="{Binding ElementName=txtDistance}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="*"/>
@@ -15,7 +15,9 @@
 
 		<StackPanel Orientation="Horizontal" Margin="5">
 			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Driving Distance:</Label>
-			<TextBox Width="125" FontSize="17" Text="{Binding Distance, Mode=TwoWay}" PreviewTextInput="TextBoxDigitOnly"/>
+			<TextBox x:Name="txtDistance" Width="125" FontSize="17"
+					 Text="{Binding Distance, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+					 PreviewTextInput="TextBoxDigitOnly" TextAlignment="Center"/>
 		</StackPanel>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">

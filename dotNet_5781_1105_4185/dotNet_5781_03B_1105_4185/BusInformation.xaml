@@ -5,12 +5,11 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:dotNet_5781_03B_1105_4185"
 		mc:Ignorable="d"
-		Title="Bus Information" Height="250" Width="300"
+		Title="Bus Information" Height="275" Width="415"
 		ResizeMode="CanMinimize" WindowStartupLocation="CenterOwner">
 	<Window.Resources>
-		<local:ShowProgressConverter x:Key="ShowProgressConverter"/>
 		<local:RedFuelBarConverter x:Key="RedFuelBarConverter"/>
-		<local:TimeSpanToString x:Key="TimeSpanToString"/>
+		<local:StatusToStringConverter x:Key="StatusToStringConverter"/>
 	</Window.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
@@ -20,7 +19,7 @@
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
+			<RowDefinition Height="1.5*"/>
 		</Grid.RowDefinitions>
 		<Label Content="{Binding Registration}" ContentStringFormat="Registration Number: {0}"/>
 		<Label Grid.Row="1" Content="{Binding Registration.Date}" ContentStringFormat="Registration Date: {0:dd MMMM yyyy}"/>
@@ -42,64 +41,24 @@
 					</Style>
 				</ProgressBar.Style>
 			</ProgressBar>
+			<Label Content="{Binding KmToRefuel}" ContentStringFormat=" {0} Kilometers until empty"/>
 		</StackPanel>
 
-		<Label Grid.Row="4">
-			<Label.Style>
-				<Style TargetType="{x:Type Label}">
-					<Style.Triggers>
-						<DataTrigger Binding="{Binding TreatmentNeeded}" Value="True">
-							<Setter Property="Content" Value="Need treatment" />
-							<Setter Property="Foreground" Value="Red"/>
-						</DataTrigger>
-						<DataTrigger Binding="{Binding TreatmentNeeded}" Value="False">
-							<Setter Property="Content" Value="Doesn't need treatment" />
-							<Setter Property="Foreground" Value="Green"/>
-						</DataTrigger>
-					</Style.Triggers>
-				</Style>
-			</Label.Style>
-		</Label>
+		<Label Grid.Row="4" Content="{Binding LastTreatment}"/>
 
 		<StackPanel Grid.Row="5" Orientation="Horizontal">
-			<Label Content="{Binding Status}" ContentStringFormat="Status: {0}"/>
-			<ProgressBar Width="100" Margin="10">
-				<ProgressBar.Style>
-					<Style TargetType="{x:Type ProgressBar}">
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding Status, Converter={StaticResource ShowProgressConverter}}" Value="True">
-								<Setter Property="Visibility" Value="Visible"/>
-								<Setter Property="Value" Value="{Binding Operation.Progress, Mode=OneWay}"/>
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Status, Converter={StaticResource ShowProgressConverter}}" Value="False">
-								<Setter Property="Visibility" Value="Hidden"/>
-								<Setter Property="Value" Value="0"/>
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</ProgressBar.Style>
-			</ProgressBar>
-			<Label ContentStringFormat="dd\:hh\:mm">
-				<Label.Style>
-					<Style TargetType="{x:Type Label}">
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding Status, Converter={StaticResource ShowProgressConverter}}" Value="True">
-								<Setter Property="Visibility" Value="Visible"/>
-								<Setter Property="Content" Value="{Binding Operation.TimeLeft, Mode=OneWay, Converter={StaticResource TimeSpanToString}}"/>
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Status, Converter={StaticResource ShowProgressConverter}}" Value="False">
-								<Setter Property="Visibility" Value="Hidden"/>
-								<Setter Property="Content" Value=""/>
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</Label.Style>
-			</Label>
+			<Label Content="{Binding Status, Converter={StaticResource StatusToStringConverter}}"
+				   ContentStringFormat="Status: {0}"/>
+			<local:OperationProgressBar Bus="{Binding}"/>
 		</StackPanel>
 
-		<StackPanel Grid.Row="6" Orientation="Horizontal">
-			<Button Margin="5" Width="75" Click="RefuelClick">Refuel</Button>
-			<Button Margin="5" Width="75" Click="TreatmentClick">Treatment</Button>
+		<StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Center">
+			<Button Margin="5" Click="RefuelClick" ToolTip="Refuel">
+				<Image Source="/Resources/refuel-bus-48px.png"/>
+			</Button>
+			<Button Margin="5" Click="TreatmentClick" ToolTip="Treatment">
+				<Image Source="/Resources/treate-bus-48px.png"/>
+			</Button>
 		</StackPanel>
 	</Grid>
 </Window>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -23,24 +24,20 @@ namespace dotNet_5781_03B_1105_4185
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		ObservableCollection<Bus> buses = new ObservableCollection<Bus>();
-
+		List<BusInformation> informationWindows = new List<BusInformation>();
 		public MainWindow()
 		{
 			GenerateFirstBuses();
 			InitializeComponent();
 
-			lstBuses.DataContext = buses;
+			lstBuses.DataContext = Bus.Buses;
 		}
 
 		private void AddBusClick(object sender, RoutedEventArgs e)
 		{
 			var dialog = new AddBusDialog();
 			dialog.Owner = this;
-			if (dialog.ShowDialog() == true)
-			{
-				buses.Add(dialog.Bus);
-			}
+			dialog.ShowDialog();
 		}
 
 		private void ListDoubleClick(object sender, MouseButtonEventArgs e)
@@ -49,6 +46,8 @@ namespace dotNet_5781_03B_1105_4185
 			if (bus != null)
 			{
 				var information = new BusInformation(bus);
+				informationWindows.Add(information);
+				information.Closing += (_sender, _e) => informationWindows.Remove(information);
 				information.Owner = this;
 				information.Show();
 			}
@@ -62,33 +61,56 @@ namespace dotNet_5781_03B_1105_4185
 			dialog.Owner = this;
 			if (dialog.ShowDialog() == true)
 			{
-				bus.Drive(dialog.Distance);
+				try
+				{
+					bus.Drive(dialog.Distance);
+				}
+				catch (BusException be)
+				{
+					MessageBox.Show(be.Message, "Bus Cannot Drive", MessageBoxButton.OK, MessageBoxImage.Error);
+				}
 			}
 		}
 
 		private void RefuelClick(object sender, RoutedEventArgs e)
 		{
 			var bus = ((Button)sender).DataContext as Bus;
-			bus.Refuel();
+			try
+			{
+				bus.Refuel();
+			}
+			catch (BusException be)
+			{
+				MessageBox.Show(be.Message, "Bus Cannot Drive", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 
 		private void RemoveClick(object sender, RoutedEventArgs e)
 		{
 			var bus = ((Button)sender).DataContext as Bus;
-			buses.Remove(bus);
+			Bus.Buses.Remove(bus);
+
+			for (int i = 0; i < informationWindows.Count; i++)
+			{
+				if (informationWindows[i].Bus == bus)
+				{
+					informationWindows[i--].Close();
+				}
+			}
 		}
 
 		void GenerateFirstBuses()
 		{
 			// Randomize first buses
 
-			buses.Add(new Bus(new Registration(11111111, DateTime.Now)));
-			buses.Add(new Bus(new Registration(22222222, DateTime.Now)));
-			buses.Add(new Bus(new Registration(33333333, DateTime.Now)));
-			buses.Add(new Bus(new Registration(44444444, DateTime.Now)));
-			buses.Add(new Bus(new Registration(1234567, DateTime.Now.AddYears(-4))));
-			buses.Add(new Bus(new Registration(2345678, DateTime.Now.AddYears(-4))));
-			buses.Add(new Bus(new Registration(3456789, DateTime.Now.AddYears(-4))));
+			for (int i = 0; i < 7; i++)
+			{
+				Bus.Random();
+			}
+
+			Bus.Random(needTreatmentForTime: true);
+			Bus.Random(needTreatmentForDistance: true);
+			Bus.Random(lowFuel: true);
 		}
 
 	}

@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>bus.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -65,7 +68,11 @@
       <DependentUpon>BusInformation.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusOperationSimulation.cs" />
+    <Compile Include="Exceptions.cs" />
     <Compile Include="Operation.cs" />
+    <Compile Include="OperationProgressBar.xaml.cs">
+      <DependentUpon>OperationProgressBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Registration.cs" />
     <Compile Include="Converters.cs" />
     <Page Include="AddBusDialog.xaml">
@@ -94,6 +101,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="OperationProgressBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -120,6 +131,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\bus.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="bus.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\delete-bus-48px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\refuel-bus-48px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\drive-bus-48px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\treate-bus-48px.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
