@@ -70,6 +70,7 @@
 			</ListView.View>
 			<ListView.Resources>
 				<Style TargetType="{x:Type ListViewItem}">
+					<Setter Property="Height" Value="40"/>
 					<Style.Triggers>
 						<DataTrigger Binding="{Binding Status, Converter={StaticResource IsStatusReadyConverter}}" Value="True">
 							<Setter Property="Background" Value="LightGreen" />
