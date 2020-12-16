@@ -8,13 +8,20 @@ using System.Windows.Data;
 
 namespace dotNet_5781_03B_1105_4185
 {
-	public class IsStatusReadyConverter : IValueConverter
+	public class StatusColorConverter: IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (Status)value == Status.Ready;
+			switch ((Status)value)
+			{
+				case Status.Ready:
+					return "Ready";
+				case Status.NeedRefueling:
+					return "Need Refueling";
+				default:
+					return "Else";
+			}
 		}
-
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			throw new NotImplementedException();
@@ -25,7 +32,7 @@ namespace dotNet_5781_03B_1105_4185
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			Status s = (Status)value;
-			return s != Status.Ready && s != Status.NeedTreatment;
+			return s != Status.Ready && s != Status.NeedTreatment && s != Status.NeedRefueling;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -85,6 +92,8 @@ namespace dotNet_5781_03B_1105_4185
 					return "Refueling";
 				case Status.InTreatment:
 					return "In Treatment";
+				case Status.NeedRefueling:
+					return "Need Refueling";
 				default:
 					throw new InvalidOperationException();
 			}

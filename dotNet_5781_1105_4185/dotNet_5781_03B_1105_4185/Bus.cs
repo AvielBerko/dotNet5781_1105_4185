@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_03B_1105_4185
 {
-	public enum Status { Ready, NeedTreatment, Driving, Refueling, InTreatment };
+	public enum Status { Ready, NeedRefueling ,NeedTreatment, Driving, Refueling, InTreatment };
 	public class Bus : INotifyPropertyChanged
 	{
-		public static ObservableCollection<Bus> Buses { get; } = new ObservableCollection<Bus>();
+		public static ObservableCollection<Bus> Buses { get; set; } = new ObservableCollection<Bus>();
 
 		public Bus(Registration reg, uint kilometrage = 0, uint kmToRefuel = 1200, LastTreatment? lastTreatment = null)
 		{
@@ -22,7 +22,7 @@ namespace dotNet_5781_03B_1105_4185
 			KmToRefuel = kmToRefuel;
 			Kilometrage = kilometrage;
 
-			SetStatusReadyOrNeedTreatment();
+			UpdateStatus();
 
 			Bus existing = Buses.FirstOrDefault((bus) => bus.Registration.Number == reg.Number);
 			if (existing != null)
@@ -54,7 +54,7 @@ namespace dotNet_5781_03B_1105_4185
 				OnPropertyChanged(nameof(Status));
 			}
 		}
-		public bool InOperation => Status != Status.Ready && Status != Status.NeedTreatment;
+		public bool InOperation => Status != Status.Ready && Status != Status.NeedTreatment && Status != Status.NeedRefueling;
 
 		private Operation operation;
 		public Operation Operation
@@ -118,7 +118,7 @@ namespace dotNet_5781_03B_1105_4185
 			LastTreatment = new LastTreatment(Kilometrage, DateTime.Now);
 			KmToRefuel = 1200;
 
-			SetStatusReadyOrNeedTreatment();
+			UpdateStatus();
 		}
 		public void StartRefueling()
 		{
@@ -135,7 +135,7 @@ namespace dotNet_5781_03B_1105_4185
 
 			KmToRefuel = 1200;
 
-			SetStatusReadyOrNeedTreatment();
+			UpdateStatus();
 		}
 		public void StartDriving(uint km)
 		{
@@ -159,12 +159,13 @@ namespace dotNet_5781_03B_1105_4185
 			KmToRefuel -= drivingData.Distance;
 			Kilometrage += drivingData.Distance;
 
-			SetStatusReadyOrNeedTreatment();
+			UpdateStatus();
 		}
 
-		private void SetStatusReadyOrNeedTreatment()
+		private void UpdateStatus()
 		{
-			Status = TreatmentNeeded ? Status.NeedTreatment : Status.Ready;
+			Status = TreatmentNeeded ? Status.NeedTreatment :
+				(KmToRefuel < 360 ? Status.NeedRefueling : Status.Ready);
 			Operation = null;
 		}
 
@@ -195,6 +196,11 @@ namespace dotNet_5781_03B_1105_4185
 						? DateTime.Now.AddDays(rnd.Next(-1200, -365))
 						: DateTime.Now.AddDays(rnd.Next(-364, 1))
 				));
+		}
+
+		public static void Shuffle()
+		{
+			Bus.Buses = new ObservableCollection<Bus>(Bus.Buses.OrderBy(bus => rnd.NextDouble()));
 		}
 
 		private static Random rnd = new Random();

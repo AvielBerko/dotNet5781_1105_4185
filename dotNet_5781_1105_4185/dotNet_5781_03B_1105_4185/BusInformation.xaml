@@ -10,7 +10,23 @@
 	<Window.Resources>
 		<local:RedFuelBarConverter x:Key="RedFuelBarConverter"/>
 		<local:StatusToStringConverter x:Key="StatusToStringConverter"/>
+		<local:StatusColorConverter x:Key="StatusColorConverter"/>
 	</Window.Resources>
+	<Window.Style>
+		<Style TargetType="{x:Type Window}">
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding Status, Converter={StaticResource StatusColorConverter}}" Value="Ready">
+					<Setter Property="Background" Value="LightGreen" />
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status, Converter={StaticResource StatusColorConverter}}" Value="Need Refueling">
+					<Setter Property="Background" Value="Khaki" />
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status, Converter={StaticResource StatusColorConverter}}" Value="Else">
+					<Setter Property="Background" Value="LightSalmon" />
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+	</Window.Style>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
@@ -21,7 +37,7 @@
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="1.5*"/>
 		</Grid.RowDefinitions>
-		<Label Content="{Binding Registration}" ContentStringFormat="Registration Number: {0}"/>
+		<Label Content="{Binding Registration}" ContentStringFormat="Registration Number: {0}" FontWeight="Bold"/>
 		<Label Grid.Row="1" Content="{Binding Registration.Date}" ContentStringFormat="Registration Date: {0:dd MMMM yyyy}"/>
 		<Label Grid.Row="2" Content="{Binding Kilometrage}" ContentStringFormat="Kilometrage: {0} km"/>
 

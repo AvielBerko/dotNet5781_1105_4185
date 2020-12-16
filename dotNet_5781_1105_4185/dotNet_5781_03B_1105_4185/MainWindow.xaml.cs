@@ -88,16 +88,33 @@ namespace dotNet_5781_03B_1105_4185
 		private void RemoveClick(object sender, RoutedEventArgs e)
 		{
 			var bus = ((Button)sender).DataContext as Bus;
-			Bus.Buses.Remove(bus);
-
-			for (int i = 0; i < informationWindows.Count; i++)
+			var result = MessageBox.Show($"Are you sure you want to remove bus number {bus.Registration}?", "Remove bus", MessageBoxButton.YesNo, MessageBoxImage.Question);
+			if (result == MessageBoxResult.Yes)
 			{
-				if (informationWindows[i].Bus == bus)
+				Bus.Buses.Remove(bus);
+
+				for (int i = 0; i < informationWindows.Count; i++)
+				{
+					if (informationWindows[i].Bus == bus)
+					{
+						informationWindows[i--].Close();
+					}
+				}
+			}
+		}
+		private void RemoveAllClick(object sender, RoutedEventArgs e)
+		{
+			var result = MessageBox.Show($"Are you sure you want to remove ALL buses?", "Remove All", MessageBoxButton.YesNo, MessageBoxImage.Question);
+			if (result == MessageBoxResult.Yes)
+			{
+				Bus.Buses.Clear();
+				for (int i = 0; i < informationWindows.Count; i++)
 				{
 					informationWindows[i--].Close();
 				}
 			}
 		}
+
 
 		void GenerateFirstBuses()
 		{
@@ -111,6 +128,7 @@ namespace dotNet_5781_03B_1105_4185
 			Bus.Random(needTreatmentForTime: true);
 			Bus.Random(needTreatmentForDistance: true);
 			Bus.Random(lowFuel: true);
+			Bus.Shuffle();
 		}
 
 	}
