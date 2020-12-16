@@ -25,12 +25,18 @@ namespace dotNet_5781_03B_1105_4185
 			InitializeComponent();
 		}
 
+		/// <summary>
+		/// The bus to show its operation
+		/// </summary>
 		public Bus Bus
 		{
 			get => (Bus)GetValue(BusProperty);
 			set => SetValue(BusProperty, value);
 		}
 
+		/// <summary>
+		/// User control property of Bus.
+		/// </summary>
 		public static readonly DependencyProperty BusProperty =
 			DependencyProperty.Register("Bus", typeof(Bus), typeof(OperationProgressBar));
 	}

@@ -26,9 +26,19 @@ namespace dotNet_5781_03B_1105_4185
 
 			DataContext = this;
 		}
+
+		/// <summary>
+		/// Creates the bus, should be called once.
+		/// </summary>
 		private void GenerateBus() => new Bus(new Registration(RegNum, RegDate), Kilometrage);
 
+		/// <summary>
+		/// Registration Number
+		/// </summary>
 		public uint RegNum { get; set; }
+		/// <summary>
+		/// Registration Date
+		/// </summary>
 		public DateTime RegDate { get; set; }
 		public uint Kilometrage { get; set; }
 
@@ -36,9 +46,15 @@ namespace dotNet_5781_03B_1105_4185
 		{
 			if (!IsValid()) return;
 
+			// Closes the dialog with true as the result
 			DialogResult = true;
 		}
 
+		/// <summary>
+		/// Checks whether the bus registration is valid and is not existing.
+		/// Generates the bus.
+		/// </summary>
+		/// <returns>True if bus is vaild, else False</returns>
 		private bool IsValid()
 		{
 			try
@@ -57,6 +73,11 @@ namespace dotNet_5781_03B_1105_4185
 				return false;
 			}
 		}
+
+		/// <summary>
+		/// Called when the textboxes' text changed.
+		/// Checks that the input contains only digits.
+		/// </summary>
 		private void TextBoxDigitOnly(object sender, TextCompositionEventArgs e)
 		{
 			var regex = new System.Text.RegularExpressions.Regex("[^0-9]+");

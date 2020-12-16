@@ -15,6 +15,8 @@
 			<ProgressBar.Style>
 				<Style TargetType="{x:Type ProgressBar}">
 					<Style.Triggers>
+						<!-- Update the visibility and the value of the progress bar if in middle of operation or not -->
+						<!-- Binding to the UserControl -->
 						<DataTrigger Binding="{Binding Bus.Status, RelativeSource={RelativeSource FindAncestor,
 							AncestorType={x:Type local:OperationProgressBar}},
 							Converter={StaticResource ShowProgressBarConverter}}" Value="True">
@@ -32,10 +34,13 @@
 				</Style>
 			</ProgressBar.Style>
 		</ProgressBar>
+
 		<Label ContentStringFormat="dd\:hh\:mm">
 			<Label.Style>
 				<Style TargetType="{x:Type Label}">
 					<Style.Triggers>
+						<!-- Update the visibility and the value of the label if in middle of operation or not -->
+						<!-- Binding to the UserControl -->
 						<DataTrigger Binding="{Binding Bus.Status, RelativeSource={RelativeSource FindAncestor,
 							AncestorType={x:Type local:OperationProgressBar}},
 							Converter={StaticResource ShowProgressBarConverter}}" Value="True">

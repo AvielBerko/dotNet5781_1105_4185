@@ -30,6 +30,10 @@ namespace dotNet_5781_03B_1105_4185
 		}
 
 		private Bus bus;
+
+		/// <summary>
+		/// The distance input
+		/// </summary>
 		public uint Distance { get; set; }
 
 		private void OkButtonClick(object sender, RoutedEventArgs e)
@@ -42,9 +46,14 @@ namespace dotNet_5781_03B_1105_4185
 				return;
 			}
 
+			// Closes the dialog with true as the result
 			DialogResult = true;
 		}
 
+		/// <summary>
+		/// Called when the textboxes' text changed.
+		/// Checks that the input contains only digits.
+		/// </summary>
 		private void TextBoxDigitOnly(object sender, TextCompositionEventArgs e)
 		{
 			var regex = new System.Text.RegularExpressions.Regex("[^0-9]+");

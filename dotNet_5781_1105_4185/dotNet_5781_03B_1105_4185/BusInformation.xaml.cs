@@ -27,6 +27,9 @@ namespace dotNet_5781_03B_1105_4185
 			DataContext = bus;
 		}
 
+		/// <summary>
+		/// The bus that its information is being shown.
+		/// </summary>
 		public Bus Bus { get; }
 
 		private void RefuelClick(object sender, RoutedEventArgs e)

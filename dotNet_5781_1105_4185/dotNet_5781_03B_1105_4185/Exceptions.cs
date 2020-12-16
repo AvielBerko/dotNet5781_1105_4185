@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace dotNet_5781_03B_1105_4185
 {
+	/// <summary>
+	/// Generic bus exception.
+	/// </summary>
 	class BusException : Exception
 	{
+		/// <summary>
+		/// The bus that connected to the exception.
+		/// </summary>
 		public Bus Bus { get; }
 		public BusException(string message, Bus bus) : base(message)
 		{
@@ -15,6 +21,9 @@ namespace dotNet_5781_03B_1105_4185
 		}
 	}
 
+	/// <summary>
+	/// Exception thrown when the trying to create bus with the same registration number.
+	/// </summary>
 	class BusExistingException : BusException
 	{
 		public BusExistingException(Bus existingBus)
@@ -22,6 +31,9 @@ namespace dotNet_5781_03B_1105_4185
 		{ }
 	}
 
+	/// <summary>
+	/// Exception thrown when the digits and the date doesn't match.
+	/// </summary>
 	class RegistrationException : Exception
 	{
 		public RegistrationException(bool before2018)

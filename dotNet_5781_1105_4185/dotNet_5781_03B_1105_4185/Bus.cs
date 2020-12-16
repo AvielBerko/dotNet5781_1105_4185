@@ -12,6 +12,9 @@ namespace dotNet_5781_03B_1105_4185
 	public enum Status { Ready, NeedRefueling ,NeedTreatment, Driving, Refueling, InTreatment };
 	public class Bus : INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Observable collection of all existing buses.
+		/// </summary>
 		public static ObservableCollection<Bus> Buses { get; set; } = new ObservableCollection<Bus>();
 
 		public Bus(Registration reg, uint kilometrage = 0, uint kmToRefuel = 1200, LastTreatment? lastTreatment = null)
@@ -24,6 +27,7 @@ namespace dotNet_5781_03B_1105_4185
 
 			UpdateStatus();
 
+			// Checks that the bus is not already existing.
 			Bus existing = Buses.FirstOrDefault((bus) => bus.Registration.Number == reg.Number);
 			if (existing != null)
 				throw new BusExistingException(existing);
@@ -100,8 +104,11 @@ namespace dotNet_5781_03B_1105_4185
 				throw new BusException($"Cannot update TimeLeft when the bus status is {Status}", this);
 
 			Operation.TimeLeft = timeLeft;
+
+			// Notifying that Operation have been changed.
 			OnPropertyChanged(nameof(Operation));
 		}
+
 		public void StartTreatment()
 		{
 			if (InOperation)
@@ -120,6 +127,7 @@ namespace dotNet_5781_03B_1105_4185
 
 			UpdateStatus();
 		}
+
 		public void StartRefueling()
 		{
 			if (InOperation)
@@ -137,6 +145,7 @@ namespace dotNet_5781_03B_1105_4185
 
 			UpdateStatus();
 		}
+
 		public void StartDriving(uint km)
 		{
 			if (Status != Status.Ready)
@@ -175,6 +184,13 @@ namespace dotNet_5781_03B_1105_4185
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
+		/// <summary>
+		/// Generates random bus.
+		/// </summary>
+		/// <param name="needTreatmentForTime">Generates bus that need treatment because of the time</param>
+		/// <param name="needTreatmentForDistance">Generates bus that need treatment because of the distance</param>
+		/// <param name="lowFuel">Generates bus with under 30% fuel left</param>
+		/// <returns>The generated bus</returns>
 		public static Bus Random(bool needTreatmentForTime = false,
 								bool needTreatmentForDistance = false,
 								bool lowFuel = false)
@@ -198,9 +214,12 @@ namespace dotNet_5781_03B_1105_4185
 				));
 		}
 
+		/// <summary>
+		/// Shuffles the collection Buses.
+		/// </summary>
 		public static void Shuffle()
 		{
-			Bus.Buses = new ObservableCollection<Bus>(Bus.Buses.OrderBy(bus => rnd.NextDouble()));
+			Buses = new ObservableCollection<Bus>(Buses.OrderBy(bus => rnd.NextDouble()));
 		}
 
 		private static Random rnd = new Random();

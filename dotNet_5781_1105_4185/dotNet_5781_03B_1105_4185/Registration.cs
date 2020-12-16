@@ -13,9 +13,11 @@ namespace dotNet_5781_03B_1105_4185
 
 		public Registration(uint number, DateTime date)
 		{
+			// Validates registration date and number.
 			if (!(date.Year >= 2018 && (number < 100000000 && number > 9999999) ||
 					date.Year < 2018 && (number < 10000000 && number > 999999)))
 				throw new RegistrationException(date.Year < 2018);
+
 			Number = number;
 			Date = date;
 		}
@@ -42,6 +44,7 @@ namespace dotNet_5781_03B_1105_4185
 				new DateTime(rnd.Next(2018, 2021), rnd.Next(1, 13), rnd.Next(1, 29))
 				);
 		}
+
 		private static Random rnd = new Random();
 	}
 }

@@ -8,6 +8,9 @@ using System.Windows.Data;
 
 namespace dotNet_5781_03B_1105_4185
 {
+	/// <summary>
+	/// Converts from Status to string in order to show different colors for read, need refueling and in operation.
+	/// </summary>
 	public class StatusColorConverter: IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -27,6 +30,10 @@ namespace dotNet_5781_03B_1105_4185
 			throw new NotImplementedException();
 		}
 	}
+
+	/// <summary>
+	/// Converts from status to bool if in operation and need to show the progress.
+	/// </summary>
 	public class ShowProgressBarConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -41,6 +48,9 @@ namespace dotNet_5781_03B_1105_4185
 		}
 	}
 
+	/// <summary>
+	/// Converts from percentage to bool if its under 30% in order to show red progress bar
+	/// </summary>
 	public class RedFuelBarConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -54,6 +64,9 @@ namespace dotNet_5781_03B_1105_4185
 		}
 	}
 
+	/// <summary>
+	/// Converts from TimeSpan to string in order to format the time span as we want.
+	/// </summary>
 	public class TimeSpanToString : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -76,6 +89,10 @@ namespace dotNet_5781_03B_1105_4185
 			throw new NotImplementedException();
 		}
 	}
+
+	/// <summary>
+	/// Converts from Status to string in order to format the status
+	/// </summary>
 	public class StatusToStringConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

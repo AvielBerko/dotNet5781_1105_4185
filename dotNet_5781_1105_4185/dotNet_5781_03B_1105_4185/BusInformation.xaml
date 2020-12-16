@@ -8,11 +8,14 @@
 		Title="Bus Information" Height="275" Width="415"
 		ResizeMode="CanMinimize" WindowStartupLocation="CenterOwner">
 	<Window.Resources>
+		<!-- Converters -->
 		<local:RedFuelBarConverter x:Key="RedFuelBarConverter"/>
 		<local:StatusToStringConverter x:Key="StatusToStringConverter"/>
 		<local:StatusColorConverter x:Key="StatusColorConverter"/>
 	</Window.Resources>
+
 	<Window.Style>
+		<!-- Sets window's background according the bus status -->
 		<Style TargetType="{x:Type Window}">
 			<Style.Triggers>
 				<DataTrigger Binding="{Binding Status, Converter={StaticResource StatusColorConverter}}" Value="Ready">
@@ -27,6 +30,7 @@
 			</Style.Triggers>
 		</Style>
 	</Window.Style>
+
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
@@ -37,19 +41,23 @@
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="1.5*"/>
 		</Grid.RowDefinitions>
+
 		<Label Content="{Binding Registration}" ContentStringFormat="Registration Number: {0}" FontWeight="Bold"/>
 		<Label Grid.Row="1" Content="{Binding Registration.Date}" ContentStringFormat="Registration Date: {0:dd MMMM yyyy}"/>
 		<Label Grid.Row="2" Content="{Binding Kilometrage}" ContentStringFormat="Kilometrage: {0} km"/>
 
 		<StackPanel Grid.Row="3" Orientation="Horizontal">
 			<Label Content="{Binding FuelLeft}" ContentStringFormat="Fuel Left: {0:n2}%"/>
+
 			<ProgressBar Value="{Binding FuelLeft, Mode=OneWay}" Width="100" Margin="5">
 				<ProgressBar.Style>
 					<Style TargetType="{x:Type ProgressBar}">
 						<Style.Triggers>
+							<!-- Sets the progress bar's color to red if the bus contains less than 30% fuel -->
 							<DataTrigger Binding="{Binding FuelLeft, Converter={StaticResource RedFuelBarConverter}}" Value="True">
 								<Setter Property="Foreground" Value="Red"/>
 							</DataTrigger>
+							<!-- Sets the progress bar's color to green if the bus contains more than 30% fuel -->
 							<DataTrigger Binding="{Binding FuelLeft, Converter={StaticResource RedFuelBarConverter}}" Value="False">
 								<Setter Property="Foreground" Value="Green"/>
 							</DataTrigger>
@@ -57,6 +65,7 @@
 					</Style>
 				</ProgressBar.Style>
 			</ProgressBar>
+			
 			<Label Content="{Binding KmToRefuel}" ContentStringFormat=" {0} Kilometers until empty"/>
 		</StackPanel>
 
