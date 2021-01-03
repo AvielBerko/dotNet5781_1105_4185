@@ -5,29 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DLAPI;
-using DO;
+using DS;
 
 namespace DL
 {
     sealed class DLObject : IDL
     {
-        // static ctor to ensure instance init is done just before first usage
-        static DLObject() { }
+        static readonly Lazy<DLObject> lazy = new Lazy<DLObject>(() => new DLObject());
+        public static DLObject Instance => lazy.Value;
+
         private DLObject() { }
-        static readonly DLObject instance = new DLObject();
-        public static DLObject Instance { get => instance; }
 
-        public User GetUser(string name)
+        public DO.User GetUser(string name)
+        {
+            return DataSet.Users.Find(user => user.Name == name).Clone();
+        }
+
+        public void AddUser(DO.User user)
         {
             throw new NotImplementedException();
         }
 
-        public void AddUser(User user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteUser(User user)
+        public void DeleteUser(DO.User user)
         {
             throw new NotImplementedException();
         }

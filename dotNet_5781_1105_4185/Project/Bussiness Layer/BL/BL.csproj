@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ACC21A11-683E-4B9D-8DC2-E6A6C6D4171B}</ProjectGuid>
+    <ProjectGuid>{91AFA102-534F-495F-B2F5-272B5D469BEC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DLObject</RootNamespace>
-    <AssemblyName>DLObject</AssemblyName>
+    <RootNamespace>BL</RootNamespace>
+    <AssemblyName>BL</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -41,16 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CloneUtility.cs" />
-    <Compile Include="DataSet.cs" />
-    <Compile Include="DLObject.cs" />
+    <Compile Include="BLFactory.cs" />
+    <Compile Include="BLImp.cs" />
+    <Compile Include="Bussiness Objects\User.cs" />
+    <Compile Include="IBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DLAPI\DLAPI.csproj">
+    <ProjectReference Include="..\..\Data Layer\DLAPI\DLAPI.csproj">
       <Project>{1edde648-faa8-447a-993b-47c2db49dcbd}</Project>
       <Name>DLAPI</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
