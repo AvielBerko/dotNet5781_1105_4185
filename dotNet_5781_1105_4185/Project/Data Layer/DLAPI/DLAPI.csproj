@@ -51,6 +51,9 @@
     <Compile Include="Data Objects\Station.cs" />
     <Compile Include="Data Objects\Trip.cs" />
     <Compile Include="Data Objects\User.cs" />
+    <Compile Include="DLConfig.cs" />
+    <Compile Include="DLFactory.cs" />
+    <Compile Include="IDL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
