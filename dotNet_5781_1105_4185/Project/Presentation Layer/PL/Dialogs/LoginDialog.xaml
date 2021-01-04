@@ -1,0 +1,75 @@
+﻿<Window x:Class="PL.LoginDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PL"
+        mc:Ignorable="d"
+        Title="Log in or Sign up" Height="250" Width="300"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <TabControl>
+        <TabItem Header="Login">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <!--#region LogIn-->
+                <Viewbox>
+                    <Label FontWeight="Bold">Log In</Label>
+                </Viewbox>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="2.5*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</Label>
+                    <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Password:</Label>
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="10"/>
+                    <PasswordBox Grid.Row="1" Grid.Column="1" Margin="10"/>
+                </Grid>
+                <Button Grid.Row="2" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5">Log In</Button>
+                <!--#endregion-->
+
+            </Grid>
+        </TabItem>
+        <TabItem Header="SignUp">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <!--#region SignUp-->
+                <Viewbox Grid.Column="1">
+                    <Label FontWeight="Bold">Sign Up</Label>
+                </Viewbox>
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="2.5*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</Label>
+                    <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Password:</Label>
+                    <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Confirm:</Label>
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="5"/>
+                    <PasswordBox Grid.Row="1" Grid.Column="1" Margin="5"/>
+                    <PasswordBox Grid.Row="2" Grid.Column="1" Margin="5"/>
+                </Grid>
+                <Button Grid.Row="2" Grid.Column="1" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5">Sign Up</Button>
+            </Grid>
+            <!--#endregion-->
+        </TabItem>
+    </TabControl>
+</Window>

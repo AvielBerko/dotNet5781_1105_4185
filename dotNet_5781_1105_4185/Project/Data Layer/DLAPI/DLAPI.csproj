@@ -46,6 +46,7 @@
     <Compile Include="Data Objects\BusLine.cs" />
     <Compile Include="Data Objects\DrivingBus.cs" />
     <Compile Include="Data Objects\Enums.cs" />
+    <Compile Include="Data Objects\Exceptions.cs" />
     <Compile Include="Data Objects\LineStation.cs" />
     <Compile Include="Data Objects\LineTrip.cs" />
     <Compile Include="Data Objects\Station.cs" />
