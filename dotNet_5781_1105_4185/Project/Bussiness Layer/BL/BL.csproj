@@ -43,7 +43,10 @@
   <ItemGroup>
     <Compile Include="BLFactory.cs" />
     <Compile Include="BLImp.cs" />
+    <Compile Include="Bussiness Objects\Enums.cs" />
+    <Compile Include="Bussiness Objects\Exceptions.cs" />
     <Compile Include="Bussiness Objects\User.cs" />
+    <Compile Include="DeepCopyUtilities.cs" />
     <Compile Include="IBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

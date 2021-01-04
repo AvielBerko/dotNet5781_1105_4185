@@ -26,10 +26,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bussiness Layer", "Bussiness Layer", "{BAA261BC-64BF-4098-8A42-CDDF1EE9EF5C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL", "Project\Bussiness Layer\BL\BL.csproj", "{91AFA102-534F-495F-B2F5-272B5D469BEC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ACC21A11-683E-4B9D-8DC2-E6A6C6D4171B} = {ACC21A11-683E-4B9D-8DC2-E6A6C6D4171B}
+		{997A94AC-F73F-4F89-A9D9-36C5B90BDDE1} = {997A94AC-F73F-4F89-A9D9-36C5B90BDDE1}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation Layer", "Presentation Layer", "{C004AFB2-CF98-4D42-98EB-E9FCF5CBBE0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PL", "Project\Presentation Layer\PL\PL.csproj", "{C630789B-76D7-49D6-A272-DCB96DD68926}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLWPF", "Project\Presentation Layer\PLWPF\PLWPF.csproj", "{C630789B-76D7-49D6-A272-DCB96DD68926}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

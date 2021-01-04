@@ -22,12 +22,19 @@ namespace DL
         #region User
         public DO.User GetUser(string name)
         {
-            return DataSet.Users.Find(user => user.Name == name).Clone();
+            var user = DataSet.Users.Find(u => u.Name == name);
+
+            if (user == null) throw new BadUserNameException(name, $"User with the name {name} not found");
+
+            return user.Clone();
         }
 
         public void AddUser(DO.User user)
         {
-            throw new NotImplementedException();
+            if (DataSet.Users.Any(u => u.Name == user.Name))
+                throw new BadUserNameException(user.Name, $"User with the name {user.Name} already exists");
+
+            DataSet.Users.Add(user.Clone());
         }
 
         public void DeleteUser(DO.User user)

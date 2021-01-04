@@ -104,5 +104,11 @@
   <ItemGroup>
     <Folder Include="PO\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Bussiness Layer\BL\BL.csproj">
+      <Project>{91afa102-534f-495f-b2f5-272b5d469bec}</Project>
+      <Name>BL</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

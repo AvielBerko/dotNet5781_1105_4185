@@ -8,6 +8,7 @@
         Title="Log in or Sign up" Height="250" Width="300"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <TabControl>
+        <!--#region LogIn-->
         <TabItem Header="Login">
             <Grid>
                 <Grid.RowDefinitions>
@@ -16,7 +17,6 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <!--#region LogIn-->
                 <Viewbox>
                     <Label FontWeight="Bold">Log In</Label>
                 </Viewbox>
@@ -31,14 +31,14 @@
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</Label>
                     <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Password:</Label>
-                    <TextBox Grid.Row="0" Grid.Column="1" Margin="10"/>
-                    <PasswordBox Grid.Row="1" Grid.Column="1" Margin="10"/>
+                    <TextBox x:Name="txbLoginName" Grid.Row="0" Grid.Column="1" Margin="10"/>
+                    <PasswordBox x:Name="txbLoginPassword" Grid.Row="1" Grid.Column="1" Margin="10"/>
                 </Grid>
-                <Button Grid.Row="2" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5">Log In</Button>
-                <!--#endregion-->
-
+                <Button Grid.Row="2" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Click="LoginClick">Log In</Button>
             </Grid>
         </TabItem>
+        <!--#endregion-->
+        <!--#region SignUp-->
         <TabItem Header="SignUp">
             <Grid>
                 <Grid.RowDefinitions>
@@ -46,7 +46,6 @@
                     <RowDefinition Height="2*"/>
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <!--#region SignUp-->
                 <Viewbox Grid.Column="1">
                     <Label FontWeight="Bold">Sign Up</Label>
                 </Viewbox>
@@ -63,13 +62,13 @@
                     <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</Label>
                     <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Password:</Label>
                     <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Confirm:</Label>
-                    <TextBox Grid.Row="0" Grid.Column="1" Margin="5"/>
-                    <PasswordBox Grid.Row="1" Grid.Column="1" Margin="5"/>
-                    <PasswordBox Grid.Row="2" Grid.Column="1" Margin="5"/>
+                    <TextBox x:Name="txbSignUpName" Grid.Row="0" Grid.Column="1" Margin="5"/>
+                    <PasswordBox x:Name="txbSignUpPassword" Grid.Row="1" Grid.Column="1" Margin="5"/>
+                    <PasswordBox x:Name="txbSignUpConfirm" Grid.Row="2" Grid.Column="1" Margin="5"/>
                 </Grid>
-                <Button Grid.Row="2" Grid.Column="1" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5">Sign Up</Button>
+                <Button Grid.Row="2" Grid.Column="1" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Click="SignUpClick">Sign Up</Button>
             </Grid>
-            <!--#endregion-->
         </TabItem>
+        <!--#endregion-->
     </TabControl>
 </Window>

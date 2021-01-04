@@ -10,7 +10,7 @@ namespace BLAPI
 {
     public static class BLFactory
     {
-        public static IBL GetIBL(string type)
+        public static IBL GetBL(string type)
         {
             switch (type)
             {

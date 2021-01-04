@@ -8,5 +8,8 @@ namespace BLAPI
 {
     public interface IBL
     {
+        BO.User UserAuthentication(string name, string password);
+        BO.User UserSignUp(string name, string password);
+        void ValidatePassword(string password);
     }
 }

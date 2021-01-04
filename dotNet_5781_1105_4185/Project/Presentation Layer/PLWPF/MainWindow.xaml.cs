@@ -10,18 +10,29 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace PL
 {
     /// <summary>
-    /// Interaction logic for LoginDialog.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class LoginDialog : Window
+    public partial class MainWindow : Window
     {
-        public LoginDialog()
+        public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void WindowLoaded(object sender, RoutedEventArgs e)
+        {
+            var login = new LoginDialog { Owner = this };
+
+            if (login.ShowDialog() != true)
+            {
+                Close();
+            }
         }
     }
 }

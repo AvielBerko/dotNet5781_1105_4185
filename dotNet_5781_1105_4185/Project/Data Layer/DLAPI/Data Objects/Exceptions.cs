@@ -6,6 +6,24 @@ using System.Threading.Tasks;
 
 namespace DO
 {
+    public class BadUserNameException : Exception
+    {
+        public string Name { get; }
+
+        public BadUserNameException(string name)
+        {
+            Name = name;
+        }
+        public BadUserNameException(string name, string message) : base(message)
+        {
+            Name = name;
+        }
+        public BadUserNameException(string name, string message, Exception innerException) : base(message, innerException)
+        {
+            Name = name;
+        }
+    }
+
     public class BadStationCodeException : Exception
     {
         public int Code { get; }
