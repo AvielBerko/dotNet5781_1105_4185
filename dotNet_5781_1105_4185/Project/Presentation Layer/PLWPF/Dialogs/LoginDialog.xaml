@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <TabControl>
         <!--#region LogIn-->
-        <TabItem Header="Login">
+        <TabItem Header="Login" x:Name="tabLogin">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -31,15 +31,29 @@
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</Label>
                     <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Password:</Label>
-                    <TextBox x:Name="txbLoginName" Grid.Row="0" Grid.Column="1" Margin="10"/>
-                    <PasswordBox x:Name="txbLoginPassword" Grid.Row="1" Grid.Column="1" Margin="10"/>
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" Margin="10" VerticalContentAlignment="Center"/>
+                    <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" Margin="10" VerticalContentAlignment="Center"/>
                 </Grid>
-                <Button Grid.Row="2" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Click="LoginClick">Log In</Button>
+                <Button Grid.Row="2" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Command="{Binding Login}">
+                    <Button.Style>
+                        <Style>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding AuthFailure}" Value="True">
+                                    <Setter Property="Button.Foreground" Value="Red" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding AuthFailure}" Value="False">
+                                    <Setter Property="Button.Foreground" Value="Black" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    Log In
+                </Button>
             </Grid>
         </TabItem>
         <!--#endregion-->
         <!--#region SignUp-->
-        <TabItem Header="SignUp">
+        <TabItem Header="SignUp" x:Name="tabSignUp">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -62,11 +76,11 @@
                     <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</Label>
                     <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Password:</Label>
                     <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Confirm:</Label>
-                    <TextBox x:Name="txbSignUpName" Grid.Row="0" Grid.Column="1" Margin="5"/>
-                    <PasswordBox x:Name="txbSignUpPassword" Grid.Row="1" Grid.Column="1" Margin="5"/>
-                    <PasswordBox x:Name="txbSignUpConfirm" Grid.Row="2" Grid.Column="1" Margin="5"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="5" Text="{Binding Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="5" Text="{Binding Password, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Text="{Binding Confirm, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
                 </Grid>
-                <Button Grid.Row="2" Grid.Column="1" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Click="SignUpClick">Sign Up</Button>
+                <Button Grid.Row="2" Grid.Column="1" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Command="{Binding SignUp}">Sign Up</Button>
             </Grid>
         </TabItem>
         <!--#endregion-->

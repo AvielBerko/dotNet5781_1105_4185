@@ -10,6 +10,7 @@ namespace BLAPI
     {
         BO.User UserAuthentication(string name, string password);
         BO.User UserSignUp(string name, string password);
-        void ValidatePassword(string password);
+        void ValidateSignUpName(string name);
+        void ValidateSignUpPassword(string password);
     }
 }

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Loaded="WindowLoaded"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Frame Source="Pages/AdminPage.xaml">
         
-    </Grid>
+    </Frame>
 </Window>

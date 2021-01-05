@@ -32,24 +32,30 @@ namespace BL
 
         public BO.User UserSignUp(string name, string password)
         {
-            if (string.IsNullOrEmpty(name)) throw new BO.BadSignUpException(name, password);
+            ValidateSignUpName(name);
+            ValidateSignUpPassword(password);
 
-            ValidatePassword(password);
+            dl.AddUser(new DO.User { Name = name, Password = password, Role = DO.Roles.Normal });
+            return new BO.User { Name = name, Password = password, Role = BO.Roles.Normal };
+        }
+
+        public void ValidateSignUpName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) throw new BO.BadNameValidationException(name, "Empty name is invalid");
 
             try
             {
-                dl.AddUser(new DO.User { Name = name, Password = password, Role = DO.Roles.Normal });
-                return new BO.User { Name = name, Password = password, Role = BO.Roles.Normal };
+                dl.GetUser(name);
+                throw new BO.BadNameValidationException(name, $"Name {name} already exists");
             }
             catch (DO.BadUserNameException)
             {
-                throw new BO.BadSignUpException(name, password);
             }
         }
 
-        public void ValidatePassword(string password)
+        public void ValidateSignUpPassword(string password)
         {
-            if (password.Length < 8)
+            if (string.IsNullOrEmpty(password) || password.Length < 8)
                 throw new BO.BadPasswordValidationException(password, "Password should contains at least 8 characters");
 
             bool hasLower = false;

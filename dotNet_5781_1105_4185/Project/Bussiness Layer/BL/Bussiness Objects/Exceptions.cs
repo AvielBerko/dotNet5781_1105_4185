@@ -28,25 +28,21 @@ namespace BO
         }
     }
 
-    public class BadSignUpException : Exception
+    public class BadNameValidationException : Exception
     {
         public string Name { get; }
-        public string Password { get; }
 
-        public BadSignUpException(string name, string password)
+        public BadNameValidationException(string name)
         {
             Name = name;
-            Password = password;
         }
-        public BadSignUpException(string name, string password, string message) : base(message)
+        public BadNameValidationException(string name, string message) : base(message)
         {
             Name = name;
-            Password = password;
         }
-        public BadSignUpException(string name, string password, string message, Exception innerException) : base(message, innerException)
+        public BadNameValidationException(string name, string message, Exception innerException) : base(message, innerException)
         {
             Name = name;
-            Password = password;
         }
     }
 

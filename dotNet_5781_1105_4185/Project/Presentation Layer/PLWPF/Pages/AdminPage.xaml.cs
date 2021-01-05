@@ -16,19 +16,13 @@ using System.Windows.Shapes;
 namespace PL
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for AdminPage.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class AdminPage : Page
     {
-        public MainWindow(MainViewModel main)
+        public AdminPage()
         {
             InitializeComponent();
-
-            DataContext = main;
-        }
-
-        private void WindowLoaded(object sender, RoutedEventArgs e)
-        {
         }
     }
 }
