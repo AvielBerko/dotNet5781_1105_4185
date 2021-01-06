@@ -23,12 +23,17 @@ namespace PL
         public MainWindow(MainViewModel main)
         {
             InitializeComponent();
-
             DataContext = main;
-        }
+        }  
+
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
+            var content = MainFrame.Content as FrameworkElement;
+            if (content == null)
+                return;
+            content.DataContext = MainFrame.DataContext;
+
         }
     }
 }

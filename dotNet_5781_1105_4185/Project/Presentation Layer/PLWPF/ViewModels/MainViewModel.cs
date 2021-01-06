@@ -21,11 +21,13 @@ namespace PL
 
         public LoginViewModel LoginViewModel { get; }
         public SignUpViewModel SignUpViewModel { get; }
+        public BusListViewModel BusListViewModel { get; }
 
         public MainViewModel()
         {
             LoginViewModel = new LoginViewModel();
             SignUpViewModel = new SignUpViewModel();
+            BusListViewModel = new BusListViewModel();
 
             LoginViewModel.LoggedIn += LoggedIn;
             SignUpViewModel.SignedUp += LoggedIn;

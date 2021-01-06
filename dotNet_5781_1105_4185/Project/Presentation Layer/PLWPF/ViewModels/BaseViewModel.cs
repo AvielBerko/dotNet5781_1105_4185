@@ -14,6 +14,7 @@ namespace PL
         readonly IBL bl = BLFactory.GetBL("1");
 
         protected object BlWork(Func<IBL, object> work) => work(bl);
+        protected void BlWork(Action<IBL> work) => work(bl);
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

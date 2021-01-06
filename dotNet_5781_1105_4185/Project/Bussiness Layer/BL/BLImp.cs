@@ -13,7 +13,8 @@ namespace BL
     {
         private readonly IDL dl = DLFactory.GetDL();
 
-        public BO.User UserAuthentication(string name, string password)
+		#region User
+		public BO.User UserAuthentication(string name, string password)
         {
             try
             {
@@ -75,5 +76,87 @@ namespace BL
                 throw new BO.BadPasswordValidationException(password,
                     "The password should contain at least 1 lower case letter, 1 upper case letter, 1 digit and 1 panctuation");
         }
-    }
+        #endregion
+
+        #region Station
+        public void AddStation(BO.Station station)
+        {
+            throw new NotImplementedException();
+            /*
+            try
+			{
+                dl.AddStation((DO.Station)station.CopyPropertiesToNew(typeof(DO.Station)));
+			}
+            catch (DO.BadStationCodeException e)
+			{
+                throw new BO.BadStationCodeException(station.Code, e.Message);
+            }
+            */
+        }
+
+        public void DeleteStation(int code)
+        {
+            throw new NotImplementedException();
+            /*
+            try
+            {
+                dl.DeleteStation(code);
+            }
+            catch (DO.BadStationCodeException e)
+            {
+                throw new BO.BadStationCodeException(code, e.Message);
+            }
+            */
+        }
+
+        public IEnumerable<BO.Station> GetAllStations()
+        {
+            return (from doStation in dl.GetAllStations() 
+                    select (BO.Station)doStation.CopyPropertiesToNew(typeof(BO.Station)));
+        }
+
+        public IEnumerable<BO.Station> GetAllStationsBy(Predicate<BO.Station> predicate)
+        {
+            IEnumerable<DO.Station> doStations = dl.GetAllStationsBy(doStation => predicate((BO.Station)doStation.CopyPropertiesToNew(typeof(BO.Station))));
+
+            return (from doStation in doStations
+                    select (BO.Station)doStation.CopyPropertiesToNew(typeof(BO.Station)));
+        }
+
+        public BO.Station GetStation(int code)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateStation(BO.Station station)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateStation(int code, Action<BO.Station> update)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region
+        private BO.Bus BusDoBoAdapter(DO.Bus doBus)
+		{
+            BO.Bus result = (BO.Bus)doBus.CopyPropertiesToNew(typeof(BO.Bus));
+            result.Registration = new BO.Registration(doBus.RegNum, doBus.RegDate);
+
+            return result;
+		}
+        public IEnumerable<BO.Bus> GetAllBuses()
+        {
+            return from doBus in dl.GetAllBuses() select BusDoBoAdapter(doBus);
+        }
+
+		public void DeleteListOfBuses(IEnumerable<BO.Bus> buses)
+		{
+            foreach (BO.Bus bus in buses)
+                dl.DeleteBus(bus.Registration.Number);
+        }
+		#endregion
+	}
 }

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DO
 {
-    public class BadUserNameException : Exception
+	#region User
+	public class BadUserNameException : Exception
     {
         public string Name { get; }
 
@@ -23,8 +24,10 @@ namespace DO
             Name = name;
         }
     }
+	#endregion
 
-    public class BadStationCodeException : Exception
+	#region Station
+	public class BadStationCodeException : Exception
     {
         public int Code { get; }
 
@@ -41,4 +44,36 @@ namespace DO
             Code = code;
         }
     }
+	#endregion
+
+	#region Bus
+	public class BadBusRegistrationException : Exception
+	{
+        public int RegNum { get; }
+        public DateTime? RegDate { get; }
+        public BadBusRegistrationException(int regNum, DateTime? regDate = null)
+        {
+            RegNum = regNum;
+            RegDate = regDate;
+        }
+        public BadBusRegistrationException(int regNum, string message) : base(message)
+        {
+            RegNum = RegNum;
+        }
+        public BadBusRegistrationException(int regNum, DateTime regDate, string message) : base(message)
+        {
+            RegNum = RegNum;
+            RegDate = regDate;
+        }
+        public BadBusRegistrationException(int regNum, string message, Exception innerException) : base(message, innerException)
+        {
+            RegNum = RegNum;
+        }
+        public BadBusRegistrationException(int regNum, DateTime regDate, string message, Exception innerException) : base(message, innerException)
+        {
+            RegNum = RegNum;
+            RegDate = regDate;
+        }
+    }
+	#endregion
 }

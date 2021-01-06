@@ -43,7 +43,33 @@ namespace DS
 
             Buses = new List<DO.Bus>
             {
-
+                 new DO.Bus
+                {
+                     RegNum = 12345678,
+                     RegDate = DateTime.Parse("23/01/2020"),
+                     Kilometrage = 2119,
+                     FuelLeft = 1000,
+                     Status = DO.BusStatus.Ready,
+                     Type = DO.BusTypes.Single
+                },
+                  new DO.Bus
+                {
+                     RegNum = 1018593,
+                     RegDate = DateTime.Parse("23/01/2001"),
+                     Kilometrage = 100233 ,
+                     FuelLeft = 142,
+                     Status = DO.BusStatus.NeedRefuel,
+                     Type = DO.BusTypes.Single
+                },
+                   new DO.Bus
+                {
+                     RegNum = 69203434,
+                     RegDate = DateTime.Parse("17/04/2019"),
+                     Kilometrage = 29403,
+                     FuelLeft = 698,
+                     Status = DO.BusStatus.Ready,
+                     Type = DO.BusTypes.Double
+                }
             };
 
             Lines = new List<DO.BusLine>

@@ -48,6 +48,13 @@ namespace DL
         {
             return (from station in DataSet.Stations select station.Clone()).AsEnumerable();
         }
+        public IEnumerable<Station> GetAllStationsBy(Predicate<Station> predicate)
+        {
+            return (from station in DataSet.Stations
+                    let cloned = station.Clone()
+                    where predicate(cloned)
+                    select cloned).AsEnumerable();
+        }
 
         public Station GetStation(int code)
         {
@@ -94,6 +101,64 @@ namespace DL
             if (exists == null) throw new BadStationCodeException(code, $"no station with code {code}");
 
             DataSet.Stations.Remove(exists);
+        }
+
+        #endregion
+
+        #region Bus
+        public IEnumerable<Bus> GetAllBuses()
+        {
+            return (from bus in DataSet.Buses select bus.Clone()).AsEnumerable();
+        }
+
+        public IEnumerable<Bus> GetAllBusesBy(Predicate<Bus> predicate)
+        {
+            return (from bus in DataSet.Buses
+                    let cloned = bus.Clone()
+                    where predicate(cloned)
+                    select cloned).AsEnumerable();
+        }
+
+        public Bus GetBus(int regNum)
+        {
+            var bus = DataSet.Buses.Find(b => b.RegNum == regNum);
+
+            if (bus == null) throw new BadBusRegistrationException(regNum, $"no bus with registration number {regNum}");
+
+            return bus.Clone();
+        }
+
+        public void AddBus(Bus bus)
+        {
+            if (DataSet.Buses.Any(b => b.RegNum == bus.RegNum))
+                throw new BadBusRegistrationException(bus.RegNum, $"bus with registration number {bus.RegNum} already exists");
+            
+            if (bus.RegDate.Year >= 2018 && bus.RegNum < 1000000 || bus.RegDate.Year < 2018 && bus.RegNum > 9999999)
+                throw new BadBusRegistrationException(bus.RegNum, bus.RegDate, "bus registration number doesn't match the registration year");
+
+            DataSet.Buses.Add(bus.Clone());
+        }
+
+        public void UpdateBus(Bus bus)
+        {
+            var exists = DataSet.Buses.Find(b => b.RegNum == bus.RegNum);
+
+            if (exists == null) throw new BadStationCodeException(bus.RegNum, $"no bus with registratin number {bus.RegNum}");
+
+            if (bus.RegDate.Year >= 2018 && bus.RegNum < 1000000 || bus.RegDate.Year < 2018 && bus.RegNum > 9999999)
+                throw new BadBusRegistrationException(bus.RegNum, bus.RegDate, "bus registration number doesn't match the registration year");
+
+            DataSet.Buses.Remove(exists);
+            DataSet.Buses.Add(bus.Clone());
+        }
+
+        public void DeleteBus(int regNum)
+        {
+            var exists = DataSet.Buses.Find(b => b.RegNum == regNum);
+
+            if (exists == null) throw new BadStationCodeException(regNum, $"no bus with registratin number {regNum}");
+
+            DataSet.Buses.Remove(exists);
         }
         #endregion
     }
