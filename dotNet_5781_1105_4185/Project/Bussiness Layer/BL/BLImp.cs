@@ -147,6 +147,20 @@ namespace BL
 
             return result;
 		}
+        private DO.Bus BusBoDoAdapter(BO.Bus boBus)
+        {
+            DO.Bus result = (DO.Bus)boBus.CopyPropertiesToNew(typeof(DO.Bus));
+            result.RegNum = boBus.Registration.Number;
+            result.RegDate = boBus.Registration.Date;
+
+            return result;
+        }
+        public void AddBus(BO.Bus bus)
+		{
+            ValidateRegistration(bus.Registration);
+            dl.AddBus(BusBoDoAdapter(bus));
+		}
+
         public IEnumerable<BO.Bus> GetAllBuses()
         {
             return from doBus in dl.GetAllBuses() select BusDoBoAdapter(doBus);
@@ -157,6 +171,22 @@ namespace BL
             foreach (BO.Bus bus in buses)
                 dl.DeleteBus(bus.Registration.Number);
         }
+
+		public void ValidateRegistration(BO.Registration registration)
+		{
+            if (registration.Date.Year >= 2018 && registration.Number< 1000000 || registration.Date.Year < 2018 && registration.Number > 9999999)
+                throw new BO.BadBusRegistrationException(registration, "bus registration number doesn't match the registration year");
+
+            try
+            {
+                dl.GetBus(registration.Number);
+            }
+            catch (DO.BadBusRegistrationException)
+			{
+                throw new BO.BadBusRegistrationException(registration, "bus with this registration number already exists");
+            }
+        }
+
 		#endregion
 	}
 }

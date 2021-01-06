@@ -27,7 +27,9 @@ namespace BLAPI
 
         #region Bus
         IEnumerable<BO.Bus> GetAllBuses();
+        void AddBus(BO.Bus bus);
         void DeleteListOfBuses(IEnumerable<BO.Bus> buses);
-		#endregion
-	}
+        void ValidateRegistration(BO.Registration registration);
+        #endregion
+    }
 }

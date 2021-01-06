@@ -19,9 +19,10 @@ namespace PL
 	/// </summary>
 	public partial class AddBusDialog : Window
 	{
-		public AddBusDialog()
+		public AddBusDialog(AddBusViewModel addBus)
 		{
 			InitializeComponent();
+			DataContext = addBus;
 		}
 	}
 }

@@ -68,7 +68,6 @@ namespace PL
 
         public delegate void LoggedInEventHandler(object sender, BO.User user);
         public event LoggedInEventHandler LoggedIn;
-
         protected virtual void OnLoggedIn(BO.User user) => LoggedIn?.Invoke(this, user);
 
         public event DialogService.RequestClose RequestClose;

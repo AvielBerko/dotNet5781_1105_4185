@@ -20,10 +20,9 @@ namespace PL
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(MainViewModel main)
+        public MainWindow()
         {
             InitializeComponent();
-            DataContext = main;
         }  
 
 

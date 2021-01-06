@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace BO
 {
-    public class BadAuthenticationException : Exception
+	#region User
+	public class BadAuthenticationException : Exception
     {
         public string Name { get; }
         public string Password { get; }
@@ -63,4 +64,25 @@ namespace BO
             Password = password;
         }
     }
+	#endregion
+
+	#region Bus
+    public class BadBusRegistrationException : Exception
+	{
+        public Registration Registration { get; }
+
+        public BadBusRegistrationException(Registration registration)
+        {
+            Registration = registration;
+        }
+        public BadBusRegistrationException(Registration registration, string message) : base(message)
+        {
+            Registration = registration;
+        }
+        public BadBusRegistrationException(Registration registration, string message, Exception innerException) : base(message, innerException)
+        {
+            Registration = registration;
+        }
+    }
+    #endregion
 }

@@ -25,7 +25,7 @@ namespace PL
         {
             AddBusDialog dialog = new AddBusDialog(addBus);
 
-            addBus.RequestClose = (sender, result) => dialog.DialogResult = result;
+            addBus.RequestClose += (sender, result) => dialog.DialogResult = result;
 
             return dialog.ShowDialog();
         }

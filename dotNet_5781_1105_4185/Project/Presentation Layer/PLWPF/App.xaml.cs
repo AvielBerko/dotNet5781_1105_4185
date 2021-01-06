@@ -17,10 +17,11 @@ namespace PL
         {
             base.OnStartup(e);
 
+            MainWindow window = new MainWindow();
             MainViewModel mainVM = new MainViewModel();
+            window.DataContext = mainVM;
             mainVM.Shutdown += (sender) => Shutdown(0);
 
-            MainWindow window = new MainWindow(mainVM);
             window.Show();
         }
     }

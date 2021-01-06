@@ -20,7 +20,7 @@
 		<!-- Registration Number Input -->
 		<StackPanel Orientation="Horizontal" Margin="5">
 			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Registration Number:</Label>
-			<TextBox Width="175" FontSize="17" Text="{Binding RegNum, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+			<TextBox Width="175" FontSize="17" Text="{Binding RegNum, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=true}"
 					 TextAlignment="Center"/>
 			<!-- " PreviewTextInput="TextBoxDigitOnly" -->
 		</StackPanel>
@@ -28,13 +28,13 @@
 		<!-- Registration Date Input -->
 		<StackPanel Grid.Row ="1" Orientation="Horizontal" Margin="5">
 			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Registration Date:</Label>
-			<DatePicker SelectedDate="{Binding RegDate, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center"/>
+			<DatePicker SelectedDate="{Binding RegDate, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center"/>
 		</StackPanel>
 
 		<!-- Kilometrage Input -->
 		<StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
 			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Kilometrage:</Label>
-			<TextBox Width="175" FontSize="17" Text="{Binding Kilometrage, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+			<TextBox Width="175" FontSize="17" Text="{Binding Kilometrage, UpdateSourceTrigger=PropertyChanged}"
 					  TextAlignment="Center"/>
 			<!-- " PreviewTextInput="TextBoxDigitOnly" -->
 		</StackPanel>
@@ -42,13 +42,13 @@
 		<!-- Type Input -->
 		<StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5">
 			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Bus Type:</Label>
-			<ComboBox Width="175" FontSize="17" Text="{Binding Type, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+			<ComboBox Width="175" FontSize="17" Text="{Binding Type, UpdateSourceTrigger=PropertyChanged}" />
 		</StackPanel>
 
 		<!-- Dialog Buttons -->
 		<StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
-			<Button Width="75" IsDefault="True" Margin="0,0,5,0">OK</Button>
-			<Button Width="75" IsCancel="True">Cancel</Button>
+			<Button Width="75" IsDefault="True" Margin="0,0,5,0" Command="{Binding Ok}">OK</Button>
+			<Button Width="75" IsCancel="True" Command="{Binding Cancel}">Cancel</Button>
 		</StackPanel>
 	</Grid>
 </Window>

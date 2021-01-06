@@ -92,7 +92,7 @@ namespace PL
         {
             try
             {
-                BlWork(bl => { bl.ValidateSignUpName(Name); return null; });
+                BlWork(bl => bl.ValidateSignUpName(Name));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadNameValidationException ex)
@@ -105,7 +105,7 @@ namespace PL
         {
             try
             {
-                BlWork(bl => { bl.ValidateSignUpPassword(Password); return null; });
+                BlWork(bl => bl.ValidateSignUpPassword(Password));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadPasswordValidationException ex)
