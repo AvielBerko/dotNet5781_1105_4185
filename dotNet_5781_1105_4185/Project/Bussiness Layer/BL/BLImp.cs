@@ -13,8 +13,8 @@ namespace BL
     {
         private readonly IDL dl = DLFactory.GetDL();
 
-		#region User
-		public BO.User UserAuthentication(string name, string password)
+        #region User
+        public BO.User UserAuthentication(string name, string password)
         {
             try
             {
@@ -111,7 +111,7 @@ namespace BL
 
         public IEnumerable<BO.Station> GetAllStations()
         {
-            return (from doStation in dl.GetAllStations() 
+            return (from doStation in dl.GetAllStations()
                     select (BO.Station)doStation.CopyPropertiesToNew(typeof(BO.Station)));
         }
 
@@ -139,14 +139,14 @@ namespace BL
         }
         #endregion
 
-        #region
+        #region Bus
         private BO.Bus BusDoBoAdapter(DO.Bus doBus)
-		{
+        {
             BO.Bus result = (BO.Bus)doBus.CopyPropertiesToNew(typeof(BO.Bus));
             result.Registration = new BO.Registration(doBus.RegNum, doBus.RegDate);
 
             return result;
-		}
+        }
         private DO.Bus BusBoDoAdapter(BO.Bus boBus)
         {
             DO.Bus result = (DO.Bus)boBus.CopyPropertiesToNew(typeof(DO.Bus));
@@ -156,37 +156,43 @@ namespace BL
             return result;
         }
         public void AddBus(BO.Bus bus)
-		{
+        {
             ValidateRegistration(bus.Registration);
             dl.AddBus(BusBoDoAdapter(bus));
-		}
+        }
 
         public IEnumerable<BO.Bus> GetAllBuses()
         {
             return from doBus in dl.GetAllBuses() select BusDoBoAdapter(doBus);
         }
 
-		public void DeleteListOfBuses(IEnumerable<BO.Bus> buses)
-		{
+        public void DeleteListOfBuses(IEnumerable<BO.Bus> buses)
+        {
             foreach (BO.Bus bus in buses)
                 dl.DeleteBus(bus.Registration.Number);
         }
 
-		public void ValidateRegistration(BO.Registration registration)
-		{
-            if (registration.Date.Year >= 2018 && registration.Number< 1000000 || registration.Date.Year < 2018 && registration.Number > 9999999)
+        public void ValidateRegistration(BO.Registration registration)
+        {
+            if (!(registration.Date.Year >= 2018 && (registration.Number < 100000000 && registration.Number > 9999999) ||
+                    registration.Date.Year < 2018 && (registration.Number < 10000000 && registration.Number > 999999)))
                 throw new BO.BadBusRegistrationException(registration, "bus registration number doesn't match the registration year");
 
             try
             {
                 dl.GetBus(registration.Number);
+                throw new BO.BadBusRegistrationException(registration, "bus with this registration number already exists");
             }
             catch (DO.BadBusRegistrationException)
-			{
-                throw new BO.BadBusRegistrationException(registration, "bus with this registration number already exists");
+            {
             }
         }
 
-		#endregion
-	}
+        public void RefuelBus(BO.Bus bus)
+        {
+            bus.FuelLeft = 1200;
+            dl.UpdateBus(BusBoDoAdapter(bus));
+        }
+        #endregion
+    }
 }

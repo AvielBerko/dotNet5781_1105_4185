@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace PL
 {
-    public class SignUpViewModel : BaseViewModel, IDataErrorInfo, IDialogHelper
+    public class SignUpViewModel : BaseDialogViewModel, IDataErrorInfo
     {
         string name;
         public string Name
@@ -48,25 +48,22 @@ namespace PL
 
         public SignUpViewModel()
         {
-            SignUp = new RelayCommand((obj) => _SignUp(), (obj) =>
+            SignUp = new RelayCommand(_SignUp, (obj) =>
                 ValidateName().IsValid &&
                 ValidatePassword().IsValid &&
                 ValidateConfirm().IsValid);
         }
 
-        private void _SignUp()
+        private void _SignUp(object window)
         {
             BO.User user = (BO.User)BlWork(bl => bl.UserSignUp(Name, Password));
             OnSignedUp(user);
-            OnRequestClose(true);
+            CloseDialog(window, true);
         }
 
         public delegate void SignedUpEventHandler(object sender, BO.User user);
         public event SignedUpEventHandler SignedUp;
         protected virtual void OnSignedUp(BO.User user) => SignedUp?.Invoke(this, user);
-
-        public event DialogService.RequestClose RequestClose;
-        protected virtual void OnRequestClose(bool? result) => RequestClose?.Invoke(this, result);
 
         public string this[string columnName]
         {

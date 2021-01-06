@@ -34,7 +34,7 @@
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" Margin="10" VerticalContentAlignment="Center"/>
                     <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" Margin="10" VerticalContentAlignment="Center"/>
                 </Grid>
-                <Button Grid.Row="2" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Command="{Binding Login}">
+                <Button Grid.Row="2" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Command="{Binding Login}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                     <Button.Style>
                         <Style>
                             <Style.Triggers>
@@ -80,7 +80,7 @@
                     <TextBox Grid.Row="1" Grid.Column="1" Margin="5" Text="{Binding Password, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
                     <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Text="{Binding Confirm, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
                 </Grid>
-                <Button Grid.Row="2" Grid.Column="1" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Command="{Binding SignUp}">Sign Up</Button>
+                <Button Grid.Row="2" Grid.Column="1" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Command="{Binding SignUp}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">Sign Up</Button>
             </Grid>
         </TabItem>
         <!--#endregion-->

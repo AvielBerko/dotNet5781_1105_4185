@@ -7,58 +7,52 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-	public class BusListViewModel : BaseViewModel
-	{
-		public ObservableCollection<BO.Bus> Buses { get; }
-		public AddBusViewModel AddBusViewModel { get; }
-		public RelayCommand AddBus { get; }
-		public RelayCommand RemoveAllBuses { get; }
-		public RelayCommand TreatBus { get; }
-		public RelayCommand RefuelBus { get; }
-		public RelayCommand RemoveBus { get; }
+    public class BusListViewModel : BaseViewModel
+    {
+        public ObservableCollection<BusViewModel> Buses { get; }
+        public AddBusViewModel AddBusViewModel { get; }
+        public RelayCommand AddBus { get; }
+        public RelayCommand RemoveAllBuses { get; }
 
+        public BusListViewModel()
+        {
+            Buses = new ObservableCollection<BusViewModel>(
+                from bus in (IEnumerable<BO.Bus>)BlWork(bl => bl.GetAllBuses())
+                select CreateBusViewModel(bus));
+            Buses.CollectionChanged += BusesCollectionChanged;
 
-		public BusListViewModel()
-		{
-			Buses = new ObservableCollection<BO.Bus>((IEnumerable<BO.Bus>)BlWork(bl => bl.GetAllBuses()));
-			Buses.CollectionChanged += BusesCollectionChanged;
-			AddBusViewModel = new AddBusViewModel();
-			AddBusViewModel.AddedBus += (sender, bus) => Buses.Add(bus);
-			AddBus = new RelayCommand(obj => _AddBus());
-			RemoveAllBuses = new RelayCommand(obj => _RemoveAllBuses(), obj => Buses.Count > 0);
-			TreatBus = new RelayCommand(obj => _TreatBus((BO.Bus)obj));
-			RefuelBus = new RelayCommand(obj => _RefuelBus((BO.Bus)obj));
-			RemoveBus = new RelayCommand(obj => _RemoveBus((BO.Bus)obj));
-		}
+            AddBusViewModel = new AddBusViewModel();
+            AddBusViewModel.AddedBus += (sender, bus) => Buses.Add(CreateBusViewModel(bus));
 
-		private void BusesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-		{
-			BlWork(bl => bl.DeleteListOfBuses((IEnumerable<BO.Bus>)e.OldItems));
-		}
+            AddBus = new RelayCommand(obj => _AddBus());
+            RemoveAllBuses = new RelayCommand(obj => _RemoveAllBuses(), obj => Buses.Count > 0);
+        }
 
-		private void _AddBus()
-		{
-			DialogService.ShowAddBusDialog(AddBusViewModel);
-		}
+        private void BusesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                var vms = (IEnumerable<BusViewModel>)e.OldItems;
+                BlWork(bl => bl.DeleteListOfBuses(from busVM in vms select busVM.Bus));
+            }
+        }
 
-		private void _RemoveAllBuses()
-		{
-			// Are You Sure ? 
-			Buses.Clear();
-		}
+        private BusViewModel CreateBusViewModel(BO.Bus bus)
+        {
+            var vm = new BusViewModel { Bus = bus };
+            vm.Remove += (sender) => Buses.Remove((BusViewModel)sender);
+            return vm;
+        }
 
-		private void _TreatBus(BO.Bus bus)
-		{
-			
-		}
+        private void _AddBus()
+        {
+            DialogService.ShowAddBusDialog(AddBusViewModel);
+        }
 
-		private void _RefuelBus(BO.Bus bus)
-		{
-
-		}
-		private void _RemoveBus(BO.Bus bus)
-		{
-			Buses.Remove(bus);
-		}
-	}
+        private void _RemoveAllBuses()
+        {
+            // Are You Sure ? 
+            Buses.Clear();
+        }
+    }
 }

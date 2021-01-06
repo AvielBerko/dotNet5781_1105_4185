@@ -133,7 +133,8 @@ namespace DL
             if (DataSet.Buses.Any(b => b.RegNum == bus.RegNum))
                 throw new BadBusRegistrationException(bus.RegNum, $"bus with registration number {bus.RegNum} already exists");
             
-            if (bus.RegDate.Year >= 2018 && bus.RegNum < 1000000 || bus.RegDate.Year < 2018 && bus.RegNum > 9999999)
+            if (!(bus.RegDate.Year >= 2018 && (bus.RegNum < 100000000 && bus.RegNum > 9999999) ||
+                    bus.RegDate.Year < 2018 && (bus.RegNum < 10000000 && bus.RegNum > 999999)))
                 throw new BadBusRegistrationException(bus.RegNum, bus.RegDate, "bus registration number doesn't match the registration year");
 
             DataSet.Buses.Add(bus.Clone());

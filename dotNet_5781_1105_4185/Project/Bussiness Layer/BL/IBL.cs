@@ -8,8 +8,8 @@ namespace BLAPI
 {
     public interface IBL
     {
-		#region User
-		BO.User UserAuthentication(string name, string password);
+        #region User
+        BO.User UserAuthentication(string name, string password);
         BO.User UserSignUp(string name, string password);
         void ValidateSignUpName(string name);
         void ValidateSignUpPassword(string password);
@@ -30,6 +30,7 @@ namespace BLAPI
         void AddBus(BO.Bus bus);
         void DeleteListOfBuses(IEnumerable<BO.Bus> buses);
         void ValidateRegistration(BO.Registration registration);
+        void RefuelBus(BO.Bus bus);
         #endregion
     }
 }
