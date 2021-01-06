@@ -85,4 +85,24 @@ namespace BO
         }
     }
     #endregion
+
+    #region Station
+    public class BadStationCodeException : Exception
+    {
+        public int Code{ get; }
+
+        public BadStationCodeException(int code)
+        {
+            Code = code;
+        }
+        public BadStationCodeException(int code, string message) : base(message)
+        {
+            Code = code;
+        }
+        public BadStationCodeException(int code, string message, Exception innerException) : base(message, innerException)
+        {
+            Code = code;
+        }
+    }
+    #endregion
 }

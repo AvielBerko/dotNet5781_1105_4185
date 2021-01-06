@@ -25,7 +25,7 @@ namespace PL
         public BusViewModel()
         {
             RefuelBus = new RelayCommand(obj => BlWork(bl => bl.RefuelBus(bus)));
-            RemoveBus = new RelayCommand(obj => OnRemove());
+            RemoveBus = new RelayCommand(obj => { BlWork(bl => bl.DeleteBus(Bus)); OnRemove(); });
         }
 
         public delegate void RemoveBusEventHandler(object sender);

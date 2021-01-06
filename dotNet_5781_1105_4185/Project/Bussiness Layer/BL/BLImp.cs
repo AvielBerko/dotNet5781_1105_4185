@@ -94,19 +94,16 @@ namespace BL
             */
         }
 
-        public void DeleteStation(int code)
+        public void DeleteStation(BO.Station station)
         {
-            throw new NotImplementedException();
-            /*
             try
             {
-                dl.DeleteStation(code);
+                dl.DeleteStation(station.Code);
             }
             catch (DO.BadStationCodeException e)
             {
-                throw new BO.BadStationCodeException(code, e.Message);
+                throw new BO.BadStationCodeException(station.Code, e.Message);
             }
-            */
         }
 
         public IEnumerable<BO.Station> GetAllStations()
@@ -190,9 +187,27 @@ namespace BL
 
         public void RefuelBus(BO.Bus bus)
         {
+            bus.Status = BO.BusStatus.Refueling;
             bus.FuelLeft = 1200;
             dl.UpdateBus(BusBoDoAdapter(bus));
         }
-        #endregion
-    }
+
+		public void DeleteAllBuses()
+		{
+            dl.DeleteAllBuses();
+        }
+
+		public void DeleteBus(BO.Bus bus)
+		{
+            try
+            {
+                dl.DeleteBus(bus.Registration.Number);
+            }
+            catch(DO.BadBusRegistrationException e)
+			{
+                throw new BO.BadBusRegistrationException(bus.Registration, e.Message);
+			}
+		}
+		#endregion
+	}
 }

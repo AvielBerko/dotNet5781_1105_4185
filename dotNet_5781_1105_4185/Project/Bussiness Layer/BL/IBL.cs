@@ -22,13 +22,15 @@ namespace BLAPI
         void AddStation(BO.Station station);
         void UpdateStation(BO.Station station);
         void UpdateStation(int code, Action<BO.Station> update);
-        void DeleteStation(int code);
+        void DeleteStation(BO.Station station);
         #endregion
 
         #region Bus
         IEnumerable<BO.Bus> GetAllBuses();
         void AddBus(BO.Bus bus);
         void DeleteListOfBuses(IEnumerable<BO.Bus> buses);
+        void DeleteAllBuses();
+        void DeleteBus(BO.Bus bus);
         void ValidateRegistration(BO.Registration registration);
         void RefuelBus(BO.Bus bus);
         #endregion

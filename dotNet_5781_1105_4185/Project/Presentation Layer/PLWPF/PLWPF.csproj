@@ -71,6 +71,8 @@
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SignUpViewModel.cs" />
+    <Compile Include="ViewModels\StationListViewModel.cs" />
+    <Compile Include="ViewModels\StationViewModel.cs" />
     <Page Include="Dialogs\AddBusDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

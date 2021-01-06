@@ -19,22 +19,12 @@ namespace PL
             Buses = new ObservableCollection<BusViewModel>(
                 from bus in (IEnumerable<BO.Bus>)BlWork(bl => bl.GetAllBuses())
                 select CreateBusViewModel(bus));
-            Buses.CollectionChanged += BusesCollectionChanged;
 
             AddBusViewModel = new AddBusViewModel();
             AddBusViewModel.AddedBus += (sender, bus) => Buses.Add(CreateBusViewModel(bus));
 
             AddBus = new RelayCommand(obj => _AddBus());
             RemoveAllBuses = new RelayCommand(obj => _RemoveAllBuses(), obj => Buses.Count > 0);
-        }
-
-        private void BusesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.OldItems != null)
-            {
-                var vms = (IEnumerable<BusViewModel>)e.OldItems;
-                BlWork(bl => bl.DeleteListOfBuses(from busVM in vms select busVM.Bus));
-            }
         }
 
         private BusViewModel CreateBusViewModel(BO.Bus bus)
@@ -52,6 +42,7 @@ namespace PL
         private void _RemoveAllBuses()
         {
             // Are You Sure ? 
+            BlWork(bl => bl.DeleteAllBuses());
             Buses.Clear();
         }
     }

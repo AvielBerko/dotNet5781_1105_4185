@@ -161,6 +161,11 @@ namespace DL
 
             DataSet.Buses.Remove(exists);
         }
-        #endregion
-    }
+
+		public void DeleteAllBuses()
+		{
+            DataSet.Buses.Clear();
+        }
+		#endregion
+	}
 }

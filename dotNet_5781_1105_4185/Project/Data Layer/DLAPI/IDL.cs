@@ -32,6 +32,8 @@ namespace DLAPI
         void UpdateBus(DO.Bus bus);
         //void UpdateBus(int regNum, Action<DO.Bus> update);
         void DeleteBus(int regNum);
+        void DeleteAllBuses();
+
         #endregion
     }
 }
