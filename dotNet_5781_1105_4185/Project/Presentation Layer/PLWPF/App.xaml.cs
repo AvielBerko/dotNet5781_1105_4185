@@ -18,18 +18,9 @@ namespace PL
             base.OnStartup(e);
 
             MainViewModel mainVM = new MainViewModel();
+            mainVM.Shutdown += (sender) => Shutdown(0);
+
             MainWindow window = new MainWindow(mainVM);
-
-            var login = new LoginDialog(mainVM.LoginViewModel, mainVM.SignUpViewModel);
-
-            mainVM.LoginViewModel.LoggedIn += (_, user) => login.DialogResult = true;
-            mainVM.SignUpViewModel.SignedUp += (_, user) => login.DialogResult = true;
-
-            if (login.ShowDialog() != true)
-            {
-                Shutdown(1);
-            }
-
             window.Show();
         }
     }

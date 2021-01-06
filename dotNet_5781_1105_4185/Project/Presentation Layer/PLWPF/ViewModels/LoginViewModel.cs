@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-    public class LoginViewModel : BaseViewModel
+    public class LoginViewModel : BaseViewModel, IDialogHelper
     {
         string name;
         public string Name
@@ -58,6 +58,7 @@ namespace PL
                 BO.User user = (BO.User)BlWork(bl => bl.UserAuthentication(Name, Password));
                 AuthFailure = false;
                 OnLoggedIn(user);
+                OnRequestClose(true);
             }
             catch (BO.BadAuthenticationException)
             {
@@ -67,6 +68,10 @@ namespace PL
 
         public delegate void LoggedInEventHandler(object sender, BO.User user);
         public event LoggedInEventHandler LoggedIn;
+
         protected virtual void OnLoggedIn(BO.User user) => LoggedIn?.Invoke(this, user);
+
+        public event DialogService.RequestClose RequestClose;
+        protected virtual void OnRequestClose(bool? result) => RequestClose?.Invoke(this, result);
     }
 }
