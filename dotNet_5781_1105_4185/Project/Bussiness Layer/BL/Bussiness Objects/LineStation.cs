@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DO
+namespace BO
 {
     public class LineStation
     {
-        public Guid LineID { get; set; }
-        public int StationCode { get; set; }
-        public int RouteIndex { get; set; }
+        public Station Station { get; set; }
+        public int Distance { get; set; }
+        public TimeSpan DrivingTime { get; set; }
     }
 }

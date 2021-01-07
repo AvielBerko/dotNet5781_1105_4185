@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DO
+namespace BO
 {
     public class BusLine
     {
         public Guid ID { get; set; }
         public int LineNum { get; set; }
         public Regions Region { get; set; }
-        public int RouteLength { get; set; }
+        public IEnumerable<LineStation> Route { get; set; }
     }
 }

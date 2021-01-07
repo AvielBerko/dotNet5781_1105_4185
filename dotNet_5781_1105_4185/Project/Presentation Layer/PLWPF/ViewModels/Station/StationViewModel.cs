@@ -18,21 +18,21 @@ namespace PL
                 OnPropertyChanged(nameof(Station));
             }
         }
-        public AddStationViewModel AddStationViewModel { get; }
+        public UpdateStationViewModel UpdateStationViewModel { get; }
         public RelayCommand RemoveStation { get; }
         public RelayCommand UpdateStation { get; }
 
-        public StationViewModel(AddStationViewModel addStationVM)
+        public StationViewModel(BO.Station station)
         {
-            AddStationViewModel = addStationVM;
+            Station = station;
+
+            UpdateStationViewModel = new UpdateStationViewModel { Station = Station };
             RemoveStation = new RelayCommand(obj => { BlWork(bl => bl.DeleteStation(Station)); OnRemove(); });
             UpdateStation = new RelayCommand(obj => _Update());
         }
         private void _Update()
 		{
-            AddStationViewModel.IsUpdate = true;
-            AddStationViewModel.Station = Station;
-            if (DialogService.ShowAddStationDialog(AddStationViewModel) == true) 
+            if (DialogService.ShowUpdateStationDialog(UpdateStationViewModel) == true) 
             {
                 OnPropertyChanged(nameof(Station));
             }

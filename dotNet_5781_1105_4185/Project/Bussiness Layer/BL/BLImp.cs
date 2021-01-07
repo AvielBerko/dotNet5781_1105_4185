@@ -129,7 +129,7 @@ namespace BL
 
 		public IEnumerable<BO.Station> GetAllStationsBy(Predicate<BO.Station> predicate)
 		{
-			IEnumerable<DO.Station> doStations = dl.GetAllStationsBy(doStation => predicate(StationDoBoAdapter(doStation)));
+			IEnumerable<DO.Station> doStations = dl.GetStationsBy(doStation => predicate(StationDoBoAdapter(doStation)));
 
 			return (from doStation in doStations
 					select StationDoBoAdapter(doStation));
@@ -142,7 +142,14 @@ namespace BL
 
 		public void UpdateStation(BO.Station station)
 		{
-			throw new NotImplementedException();
+			try
+            {
+				dl.UpdateStation(StationBoDoAdapter(station));
+            }
+			catch (DO.BadStationCodeException e)
+            {
+				throw new BO.BadStationCodeException(station.Code, e.Message);
+            }
 		}
 
 		public void UpdateStation(int code, Action<BO.Station> update)
@@ -252,6 +259,10 @@ namespace BL
 				throw new BO.BadBusRegistrationException(bus.Registration, e.Message);
 			}
 		}
+		#endregion
+
+		#region BusLine
+		
 		#endregion
 	}
 }

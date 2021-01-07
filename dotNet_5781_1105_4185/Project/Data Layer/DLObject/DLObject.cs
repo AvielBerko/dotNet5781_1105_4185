@@ -48,7 +48,7 @@ namespace DL
         {
             return (from station in DataSet.Stations select station.Clone()).AsEnumerable();
         }
-        public IEnumerable<Station> GetAllStationsBy(Predicate<Station> predicate)
+        public IEnumerable<Station> GetStationsBy(Predicate<Station> predicate)
         {
             return (from station in DataSet.Stations
                     let cloned = station.Clone()
@@ -116,7 +116,7 @@ namespace DL
             return (from bus in DataSet.Buses select bus.Clone()).AsEnumerable();
         }
 
-        public IEnumerable<Bus> GetAllBusesBy(Predicate<Bus> predicate)
+        public IEnumerable<Bus> GetBusesBy(Predicate<Bus> predicate)
         {
             return (from bus in DataSet.Buses
                     let cloned = bus.Clone()
@@ -171,6 +171,132 @@ namespace DL
 		{
             DataSet.Buses.Clear();
         }
-		#endregion
-	}
+        #endregion
+
+        #region BusLine
+        public IEnumerable<BusLine> GetAllBusLines()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<BusLine> GetBusLinesBy(Predicate<BusLine> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public BusLine GetBusLine(Guid ID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddBusLine(BusLine busLine)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateBusLine(BusLine busLine)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteBusLine(Guid ID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAllBusLines()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region LineStation
+        public IEnumerable<LineStation> GetAllLineStation(Guid lineID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<LineStation> GetLineStationsBy(Guid lineID, Predicate<LineStation> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public LineStation GetLineStationByStation(Guid lineID, int stationCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public LineStation GetLineStationByIndex(Guid lineID, int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddLineStation(LineStation lineSation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateLineStationByStation(LineStation lineSation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateLineStationByIndex(LineStation lineSation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteLineStationByStation(Guid lineID, int stationCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteLineStationByIndex(Guid lineID, int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAllLineStations(Guid lineID)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region AdjacentStations
+        public IEnumerable<AdjacentStations> GetAllAdjacentStations()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<AdjacentStations> GetAdjacentStationsBy(Predicate<AdjacentStations> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AdjacentStations GetAdjacentStations(int stationCode1, int stationCode2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddAdjacentStations(AdjacentStations adjacentStations)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateAdjacentStations(AdjacentStations adjacentStations)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAdjacentStations(int stationCode1, int stationCode2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAllAdjacentStations()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+    }
 }
