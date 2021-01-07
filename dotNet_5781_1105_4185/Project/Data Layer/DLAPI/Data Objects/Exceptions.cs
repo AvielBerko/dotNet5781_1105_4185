@@ -97,6 +97,51 @@ namespace DO
     }
     #endregion
 
+    #region LineStation
+    public class BadLineStationStationCodeException : Exception
+    {
+        public Guid LineID { get; }
+        public int StationCode { get; }
+
+        public BadLineStationStationCodeException(Guid id, int stationCode)
+        {
+            LineID = id;
+            StationCode = stationCode;
+        }
+        public BadLineStationStationCodeException(Guid id, int stationCode, string message) : base(message)
+        {
+            LineID = id;
+            StationCode = stationCode;
+        }
+        public BadLineStationStationCodeException(Guid id, int stationCode, string message, Exception innerException) : base(message, innerException)
+        {
+            LineID = id;
+            StationCode = stationCode;
+        }
+    }
+    public class BadLineStationIndexException : Exception
+    {
+        public Guid LineID { get; }
+        public int Index { get; }
+
+        public BadLineStationIndexException(Guid id, int index)
+        {
+            LineID = id;
+            Index = index;
+        }
+        public BadLineStationIndexException(Guid id, int index, string message) : base(message)
+        {
+            LineID = id;
+            Index = index;
+        }
+        public BadLineStationIndexException(Guid id, int index, string message, Exception innerException) : base(message, innerException)
+        {
+            LineID = id;
+            Index = index;
+        }
+    }
+    #endregion
+
     #region AdjacentStations
     public class BadAdjacentStationsCodeException : Exception
     {
