@@ -173,42 +173,61 @@ namespace DL
 		}
 		#endregion
 
-		#region BusLine
-		public IEnumerable<BusLine> GetAllBusLines()
-		{
-			throw new NotImplementedException();
-		}
+        #region BusLine
+        public IEnumerable<BusLine> GetAllBusLines()
+        {
+            return (from busLine in DataSet.Lines select busLine.Clone()).AsEnumerable();
+        }
 
-		public IEnumerable<BusLine> GetBusLinesBy(Predicate<BusLine> predicate)
-		{
-			throw new NotImplementedException();
-		}
+        public IEnumerable<BusLine> GetBusLinesBy(Predicate<BusLine> predicate)
+        {
+            return (from busLine in DataSet.Lines
+                    let cloned = busLine.Clone()
+                    where predicate(cloned)
+                    select cloned).AsEnumerable();
+        }
 
-		public BusLine GetBusLine(Guid ID)
-		{
-			throw new NotImplementedException();
-		}
+        public BusLine GetBusLine(Guid ID)
+        {
+            var busLine = DataSet.Lines.Find(b => b.ID == ID);
 
-		public void AddBusLine(BusLine busLine)
-		{
-			throw new NotImplementedException();
-		}
+            if (busLine == null) throw new BadBusLineIDException(ID, $"no bus line with ID {ID}");
 
-		public void UpdateBusLine(BusLine busLine)
-		{
-			throw new NotImplementedException();
-		}
+            return busLine.Clone();
+        }
 
-		public void DeleteBusLine(Guid ID)
-		{
-			throw new NotImplementedException();
-		}
+        public void AddBusLine(BusLine busLine)
+        {
+            if (DataSet.Lines.Any(b => b.ID == busLine.ID))
+                throw new BadBusLineIDException(busLine.ID, $"bus line with ID {busLine.ID} already exists");
 
-		public void DeleteAllBusLines()
-		{
-			throw new NotImplementedException();
-		}
-		#endregion
+            DataSet.Lines.Add(busLine.Clone());
+        }
+
+        public void UpdateBusLine(BusLine busLine)
+        {
+            var exists = DataSet.Lines.Find(b => b.ID == busLine.ID);
+
+            if (exists == null) throw new BadBusLineIDException(busLine.ID, $"no bus line with ID {busLine.ID}");
+
+            DataSet.Lines.Remove(exists);
+            DataSet.Lines.Add(exists);
+        }
+
+        public void DeleteBusLine(Guid ID)
+        {
+            var busLine = DataSet.Lines.Find(b => b.ID == ID);
+
+            if (busLine == null) throw new BadBusLineIDException(ID, $"no bus line with ID {ID}");
+
+            DataSet.Lines.Remove(busLine);
+        }
+
+        public void DeleteAllBusLines()
+        {
+            DataSet.Lines.Clear();
+        }
+        #endregion
 
 		#region LineStation
 		public IEnumerable<LineStation> GetAllLineStation(Guid lineID)

@@ -77,6 +77,28 @@ namespace DO
     }
     #endregion
 
+    #region BusLine
+	public class BadBusLineIDException : Exception
+    {
+        public Guid ID { get; }
+
+        public BadBusLineIDException(Guid id)
+        {
+            ID = id;
+        }
+        public BadBusLineIDException(Guid id, string message) : base(message)
+        {
+            ID = id;
+        }
+        public BadBusLineIDException(Guid id, string message, Exception innerException) : base(message, innerException)
+        {
+            ID = id;
+        }
+    }
+    #endregion
+}
+    #endregion
+
     #region AdjacentStations
     public class BadAdjacentStationsCodeException : Exception
     {
