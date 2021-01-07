@@ -75,5 +75,28 @@ namespace DO
             RegDate = regDate;
         }
     }
-	#endregion
-}
+    #endregion
+
+    #region AdjacentStations
+    public class BadAdjacentStationsCodeException : Exception
+    {
+        public int Station1Code { get; }
+        public int Station2Code { get; }
+
+        public BadAdjacentStationsCodeException(int code1, int code2)
+        {
+            Station1Code = code1;
+            Station2Code = code2;
+        }
+        public BadAdjacentStationsCodeException(int code1, int code2, string message) : base(message)
+        {
+            Station1Code = code1;
+            Station2Code = code2;
+        }
+        public BadAdjacentStationsCodeException(int code1, int code2, string message, Exception innerException) : base(message, innerException)
+        {
+            Station1Code = code1;
+            Station2Code = code2;
+        }
+        #endregion
+    }
