@@ -10,7 +10,7 @@ namespace DO
     {
         public int Station1Code { get; set; }
         public int Station2Code { get; set; }
-        public int DistanceInMeters { get; set; }
+        public int Distance { get; set; }
         public TimeSpan DrivingTime { get; set; }
     }
 }

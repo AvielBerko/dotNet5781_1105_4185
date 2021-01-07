@@ -40,5 +40,10 @@ namespace BLAPI
         void ValidateRegistration(BO.Registration registration);
         void RefuelBus(BO.Bus bus);
         #endregion
+
+        #region BusLine, LineStation, AdjacentLines
+        IEnumerable<BO.BusLine> GetAllBusLinesWithoutRoute();
+        IEnumerable<BO.BusLine> GetAllBusLines();
+        #endregion
     }
 }

@@ -9,7 +9,7 @@ namespace BO
     public class LineStation
     {
         public Station Station { get; set; }
-        public int Distance { get; set; }
-        public TimeSpan DrivingTime { get; set; }
+        public int? Distance { get; set; }
+        public TimeSpan? DrivingTime { get; set; }
     }
 }
