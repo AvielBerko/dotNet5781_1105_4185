@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DO
 {
-	#region User
-	public class BadUserNameException : Exception
+    #region User
+    public class BadUserNameException : Exception
     {
         public string Name { get; }
 
@@ -24,10 +24,10 @@ namespace DO
             Name = name;
         }
     }
-	#endregion
+    #endregion
 
-	#region Station
-	public class BadStationCodeException : Exception
+    #region Station
+    public class BadStationCodeException : Exception
     {
         public int Code { get; }
 
@@ -44,11 +44,11 @@ namespace DO
             Code = code;
         }
     }
-	#endregion
+    #endregion
 
-	#region Bus
-	public class BadBusRegistrationException : Exception
-	{
+    #region Bus
+    public class BadBusRegistrationException : Exception
+    {
         public int RegNum { get; }
         public DateTime? RegDate { get; }
         public BadBusRegistrationException(int regNum, DateTime? regDate = null)
@@ -78,7 +78,7 @@ namespace DO
     #endregion
 
     #region BusLine
-	public class BadBusLineIDException : Exception
+    public class BadBusLineIDException : Exception
     {
         public Guid ID { get; }
 
@@ -95,8 +95,6 @@ namespace DO
             ID = id;
         }
     }
-    #endregion
-}
     #endregion
 
     #region AdjacentStations
@@ -120,5 +118,6 @@ namespace DO
             Station1Code = code1;
             Station2Code = code2;
         }
-        #endregion
     }
+    #endregion
+}
