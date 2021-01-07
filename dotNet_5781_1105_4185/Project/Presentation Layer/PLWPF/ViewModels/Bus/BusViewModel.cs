@@ -24,7 +24,7 @@ namespace PL
 
         public BusViewModel()
         {
-            RefuelBus = new RelayCommand(obj => BlWork(bl => bl.RefuelBus(bus)));
+            RefuelBus = new RelayCommand(obj => { BlWork(bl => bl.RefuelBus(bus)); OnPropertyChanged(nameof(Bus)); });
             RemoveBus = new RelayCommand(obj => { BlWork(bl => bl.DeleteBus(Bus)); OnRemove(); });
         }
 

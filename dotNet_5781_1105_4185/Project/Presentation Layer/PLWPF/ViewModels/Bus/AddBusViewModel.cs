@@ -75,7 +75,7 @@ namespace PL
             OnAddedBus(bus);
             CloseDialog(window, true);
 
-            bus = new BO.Bus();
+           // bus = new BO.Bus();
         }
 
         private void _Cancel(object window)

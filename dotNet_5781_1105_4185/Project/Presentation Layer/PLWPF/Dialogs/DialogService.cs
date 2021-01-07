@@ -21,5 +21,12 @@ namespace PL
 
             return dialog.ShowDialog();
         }
+
+        public static bool? ShowAddStationDialog(AddStationViewModel addStation)
+        {
+            AddStationDialog dialog = new AddStationDialog(addStation);
+
+            return dialog.ShowDialog();
+        }
     }
 }

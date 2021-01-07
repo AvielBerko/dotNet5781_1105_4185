@@ -46,6 +46,7 @@
     <Compile Include="Bussiness Objects\Bus.cs" />
     <Compile Include="Bussiness Objects\Enums.cs" />
     <Compile Include="Bussiness Objects\Exceptions.cs" />
+    <Compile Include="Bussiness Objects\Location.cs" />
     <Compile Include="Bussiness Objects\Registration.cs" />
     <Compile Include="Bussiness Objects\Station.cs" />
     <Compile Include="Bussiness Objects\User.cs" />

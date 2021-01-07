@@ -58,22 +58,30 @@
     <Compile Include="Dialogs\AddBusDialog.xaml.cs">
       <DependentUpon>AddBusDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\AddStationDialog.xaml.cs">
+      <DependentUpon>AddStationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\DialogService.cs" />
     <Compile Include="Pages\AdminPage.xaml.cs">
       <DependentUpon>AdminPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="ViewModels\AddBusViewModel.cs" />
+    <Compile Include="ViewModels\Bus\AddBusViewModel.cs" />
+    <Compile Include="ViewModels\Station\AddStationViewModel.cs" />
     <Compile Include="ViewModels\BaseDialogViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\BusListViewModel.cs" />
-    <Compile Include="ViewModels\BusViewModel.cs" />
-    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\Bus\BusListViewModel.cs" />
+    <Compile Include="ViewModels\Bus\BusViewModel.cs" />
+    <Compile Include="ViewModels\User\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\SignUpViewModel.cs" />
-    <Compile Include="ViewModels\StationListViewModel.cs" />
-    <Compile Include="ViewModels\StationViewModel.cs" />
+    <Compile Include="ViewModels\User\SignUpViewModel.cs" />
+    <Compile Include="ViewModels\Station\StationListViewModel.cs" />
+    <Compile Include="ViewModels\Station\StationViewModel.cs" />
     <Page Include="Dialogs\AddBusDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\AddStationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

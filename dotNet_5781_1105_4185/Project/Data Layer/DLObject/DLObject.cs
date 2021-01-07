@@ -103,6 +103,11 @@ namespace DL
             DataSet.Stations.Remove(exists);
         }
 
+        public void DeleteAllStations()
+		{
+            DataSet.Stations.Clear();
+		}
+
         #endregion
 
         #region Bus

@@ -1,64 +1,15 @@
 ﻿<Page x:Class="PL.AdminPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:PL"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="AdminPage">
-    <TabControl>
-        <!--#region Bus List-->
-        <TabItem Header="Bus Management" DataContext="{Binding BusListViewModel}">
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="50"/>
-                </Grid.RowDefinitions>
-
-                <!-- Add Bus and Remove All buttons -->
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,0,0">
-                    <Button MinWidth="75" Margin="0,0,5,0" HorizontalAlignment="Left" Command="{Binding AddBus}">Add Bus</Button>
-                    <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllBuses}">Remove All Buses</Button>
-                </StackPanel>
-
-                <ListView ItemsSource="{Binding Buses}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Bus Registration" DisplayMemberBinding="{Binding Bus.Registration}" />
-                            <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Bus.Status}" />
-                            <GridViewColumn Header="Refuel">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="0" Background="Transparent"
-                                                BorderThickness="0" VerticalAlignment="Center"
-                                                Command="{Binding RefuelBus}">
-                                            <!-- <Image Source="/Resources/refuel-bus-48px.png"/> -->
-                                            Refuel
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Remove">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="0" Background="Transparent"
-										BorderThickness="0" VerticalAlignment="Center"
-										Command="{Binding RemoveBus}">
-                                            <!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
-                                            Remove
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </Grid>
-        </TabItem>
-        <!--#endregion-->
-		<!--#region Station List-->
-		<TabItem Header="Station Management" DataContext="{Binding StationListViewModel}">
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+	  xmlns:local="clr-namespace:PL"
+	  mc:Ignorable="d" 
+	  d:DesignHeight="450" d:DesignWidth="800"
+	  Title="AdminPage">
+	<TabControl>
+		<!--#region Bus List-->
+		<TabItem Header="Bus Management" DataContext="{Binding BusListViewModel}">
 			<Grid Margin="10">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*"/>
@@ -67,23 +18,33 @@
 
 				<!-- Add Bus and Remove All buttons -->
 				<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,0,0">
-					<Button MinWidth="75" Margin="0,0,5,0" HorizontalAlignment="Left" Command="{Binding AddStation}">Add Station</Button>
-					<Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllStations}">Remove All Stations</Button>
+					<Button MinWidth="75" Margin="0,0,5,0" HorizontalAlignment="Left" Command="{Binding AddBus}">Add Bus</Button>
+					<Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllBuses}">Remove All Buses</Button>
 				</StackPanel>
 
-				<ListView ItemsSource="{Binding Stations}">
+				<ListView ItemsSource="{Binding Buses}">
 					<ListView.View>
 						<GridView>
-							<GridViewColumn Header="Code" DisplayMemberBinding="{Binding Station.Code}" />
-							<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Station.Name}" />
-							<GridViewColumn Header="Address" DisplayMemberBinding="{Binding Station.Address}" />
-							<GridViewColumn Header="Location" DisplayMemberBinding="{Binding Station.Location}" />
+							<GridViewColumn Header="Bus Registration" DisplayMemberBinding="{Binding Bus.Registration}" />
+							<GridViewColumn Header="Status" DisplayMemberBinding="{Binding Bus.Status}" />
+							<GridViewColumn Header="Refuel">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<Button Margin="0" Background="Transparent"
+												BorderThickness="0" VerticalAlignment="Center"
+												Command="{Binding RefuelBus}">
+											<!-- <Image Source="/Resources/refuel-bus-48px.png"/> -->
+											Refuel
+										</Button>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
 							<GridViewColumn Header="Remove">
 								<GridViewColumn.CellTemplate>
 									<DataTemplate>
 										<Button Margin="0" Background="Transparent"
 										BorderThickness="0" VerticalAlignment="Center"
-										Command="{Binding RemoveStation}">
+										Command="{Binding RemoveBus}">
 											<!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
 											Remove
 										</Button>
@@ -96,6 +57,57 @@
 			</Grid>
 		</TabItem>
 		<!--#endregion-->
+		<!--#region Station List-->
+		<TabItem Header="Station Management" DataContext="{Binding StationListViewModel}">
+			<Grid Margin="10">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="50"/>
+				</Grid.RowDefinitions>
 
+				<!-- Add Bus and Remove All buttons -->
+				<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,0,0">
+					<Button MinWidth="75" Margin="0,0,5,0" HorizontalAlignment="Left" Command="{Binding AddStation}" Height="40" VerticalAlignment="Top">Add Station</Button>
+					<Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllStations}">Remove All Stations</Button>
+				</StackPanel>
+
+				<ListView ItemsSource="{Binding Stations}">
+					<ListView.View>
+						<GridView>
+							<GridViewColumn Header="Code" DisplayMemberBinding="{Binding Station.Code}" />
+							<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Station.Name}" />
+							<GridViewColumn Header="Address" DisplayMemberBinding="{Binding Station.Address}" />
+							<GridViewColumn Header="Location" DisplayMemberBinding="{Binding Station.Location}" />
+							<GridViewColumn Header="Update">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<Button Margin="0" Background="Transparent"
+										BorderThickness="0" VerticalAlignment="Center"
+										Command="{Binding UpdateStation}">
+											<!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
+											Update
+										</Button>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+							<GridViewColumn Header="Remove">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<Button Margin="0" Background="Transparent"
+										BorderThickness="0" VerticalAlignment="Center"
+										Command="{Binding RemoveStation}">
+											<!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
+											Remove
+										</Button>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+							
+						</GridView>
+					</ListView.View>
+				</ListView>
+			</Grid>
+		</TabItem>
+		<!--#endregion-->
 	</TabControl>
 </Page>

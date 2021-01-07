@@ -22,6 +22,7 @@ namespace DLAPI
         void UpdateStation(DO.Station station);
         void UpdateStation(int code, Action<DO.Station> update);
         void DeleteStation(int code);
+        void DeleteAllStations();
         #endregion
 
         #region Bus

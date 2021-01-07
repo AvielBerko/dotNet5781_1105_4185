@@ -104,5 +104,56 @@ namespace BO
             Code = code;
         }
     }
+    public class BadStationNameException : Exception
+    {
+        public string Name { get; }
+
+        public BadStationNameException(string name)
+        {
+            Name = name;
+        }
+        public BadStationNameException(string name, string message) : base(message)
+        {
+            Name = name;
+        }
+        public BadStationNameException(string name, string message, Exception innerException) : base(message, innerException)
+        {
+            Name = name;
+        }
+    }
+    public class BadStationAddressException : Exception
+    {
+        public string Address { get; }
+
+        public BadStationAddressException(string address)
+        {
+            Address = address;
+        }
+        public BadStationAddressException(string address, string message) : base(message)
+        {
+            Address = address;
+        }
+        public BadStationAddressException(string address, string message, Exception innerException) : base(message, innerException)
+        {
+            Address = address;
+        }
+    }
+    public class BadStationLocationException : Exception
+    {
+        public BO.Location Location { get; }
+
+        public BadStationLocationException(BO.Location location)
+        {
+            Location = location;
+        }
+        public BadStationLocationException(BO.Location location, string message) : base(message)
+        {
+            Location = location;
+        }
+        public BadStationLocationException(BO.Location location, string message, Exception innerException) : base(message, innerException)
+        {
+            Location = location;
+        }
+    }
     #endregion
 }

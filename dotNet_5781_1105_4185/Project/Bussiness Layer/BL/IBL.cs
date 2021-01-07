@@ -23,6 +23,12 @@ namespace BLAPI
         void UpdateStation(BO.Station station);
         void UpdateStation(int code, Action<BO.Station> update);
         void DeleteStation(BO.Station station);
+        void DeleteAllStations();
+        void ValidateStationCode(int code);
+        void ValidateStationName(string name);
+        void ValidateStationAddress(string address);
+        void ValidateStationLocation(BO.Location location);
+
         #endregion
 
         #region Bus
