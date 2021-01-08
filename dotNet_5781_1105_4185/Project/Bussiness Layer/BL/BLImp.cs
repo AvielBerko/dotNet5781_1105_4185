@@ -292,7 +292,7 @@ namespace BL
         {
             var busLine = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
 
-            List<BO.LineStation> lineStations = new List<BO.LineStation>();
+            List<BO.LineStation> route = new List<BO.LineStation>();
             for (int i = 0; ; i++)
             {
                 try
@@ -300,11 +300,11 @@ namespace BL
                     var doLineStation = dl.GetLineStationByIndex(busLine.ID, i);
                     if (i == 0)
                     {
-                        lineStations.Add(LineStationDoBoAdapter(doLineStation));
+                        route.Add(LineStationDoBoAdapter(doLineStation));
                     }
                     else
                     {
-                        lineStations.Add(LineStationDoBoAdapter(doLineStation, lineStations[i - 1]));
+                        route.Add(LineStationDoBoAdapter(doLineStation, route[i - 1]));
                     }
                 }
                 catch (DO.BadLineStationIndexException)
@@ -312,7 +312,7 @@ namespace BL
                     break;
                 }
             }
-            busLine.Route = lineStations;
+            busLine.Route = route;
 
             return busLine;
         }

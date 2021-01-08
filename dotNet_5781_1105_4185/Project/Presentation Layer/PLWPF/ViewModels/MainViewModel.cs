@@ -23,7 +23,7 @@ namespace PL
         public SignUpViewModel SignUpViewModel { get; }
         public BusListViewModel BusListViewModel { get; }
         public StationListViewModel StationListViewModel { get; }
-
+        public BusLinesListViewModel BusLinesListViewModel { get; }
 
         public MainViewModel()
         {
@@ -31,6 +31,7 @@ namespace PL
             SignUpViewModel = new SignUpViewModel();
             BusListViewModel = new BusListViewModel();
             StationListViewModel = new StationListViewModel();
+            BusLinesListViewModel = new BusLinesListViewModel();
 
             LoginViewModel.LoggedIn += LoggedIn;
             SignUpViewModel.SignedUp += LoggedIn;

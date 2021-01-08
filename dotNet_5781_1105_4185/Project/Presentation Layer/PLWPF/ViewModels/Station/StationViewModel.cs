@@ -18,7 +18,6 @@ namespace PL
                 OnPropertyChanged(nameof(Station));
             }
         }
-        public UpdateStationViewModel UpdateStationViewModel { get; }
         public RelayCommand RemoveStation { get; }
         public RelayCommand UpdateStation { get; }
 
@@ -26,13 +25,13 @@ namespace PL
         {
             Station = station;
 
-            UpdateStationViewModel = new UpdateStationViewModel { Station = Station };
             RemoveStation = new RelayCommand(obj => { BlWork(bl => bl.DeleteStation(Station)); OnRemove(); });
             UpdateStation = new RelayCommand(obj => _Update());
         }
         private void _Update()
 		{
-            if (DialogService.ShowUpdateStationDialog(UpdateStationViewModel) == true) 
+            var updateVM = new UpdateStationViewModel { Station = station };
+            if (DialogService.ShowUpdateStationDialog(updateVM) == true) 
             {
                 OnPropertyChanged(nameof(Station));
             }
