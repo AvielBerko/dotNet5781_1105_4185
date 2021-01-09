@@ -155,5 +155,25 @@ namespace BO
             Location = location;
         }
     }
+	#endregion
+
+	#region Adjacent
+    public class BadAdjacentStationsCodeException : Exception
+	{
+        public AdjacentStations Adjacents { get; }
+
+        public BadAdjacentStationsCodeException(AdjacentStations adjacents)
+        {
+            Adjacents = adjacents;
+        }
+        public BadAdjacentStationsCodeException(AdjacentStations adjacents, string message) : base(message)
+        {
+            Adjacents = adjacents;
+        }
+        public BadAdjacentStationsCodeException(AdjacentStations adjacents, string message, Exception innerException) : base(message, innerException)
+        {
+            Adjacents = adjacents;
+        }
+    }
     #endregion
 }

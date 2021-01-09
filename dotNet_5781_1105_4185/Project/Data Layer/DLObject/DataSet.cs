@@ -491,6 +491,20 @@ namespace DS
 
             AdjacentStations = new List<DO.AdjacentStations>
             {
+                new DO.AdjacentStations
+                {
+                    Station1Code = 38831,
+                    Station2Code = 38832,
+                    Distance = 303.34,
+                    DrivingTime = TimeSpan.FromMinutes(4.20),
+				},
+                new DO.AdjacentStations
+                {
+                    Station1Code = 38832,
+                    Station2Code = 38833,
+                    Distance = 295.46,
+                    DrivingTime = TimeSpan.FromMinutes(1.90),
+                },
             };
 
             Trips = new List<DO.Trip>

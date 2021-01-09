@@ -19,7 +19,7 @@ namespace PL
             AddStationViewModel = new AddStationViewModel();
 
             Stations = new ObservableCollection<StationViewModel>(
-                from station in (IEnumerable<BO.Station>)BlWork(bl => bl.GetAllStations())
+                from station in (IEnumerable<BO.Station>)BlWork(bl => bl.GetAllStationsWithoutAdjacents())
                 select CreateStationViewModel(station));
 
             AddStationViewModel.AddedStaion += (sender, station) => Stations.Add(CreateStationViewModel(station));

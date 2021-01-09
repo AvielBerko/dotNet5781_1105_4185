@@ -5,54 +5,112 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-       Title="Update station" Height="275" Width="400"
+       Title="Update station" Height="300" Width="666"
 		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
 	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
 		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
-
+			<RowDefinition/>
+			<RowDefinition Height="50"/>
 		</Grid.RowDefinitions>
+		<!--#region Textboxes-->
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
 
-		<!-- Registration Number Input -->
-		<StackPanel Orientation="Horizontal" Margin="5">
-			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Station Code:</Label>
-			<TextBox Width="175" FontSize="17" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding Code, Mode=OneWay}"
+			</Grid.RowDefinitions>
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="1.75*"/>
+
+			</Grid.ColumnDefinitions>
+			<!-- Registration Number Input -->
+			<Label VerticalAlignment="Center" FontSize="14" Margin="0,0,10,0">Station Code:</Label>
+			<TextBox Grid.Column="1" Margin="10" FontSize="14" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding Code, Mode=OneWay}"
 					 TextAlignment="Center"/>
 			<!-- " PreviewTextInput="TextBoxDigitOnly" -->
-		</StackPanel>
 
-		<!-- Registration Date Input -->
-		<StackPanel Grid.Row ="1" Orientation="Horizontal" Margin="5">
-			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Station Name:</Label>
-			<TextBox Width="175" FontSize="17" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+			<!-- Registration Date Input -->
+			<Label Grid.Row="1" VerticalAlignment="Center" FontSize="14" Margin="0,0,10,0">Station Name:</Label>
+			<TextBox Grid.Column="1" Grid.Row="1" Margin="10" FontSize="14" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
 					 TextAlignment="Center"/>
-		</StackPanel>
 
-		<!-- Kilometrage Input -->
-		<StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
-			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Station Address:</Label>
-			<TextBox Width="175" FontSize="17" Text="{Binding Address, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+			<!-- Kilometrage Input -->
+			<Label Grid.Row="2" VerticalAlignment="Center" FontSize="14" Margin="0,0,10,0">Station Address:</Label>
+			<TextBox Grid.Row="2" Grid.Column="1" Margin="10" FontSize="14" Text="{Binding Address, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
 					  TextAlignment="Center"/>
 			<!-- " PreviewTextInput="TextBoxDigitOnly" -->
-		</StackPanel>
 
-		<!-- Type Input -->
-		<StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5">
-			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Station Location:</Label>
-			<TextBox Width="80" FontSize="17" Margin="0,0,10,0" Text="{Binding Latitude, UpdateSourceTrigger=PropertyChanged, StringFormat=n5, ValidatesOnDataErrors=True}"
+			<!-- Type Input -->
+			<Label Grid.Row="3" VerticalAlignment="Center" FontSize="14" >Station Location:</Label>
+			<Grid Grid.Row="3" Grid.Column="1" Margin="10">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition Width="5"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<TextBox FontSize="14" Text="{Binding Latitude, UpdateSourceTrigger=PropertyChanged, StringFormat=n5, ValidatesOnDataErrors=True}"
 					  TextAlignment="Center"/>
-			<TextBox Width="80" FontSize="17" Text="{Binding Longitude, UpdateSourceTrigger=PropertyChanged, StringFormat=n5,ValidatesOnDataErrors=True}"
+				<TextBox Grid.Column="2" FontSize="14" Text="{Binding Longitude, UpdateSourceTrigger=PropertyChanged, StringFormat=n5,ValidatesOnDataErrors=True}"
 					  TextAlignment="Center"/>
-		</StackPanel>
-
+			</Grid>
+		</Grid>
+		<!--#endregion-->
+		<!--#region Adjacents list-->
+		<ListView Grid.Column="1" Margin="5" ItemsSource="{Binding AdjacentStations}">
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Header="Code" DisplayMemberBinding="{Binding Adjacent.ToStation.Code}"/>
+					<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Adjacent.ToStation.Name}"/>
+					<GridViewColumn Header="Distance">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBox MinWidth="40" Text="{Binding Adjacent.Distance, UpdateSourceTrigger=PropertyChanged}"/>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Header="Time">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBox MinWidth="45" Text="{Binding Adjacent.DrivingTime, UpdateSourceTrigger=PropertyChanged}"/>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Header="Remove">
+					<GridViewColumn.CellTemplate>
+						<DataTemplate>
+							<Button Background="Transparent"
+										BorderThickness="0" VerticalAlignment="Center"
+										Command="{Binding RemoveAdjacents}">
+								<!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
+								Remove
+							</Button>
+						</DataTemplate>
+					</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+				</GridView>
+			</ListView.View>
+		</ListView>
+		<Button Grid.Column="1" Grid.Row="1" Margin="5" Command="{Binding AddAdjacent}">Add Adjacent Station</Button>
+		<!--#endregion-->
 		<!-- Dialog Buttons -->
-		<StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
-			<Button Width="75" IsDefault="True" Margin="0,0,5,0" Command="{Binding Ok}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">OK</Button>
-			<Button Width="75" IsCancel="True" Command="{Binding Cancel}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">Cancel</Button>
-		</StackPanel>
+		<Grid Grid.Row="1" Margin="5">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition Width="5"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<Button IsDefault="True" Command="{Binding Ok}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">OK</Button>
+			<Button Grid.Column="2" IsCancel="True" Command="{Binding Cancel}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">Cancel</Button>
+		</Grid>
 	</Grid>
+
 </Window>

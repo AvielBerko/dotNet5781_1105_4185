@@ -15,9 +15,14 @@ namespace BLAPI
         void ValidateSignUpPassword(string password);
         #endregion
 
-        #region Station
+        #region AdjacentStation
+        void DeleteAdjacent(BO.AdjacentStations adjacents);
+		#endregion
+		#region Station
+		IEnumerable<BO.Station> GetAllStationsWithoutAdjacents();
         IEnumerable<BO.Station> GetAllStations();
         IEnumerable<BO.Station> GetAllStationsBy(Predicate<BO.Station> predicate);
+        BO.Station GetStationWithoutAdjacents(int code);
         BO.Station GetStation(int code);
         void AddStation(BO.Station station);
         void UpdateStation(BO.Station station);
@@ -41,7 +46,7 @@ namespace BLAPI
         void RefuelBus(BO.Bus bus);
         #endregion
 
-        #region BusLine, LineStation, AdjacentLines
+        #region BusLine, LineStation
         IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute();
         IEnumerable<BO.BusLine> GetAllBusLines();
         #endregion

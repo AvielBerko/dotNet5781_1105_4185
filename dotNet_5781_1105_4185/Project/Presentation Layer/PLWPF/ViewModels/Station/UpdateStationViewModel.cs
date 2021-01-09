@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace PL
 {
 	public class UpdateStationViewModel : BaseDialogViewModel, IDataErrorInfo
 	{
+		public ObservableCollection<AdjacentStationViewModel> AdjacentStations{ get; }
 		BO.Station station;
 		public BO.Station Station
 		{
@@ -68,15 +70,25 @@ namespace PL
 		public RelayCommand Ok { get; }
 		public RelayCommand Cancel { get; }
 
-		public UpdateStationViewModel()
+		public UpdateStationViewModel(int stationCode)
 		{
-			station = new BO.Station();
+			Station = (BO.Station)BlWork(bl => bl.GetStation(stationCode));
+			AdjacentStations = new ObservableCollection<AdjacentStationViewModel>
+				(from ad in Station.AdjacentStations select _CreateAdjacentVM(ad));
+
 			Ok = new RelayCommand(_Ok, obj => ValidateStationName().IsValid &&
                                               ValidateStationAddress().IsValid &&
                                               ValidateStationLocation().IsValid);
 			Cancel = new RelayCommand(_Cancel);
 		}
 
+		private AdjacentStationViewModel _CreateAdjacentVM(BO.AdjacentStations adjacents)
+		{
+			var result = new AdjacentStationViewModel(adjacents);
+			result.Remove += (sender) => AdjacentStations.Remove(result);
+
+			return result;
+		}
 		private void _Ok(object window)
 		{
             BlWork(bl => bl.UpdateStation(station));

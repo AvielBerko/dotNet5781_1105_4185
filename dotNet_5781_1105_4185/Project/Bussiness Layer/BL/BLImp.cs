@@ -78,15 +78,48 @@ namespace BL
         }
         #endregion
 
+        #region AdjacentStation
+        private BO.AdjacentStations AdjacentDoToBo(DO.AdjacentStations doAdjacntStation, int station1Code, int station2Code)
+        {
+            BO.AdjacentStations result = (BO.AdjacentStations)doAdjacntStation.CopyPropertiesToNew(typeof(BO.AdjacentStations));
+            result.FromStation = GetStationWithoutAdjacents(station1Code);
+            result.ToStation = GetStationWithoutAdjacents(station2Code);
+
+            return result;
+        }
+
+        public void DeleteAdjacent(BO.AdjacentStations adjacent)
+		{
+            try
+			{
+                dl.DeleteAdjacentStations(adjacent.FromStation.Code, adjacent.ToStation.Code);
+			}
+            catch (DO.BadAdjacentStationsCodeException e)
+			{
+                throw new BO.BadAdjacentStationsCodeException(adjacent, e.Message);
+            }
+		}
+
+        #endregion
+
         #region Station
-        private BO.Station StationDoBoAdapter(DO.Station doStation)
+        private BO.Station StationDoToBoWithoutAdjacents(DO.Station doStation)
         {
             BO.Station result = (BO.Station)doStation.CopyPropertiesToNew(typeof(BO.Station));
             result.Location = new BO.Location(doStation.Longitude, doStation.Latitude);
 
             return result;
         }
-        private DO.Station StationBoDoAdapter(BO.Station boStation)
+        private BO.Station StationDoToBo(DO.Station doStation)
+        {
+            BO.Station result = StationDoToBoWithoutAdjacents(doStation);
+
+            var doAdjacents = dl.GetAdjacentStationsBy(adjacent => adjacent.Station1Code == result.Code || adjacent.Station2Code == result.Code);
+            result.AdjacentStations = from doAdjacent in doAdjacents select AdjacentDoToBo(doAdjacent, result.Code, doAdjacent.Station1Code == result.Code ? doAdjacent.Station2Code : doAdjacent.Station1Code);
+
+            return result;
+        }
+        private DO.Station StationBoToDoWithoutAdjacents(BO.Station boStation)
         {
             DO.Station result = (DO.Station)boStation.CopyPropertiesToNew(typeof(DO.Station));
             result.Longitude = boStation.Location.Longitude;
@@ -101,7 +134,7 @@ namespace BL
             ValidateStationAddress(station.Address);
             ValidateStationLocation(station.Location);
 
-            dl.AddStation(StationBoDoAdapter(station));
+            dl.AddStation(StationBoToDoWithoutAdjacents(station));
         }
 
         public void DeleteStation(BO.Station station)
@@ -121,25 +154,41 @@ namespace BL
             dl.DeleteAllStations();
         }
 
+        public IEnumerable<BO.Station> GetAllStationsWithoutAdjacents()
+        {
+            return (from doStation in dl.GetAllStations()
+                    select StationDoToBoWithoutAdjacents(doStation));
+        }
         public IEnumerable<BO.Station> GetAllStations()
         {
             return (from doStation in dl.GetAllStations()
-                    select StationDoBoAdapter(doStation));
+                    select StationDoToBo(doStation));
         }
 
         public IEnumerable<BO.Station> GetAllStationsBy(Predicate<BO.Station> predicate)
         {
-            IEnumerable<DO.Station> doStations = dl.GetStationsBy(doStation => predicate(StationDoBoAdapter(doStation)));
+            IEnumerable<DO.Station> doStations = dl.GetStationsBy(doStation => predicate(StationDoToBoWithoutAdjacents(doStation)));
 
             return (from doStation in doStations
-                    select StationDoBoAdapter(doStation));
+                    select StationDoToBoWithoutAdjacents(doStation));
         }
 
-        public BO.Station GetStation(int code)
+        public BO.Station GetStationWithoutAdjacents(int code)
         {
             try
+			{
+                return StationDoToBoWithoutAdjacents(dl.GetStation(code));
+			}
+            catch (DO.BadStationCodeException e)
+			{
+                throw new BO.BadStationCodeException(code, e.Message);
+			}
+        }
+        public BO.Station GetStation(int code)
+		{
+            try
             {
-                return StationDoBoAdapter(dl.GetStation(code));
+                return StationDoToBo(dl.GetStation(code));
             }
             catch (DO.BadStationCodeException e)
             {
@@ -151,7 +200,7 @@ namespace BL
         {
             try
             {
-                dl.UpdateStation(StationBoDoAdapter(station));
+                dl.UpdateStation(StationBoToDoWithoutAdjacents(station));
             }
             catch (DO.BadStationCodeException e)
             {
@@ -268,48 +317,38 @@ namespace BL
         }
         #endregion
 
-        #region BusLine, LineStation, AdjacentLines
-        BO.LineStation LineStationDoBoAdapter(DO.LineStation doLineStation, BO.LineStation lastStation = null)
+        #region BusLine, LineStation
+        BO.AdjacentStations LineStationDoBoAdapter(DO.LineStation doLineStation, BO.AdjacentStations lastStation = null)
         {
             if (lastStation != null)
             {
-                var doAdjStations = dl.GetAdjacentStations(lastStation.Station.Code, doLineStation.StationCode);
-                return new BO.LineStation
+                var doAdjStations = dl.GetAdjacentStations(lastStation.FromStation.Code, doLineStation.StationCode);
+                return new BO.AdjacentStations
                 {
-                    Station = GetStation(doLineStation.StationCode),
+                    FromStation = GetStationWithoutAdjacents(doLineStation.StationCode),
                     Distance = doAdjStations.Distance,
                     DrivingTime = doAdjStations.DrivingTime,
                 };
             }
 
-            return new BO.LineStation
+            return new BO.AdjacentStations
             {
-                Station = GetStation(doLineStation.StationCode),
-                Distance = null,
-                DrivingTime = null,
+                FromStation = GetStationWithoutAdjacents(doLineStation.StationCode),
+                Distance = 0,
+                DrivingTime = TimeSpan.Zero,
             };
         }
 
-        BO.BusLine BusLineDoBoWithoutFullRouteAdapter(DO.BusLine doBusLine)
+        BO.BusLine BusLineDoBoWithoutRouteAdapter(DO.BusLine doBusLine)
         {
-            var busLine = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
-
-            var doStart = dl.GetLineStationByStation(busLine.ID, doBusLine.StartStationCode);
-            var doEnd = dl.GetLineStationByStation(busLine.ID, doBusLine.EndStationCode);
-            busLine.Route = new BO.LineStation[2]
-            {
-                LineStationDoBoAdapter(doStart),
-                LineStationDoBoAdapter(doEnd),
-            };
-
-            return busLine;
+            return (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
         }
 
         BO.BusLine BusLineDoBoAdapter(DO.BusLine doBusLine)
         {
             var busLine = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
 
-            List<BO.LineStation> route = new List<BO.LineStation>();
+            List<BO.AdjacentStations> route = new List<BO.AdjacentStations>();
             for (int i = 0; ; i++)
             {
                 try
@@ -337,7 +376,7 @@ namespace BL
         public IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute()
         {
             return from doBusLine in dl.GetAllBusLines()
-                   select BusLineDoBoWithoutFullRouteAdapter(doBusLine);
+                   select BusLineDoBoWithoutRouteAdapter(doBusLine);
         }
 
         public IEnumerable<BO.BusLine> GetAllBusLines()

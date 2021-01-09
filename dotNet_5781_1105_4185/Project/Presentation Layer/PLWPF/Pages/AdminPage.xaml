@@ -145,6 +145,18 @@
 							<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Station.Name}" />
 							<GridViewColumn Header="Address" DisplayMemberBinding="{Binding Station.Address}" />
 							<GridViewColumn Header="Location" DisplayMemberBinding="{Binding Station.Location}" />
+							<GridViewColumn Header="Details">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<Button Margin="0" Background="Transparent"
+										BorderThickness="0" VerticalAlignment="Center"
+										Command="{Binding StationDetails}">
+											<!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
+											Details
+										</Button>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
 							<GridViewColumn Header="Update">
 								<GridViewColumn.CellTemplate>
 									<DataTemplate>
