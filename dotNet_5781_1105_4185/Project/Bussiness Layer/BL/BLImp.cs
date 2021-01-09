@@ -137,7 +137,14 @@ namespace BL
 
         public BO.Station GetStation(int code)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return StationDoBoAdapter(dl.GetStation(code));
+            }
+            catch (DO.BadStationCodeException e)
+            {
+                throw new BO.BadStationCodeException(code, e.Message);
+            }
         }
 
         public void UpdateStation(BO.Station station)
@@ -283,9 +290,19 @@ namespace BL
             };
         }
 
-        BO.BusLine BusLineDoBoWithoutRouteAdapter(DO.BusLine doBusLine)
+        BO.BusLine BusLineDoBoWithoutFullRouteAdapter(DO.BusLine doBusLine)
         {
-            return (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
+            var busLine = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
+
+            var doStart = dl.GetLineStationByStation(busLine.ID, doBusLine.StartStationCode);
+            var doEnd = dl.GetLineStationByStation(busLine.ID, doBusLine.EndStationCode);
+            busLine.Route = new BO.LineStation[2]
+            {
+                LineStationDoBoAdapter(doStart),
+                LineStationDoBoAdapter(doEnd),
+            };
+
+            return busLine;
         }
 
         BO.BusLine BusLineDoBoAdapter(DO.BusLine doBusLine)
@@ -317,10 +334,10 @@ namespace BL
             return busLine;
         }
 
-        public IEnumerable<BO.BusLine> GetAllBusLinesWithoutRoute()
+        public IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute()
         {
             return from doBusLine in dl.GetAllBusLines()
-                   select BusLineDoBoWithoutRouteAdapter(doBusLine);
+                   select BusLineDoBoWithoutFullRouteAdapter(doBusLine);
         }
 
         public IEnumerable<BO.BusLine> GetAllBusLines()

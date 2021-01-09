@@ -79,12 +79,16 @@ namespace DS
                     ID = Guid.NewGuid(),
                     LineNum = 75,
                     Region = DO.Regions.Center,
+                    StartStationCode = 38831,
+                    EndStationCode = 38832,
                 },
                 new DO.BusLine
                 {
                     ID = Guid.NewGuid(),
                     LineNum = 39,
                     Region = DO.Regions.Jerusalem,
+                    StartStationCode = 38832,
+                    EndStationCode = 38833,
                 },
             };
 
@@ -459,7 +463,30 @@ namespace DS
 
             LineStations = new List<DO.LineStation>
             {
-
+                new DO.LineStation
+                {
+                    LineID = Lines[0].ID,
+                    StationCode = 38831,
+                    RouteIndex = 0,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[0].ID,
+                    StationCode = 38832,
+                    RouteIndex = 1,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[1].ID,
+                    StationCode = 38832,
+                    RouteIndex = 0,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[1].ID,
+                    StationCode = 38833,
+                    RouteIndex = 1,
+                },
             };
 
             AdjacentStations = new List<DO.AdjacentStations>

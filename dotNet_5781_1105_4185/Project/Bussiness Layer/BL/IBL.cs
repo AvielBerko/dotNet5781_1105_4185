@@ -42,7 +42,7 @@ namespace BLAPI
         #endregion
 
         #region BusLine, LineStation, AdjacentLines
-        IEnumerable<BO.BusLine> GetAllBusLinesWithoutRoute();
+        IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute();
         IEnumerable<BO.BusLine> GetAllBusLines();
         #endregion
     }

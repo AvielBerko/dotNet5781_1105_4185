@@ -201,6 +201,10 @@ namespace DL
             if (DataSet.Lines.Any(b => b.ID == busLine.ID))
                 throw new BadBusLineIDException(busLine.ID, $"bus line with ID {busLine.ID} already exists");
 
+            // Checks for the start and end stations
+            GetStation(busLine.StartStationCode);
+            GetStation(busLine.EndStationCode);
+
             DataSet.Lines.Add(busLine.Clone());
         }
 

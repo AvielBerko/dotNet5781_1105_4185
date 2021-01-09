@@ -76,6 +76,8 @@
 						<GridView>
 							<GridViewColumn Header="Number" DisplayMemberBinding="{Binding BusLine.LineNum}" />
 							<GridViewColumn Header="Region" DisplayMemberBinding="{Binding BusLine.Region}" />
+							<GridViewColumn Header="Start" DisplayMemberBinding="{Binding StartName}" />
+							<GridViewColumn Header="End" DisplayMemberBinding="{Binding EndName}" />
 							<GridViewColumn Header="Update">
 								<GridViewColumn.CellTemplate>
 									<DataTemplate>

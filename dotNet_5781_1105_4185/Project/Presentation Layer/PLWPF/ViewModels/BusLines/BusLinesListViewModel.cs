@@ -19,7 +19,7 @@ namespace PL
             //AddBusLineViewModel = new AddBusLineViewModel();
 
             BusLines = new ObservableCollection<BusLineViewModel>(
-                from busLine in (IEnumerable<BO.BusLine>)BlWork(bl => bl.GetAllBusLinesWithoutRoute())
+                from busLine in (IEnumerable<BO.BusLine>)BlWork(bl => bl.GetAllBusLinesWithoutFullRoute())
                 select CreateBusLineViewModel(busLine));
 
             //AddBusLineViewModel.AddedBusLine += (sender, busLine) => BusLines.Add(CreateBusLineViewModel(busLine));

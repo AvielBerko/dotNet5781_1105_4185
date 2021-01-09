@@ -11,5 +11,7 @@ namespace DO
         public Guid ID { get; set; }
         public int LineNum { get; set; }
         public Regions Region { get; set; }
+        public int StartStationCode { get; set; }
+        public int EndStationCode { get; set; }
     }
 }

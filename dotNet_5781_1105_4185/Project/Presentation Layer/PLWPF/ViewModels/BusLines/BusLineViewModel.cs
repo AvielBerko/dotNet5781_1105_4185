@@ -18,6 +18,9 @@ namespace PL
                 OnPropertyChanged(nameof(BusLine));
             }
         }
+        public string StartName => busLine.Route.First().Station.Name;
+        public string EndName => busLine.Route.Last().Station.Name;
+
         public RelayCommand RemoveBusLine { get; }
         public RelayCommand UpdateBusLine { get; }
         public RelayCommand DuplicateBusLine { get; }
