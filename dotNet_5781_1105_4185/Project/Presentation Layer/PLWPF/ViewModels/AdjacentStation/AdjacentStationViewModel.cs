@@ -28,7 +28,6 @@ namespace PL
         }
         private void _Remove()
 		{
-            BlWork(bl => bl.DeleteAdjacent(Adjacent)); 
             OnRemove();
         }
 

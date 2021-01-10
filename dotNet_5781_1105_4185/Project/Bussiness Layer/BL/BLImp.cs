@@ -87,7 +87,15 @@ namespace BL
 
             return result;
         }
+        private DO.AdjacentStations AdjacentBoToDo(BO.AdjacentStations boAdjacntStation)
+        {
+            DO.AdjacentStations result = (DO.AdjacentStations)boAdjacntStation.CopyPropertiesToNew(typeof(DO.AdjacentStations));
+            result.Station1Code = boAdjacntStation.FromStation.Code;
+            result.Station2Code = boAdjacntStation.ToStation.Code;
 
+            return result;
+        }
+        
         public void DeleteAdjacent(BO.AdjacentStations adjacent)
 		{
             try
@@ -100,6 +108,12 @@ namespace BL
             }
 		}
 
+        public IEnumerable<BO.Station> GetRestOfStations(IEnumerable<BO.Station> stations)
+		{
+            var restStations = dl.GetStationsBy(st => !stations.Any(st2 => st.Code == st2.Code));
+
+            return from st in restStations select StationDoToBoWithoutAdjacents(st);
+        }
         #endregion
 
         #region Station
@@ -119,7 +133,7 @@ namespace BL
 
             return result;
         }
-        private DO.Station StationBoToDoWithoutAdjacents(BO.Station boStation)
+        private DO.Station StationBoToDo(BO.Station boStation)
         {
             DO.Station result = (DO.Station)boStation.CopyPropertiesToNew(typeof(DO.Station));
             result.Longitude = boStation.Location.Longitude;
@@ -134,13 +148,16 @@ namespace BL
             ValidateStationAddress(station.Address);
             ValidateStationLocation(station.Location);
 
-            dl.AddStation(StationBoToDoWithoutAdjacents(station));
+            dl.AddStation(StationBoToDo(station));
+            foreach (var ad in station.AdjacentStations)
+                dl.AddAdjacentStations(AdjacentBoToDo(ad));
         }
 
         public void DeleteStation(BO.Station station)
         {
             try
             {
+                dl.DeleteStationAdjacents(station.Code);
                 dl.DeleteStation(station.Code);
             }
             catch (DO.BadStationCodeException e)
@@ -200,7 +217,10 @@ namespace BL
         {
             try
             {
-                dl.UpdateStation(StationBoToDoWithoutAdjacents(station));
+                dl.DeleteStationAdjacents(station.Code);
+                foreach (var ad in station.AdjacentStations)
+                    dl.AddAdjacentStations(AdjacentBoToDo(ad));
+                dl.UpdateStation(StationBoToDo(station));
             }
             catch (DO.BadStationCodeException e)
             {

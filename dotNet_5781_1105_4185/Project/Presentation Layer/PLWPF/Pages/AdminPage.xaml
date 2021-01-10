@@ -144,7 +144,6 @@
 							<GridViewColumn Header="Code" DisplayMemberBinding="{Binding Station.Code}" />
 							<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Station.Name}" />
 							<GridViewColumn Header="Address" DisplayMemberBinding="{Binding Station.Address}" />
-							<GridViewColumn Header="Location" DisplayMemberBinding="{Binding Station.Location}" />
 							<GridViewColumn Header="Details">
 								<GridViewColumn.CellTemplate>
 									<DataTemplate>

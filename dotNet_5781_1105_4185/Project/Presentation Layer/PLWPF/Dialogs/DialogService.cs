@@ -35,5 +35,12 @@ namespace PL
 
             return dialog.ShowDialog();
         }
+
+        public static bool? ShowAddAdjacentDialog(AddAdjacentViewModel addAdjacent)
+        {
+            AddAdjacentDialog dialog = new AddAdjacentDialog(addAdjacent);
+
+            return dialog.ShowDialog();
+        }
     }
 }

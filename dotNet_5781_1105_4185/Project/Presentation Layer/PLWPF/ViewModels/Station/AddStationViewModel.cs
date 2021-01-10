@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace PL
 {
     public class AddStationViewModel : BaseDialogViewModel, IDataErrorInfo
     {
+        public ObservableCollection<AdjacentStationViewModel> AdjacentStations { get; }
         BO.Station station;
 
         public int Code
@@ -60,19 +62,42 @@ namespace PL
 
         public RelayCommand Ok { get; }
         public RelayCommand Cancel { get; }
+        public RelayCommand AddAdjacent { get; }
+
 
         public AddStationViewModel()
         {
             station = new BO.Station();
+            AdjacentStations = new ObservableCollection<AdjacentStationViewModel>();
             Ok = new RelayCommand(_Ok, obj => ValidateStationCode().IsValid &&
                                               ValidateStationName().IsValid &&
                                               ValidateStationAddress().IsValid &&
                                               ValidateStationLocation().IsValid);
             Cancel = new RelayCommand(_Cancel);
+            AddAdjacent = new RelayCommand(obj => _AddAdjacent());
         }
+        private AdjacentStationViewModel _CreateAdjacentVM(BO.AdjacentStations adjacents)
+        {
+            var result = new AdjacentStationViewModel(adjacents);
+            result.Remove += (sender) => AdjacentStations.Remove(result);
 
+            return result;
+        }
+        private void _AddAdjacent()
+        {
+            var currentStations = (from ad in AdjacentStations select ad.Adjacent.ToStation).Append(station);
+            var restStations = (IEnumerable<BO.Station>)BlWork(bl => bl.GetRestOfStations(currentStations));
+            var vm = new AddAdjacentViewModel(restStations);
+            if (DialogService.ShowAddAdjacentDialog(vm) == true)
+            {
+                var addedAdjacents = from st in vm.SelectedStations select new BO.AdjacentStations { FromStation = station, ToStation = st };
+                foreach (var ad in addedAdjacents)
+                    AdjacentStations.Add(_CreateAdjacentVM(ad));
+            }
+        }
         private void _Ok(object window)
         {
+            station.AdjacentStations = from ad in AdjacentStations select ad.Adjacent;
             BlWork(bl => bl.AddStation(station));
             OnAddedStation(station);
             CloseDialog(window, true);

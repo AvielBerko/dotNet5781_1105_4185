@@ -10,19 +10,15 @@ namespace PL
 	public class StationListViewModel : BaseViewModel
     {
         public ObservableCollection<StationViewModel> Stations { get; }
-        public AddStationViewModel AddStationViewModel { get; }
         public RelayCommand AddStation { get; }
         public RelayCommand RemoveAllStations { get; }
 
         public StationListViewModel()
         {
-            AddStationViewModel = new AddStationViewModel();
 
             Stations = new ObservableCollection<StationViewModel>(
                 from station in (IEnumerable<BO.Station>)BlWork(bl => bl.GetAllStationsWithoutAdjacents())
                 select CreateStationViewModel(station));
-
-            AddStationViewModel.AddedStaion += (sender, station) => Stations.Add(CreateStationViewModel(station));
 
             AddStation = new RelayCommand(obj => _AddStation());
             RemoveAllStations = new RelayCommand(obj => _RemoveAllStations(), obj => Stations.Count > 0);
@@ -37,7 +33,9 @@ namespace PL
 
         private void _AddStation()
         {
-            DialogService.ShowAddStationDialog(AddStationViewModel);
+            var addStationVM = new AddStationViewModel();
+            addStationVM.AddedStaion += (sender, station) => Stations.Add(CreateStationViewModel(station));
+            DialogService.ShowAddStationDialog(addStationVM);
         }
 
         private void _RemoveAllStations()

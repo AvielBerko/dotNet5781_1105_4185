@@ -338,7 +338,6 @@ namespace DL
                    where predicate(cloned)
                    select cloned;
         }
-
         public AdjacentStations GetAdjacentStations(int stationCode1, int stationCode2)
         {
             var adjacent = DataSet.AdjacentStations.Find(a => a.Station1Code == stationCode1 && a.Station2Code == stationCode2 || a.Station1Code == stationCode2 && a.Station2Code == stationCode1);
@@ -378,6 +377,11 @@ namespace DL
 
             DataSet.AdjacentStations.Remove(adjacent);
         }
+
+        public void DeleteStationAdjacents(int code)
+		{
+            DataSet.AdjacentStations.RemoveAll(ad => ad.Station1Code == code || ad.Station2Code == code);
+		}
 
         public void DeleteAllAdjacentStations()
         {
