@@ -6,9 +6,6 @@
 # Ignore desktop.ini
 **/desktop.ini
 
-**/[Bb]in/**/*
-!**/[Bb]in/**/config.xml
-
 # User-specific files
 *.rsuser
 *.suo
@@ -32,6 +29,7 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
+[Bb]in/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
