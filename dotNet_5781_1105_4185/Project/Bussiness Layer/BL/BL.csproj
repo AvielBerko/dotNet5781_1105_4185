@@ -48,6 +48,7 @@
     <Compile Include="Bussiness Objects\Enums.cs" />
     <Compile Include="Bussiness Objects\Exceptions.cs" />
     <Compile Include="Bussiness Objects\AdjacentStations.cs" />
+    <Compile Include="Bussiness Objects\LineStation.cs" />
     <Compile Include="Bussiness Objects\Location.cs" />
     <Compile Include="Bussiness Objects\Registration.cs" />
     <Compile Include="Bussiness Objects\Station.cs" />

@@ -158,6 +158,7 @@ namespace BL
             try
             {
                 dl.DeleteStationAdjacents(station.Code);
+                dl.DeleteLineStationByStation(station.Code);
                 dl.DeleteStation(station.Code);
             }
             catch (DO.BadStationCodeException e)
@@ -338,37 +339,47 @@ namespace BL
         #endregion
 
         #region BusLine, LineStation
-        BO.AdjacentStations LineStationDoBoAdapter(DO.LineStation doLineStation, BO.AdjacentStations lastStation = null)
+        BO.LineStation LineStationDoBoAdapter(DO.LineStation doLineStation, BO.LineStation lastStation = null)
         {
             if (lastStation != null)
             {
-                var doAdjStations = dl.GetAdjacentStations(lastStation.FromStation.Code, doLineStation.StationCode);
-                return new BO.AdjacentStations
+                var doAdjStations = dl.GetAdjacentStations(lastStation.Station.Code, doLineStation.StationCode);
+                return new BO.LineStation
                 {
-                    FromStation = GetStationWithoutAdjacents(doLineStation.StationCode),
+                    Station = GetStationWithoutAdjacents(doLineStation.StationCode),
                     Distance = doAdjStations.Distance,
                     DrivingTime = doAdjStations.DrivingTime,
                 };
             }
 
-            return new BO.AdjacentStations
+            return new BO.LineStation
             {
-                FromStation = GetStationWithoutAdjacents(doLineStation.StationCode),
-                Distance = 0,
-                DrivingTime = TimeSpan.Zero,
+                Station = GetStationWithoutAdjacents(doLineStation.StationCode),
+                Distance = null,
+                DrivingTime = null,
             };
         }
 
-        BO.BusLine BusLineDoBoWithoutRouteAdapter(DO.BusLine doBusLine)
+        private BO.BusLine BusLineDoBoWithoutFullRouteAdapter(DO.BusLine doBusLine)
         {
-            return (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
+            var busLine = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
+
+            var doStart = dl.GetLineStationByStation(busLine.ID, doBusLine.StartStationCode);
+            var doEnd = dl.GetLineStationByStation(busLine.ID, doBusLine.EndStationCode);
+            busLine.Route = new BO.LineStation[2]
+            {
+                LineStationDoBoAdapter(doStart),
+                LineStationDoBoAdapter(doEnd),
+            };
+
+            return busLine;
         }
 
         BO.BusLine BusLineDoBoAdapter(DO.BusLine doBusLine)
         {
             var busLine = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
 
-            List<BO.AdjacentStations> route = new List<BO.AdjacentStations>();
+            List<BO.LineStation> route = new List<BO.LineStation>();
             for (int i = 0; ; i++)
             {
                 try
@@ -396,7 +407,7 @@ namespace BL
         public IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute()
         {
             return from doBusLine in dl.GetAllBusLines()
-                   select BusLineDoBoWithoutRouteAdapter(doBusLine);
+                   select BusLineDoBoWithoutFullRouteAdapter(doBusLine);
         }
 
         public IEnumerable<BO.BusLine> GetAllBusLines()
@@ -404,6 +415,13 @@ namespace BL
             return from doBusLine in dl.GetAllBusLines()
                    select BusLineDoBoAdapter(doBusLine);
         }
+        public IEnumerable<BO.BusLine> GetLinesPassingTheStation(int code)
+		{
+            var busLinesIDs = (from st in dl.GetLineStationsBy(st => st.StationCode == code) select st.LineID).Distinct();
+
+            return from busLine in dl.GetBusLinesBy(bl => busLinesIDs.Any(id => bl.ID == id)) select BusLineDoBoWithoutFullRouteAdapter(busLine);
+        }
+
         #endregion
     }
 }

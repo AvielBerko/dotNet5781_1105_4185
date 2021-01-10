@@ -250,6 +250,13 @@ namespace DL
                    select cloned;
         }
 
+        public IEnumerable<DO.LineStation> GetLineStationsBy(Predicate<DO.LineStation> predicate)
+		{
+            return from lineStation in DataSet.LineStations
+                   let cloned = lineStation.Clone()
+                   where predicate(cloned)
+                   select cloned;
+        }
         public LineStation GetLineStationByStation(Guid lineID, int stationCode)
         {
             var lineStations = GetAllLineStations(lineID);
@@ -310,6 +317,13 @@ namespace DL
             var exists = GetLineStationByStation(lineID, stationCode);
 
             DataSet.LineStations.Remove(exists);
+        }
+        public void DeleteLineStationByStation(int stationCode)
+		{
+            var exists = from ls in DataSet.LineStations where (ls.StationCode == stationCode) select ls;
+
+            foreach (var ex in exists.ToArray())
+                DataSet.LineStations.Remove(ex);
         }
 
         public void DeleteLineStationByIndex(Guid lineID, int index)

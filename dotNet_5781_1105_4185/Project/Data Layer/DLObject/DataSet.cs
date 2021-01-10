@@ -78,17 +78,17 @@ namespace DS
                 {
                     ID = Guid.NewGuid(),
                     LineNum = 75,
-                    Region = DO.Regions.Center,
-                    StartStationCode = 38831,
-                    EndStationCode = 38832,
+                    Region = DO.Regions.Jerusalem,
+                    StartStationCode = 174,
+                    EndStationCode = 175,
                 },
                 new DO.BusLine
                 {
                     ID = Guid.NewGuid(),
                     LineNum = 39,
                     Region = DO.Regions.Jerusalem,
-                    StartStationCode = 38832,
-                    EndStationCode = 38833,
+                    StartStationCode = 175,
+                    EndStationCode = 176,
                 },
             };
 
@@ -906,25 +906,25 @@ namespace DS
                 new DO.LineStation
                 {
                     LineID = Lines[0].ID,
-                    StationCode = 38831,
+                    StationCode = 174,
                     RouteIndex = 0,
                 },
                 new DO.LineStation
                 {
                     LineID = Lines[0].ID,
-                    StationCode = 38832,
+                    StationCode = 175,
                     RouteIndex = 1,
                 },
                 new DO.LineStation
                 {
                     LineID = Lines[1].ID,
-                    StationCode = 38832,
+                    StationCode = 175,
                     RouteIndex = 0,
                 },
                 new DO.LineStation
                 {
                     LineID = Lines[1].ID,
-                    StationCode = 38833,
+                    StationCode = 176,
                     RouteIndex = 1,
                 },
             };

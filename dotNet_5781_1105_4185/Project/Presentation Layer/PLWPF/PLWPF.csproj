@@ -61,6 +61,9 @@
     <Compile Include="Dialogs\AddBusDialog.xaml.cs">
       <DependentUpon>AddBusDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\StationDetailsDialog.xaml.cs">
+      <DependentUpon>StationDetailsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\UpdateStationDialog.xaml.cs">
       <DependentUpon>UpdateStationDialog.xaml</DependentUpon>
     </Compile>
@@ -78,6 +81,7 @@
     <Compile Include="ViewModels\BusLines\BusLinesListViewModel.cs" />
     <Compile Include="ViewModels\BusLines\BusLineViewModel.cs" />
     <Compile Include="ViewModels\Bus\AddBusViewModel.cs" />
+    <Compile Include="ViewModels\Station\StationDetailsViewModel.cs" />
     <Compile Include="ViewModels\Station\UpdateStationViewModel.cs" />
     <Compile Include="ViewModels\Station\AddStationViewModel.cs" />
     <Compile Include="ViewModels\BaseDialogViewModel.cs" />
@@ -94,6 +98,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\AddBusDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\StationDetailsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

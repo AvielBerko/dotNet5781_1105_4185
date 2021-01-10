@@ -50,12 +50,14 @@ namespace DLAPI
         #region LineStation
         IEnumerable<DO.LineStation> GetAllLineStations(Guid lineID);
         IEnumerable<DO.LineStation> GetLineStationsBy(Guid lineID, Predicate<DO.LineStation> predicate);
+        IEnumerable<DO.LineStation> GetLineStationsBy(Predicate<DO.LineStation> predicate);
         DO.LineStation GetLineStationByStation(Guid lineID, int stationCode);
         DO.LineStation GetLineStationByIndex(Guid lineID, int index);
         void AddLineStation(DO.LineStation lineStation);
         void UpdateLineStationByStation(DO.LineStation lineStation);
         void UpdateLineStationByIndex(DO.LineStation lineStation);
         void DeleteLineStationByStation(Guid lineID, int stationCode);
+        void DeleteLineStationByStation(int stationCode);
         void DeleteLineStationByIndex(Guid lineID, int index);
         void DeleteAllLineStations(Guid lineID);
         #endregion

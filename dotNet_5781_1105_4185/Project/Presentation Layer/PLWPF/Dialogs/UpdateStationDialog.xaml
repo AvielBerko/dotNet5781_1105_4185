@@ -28,19 +28,18 @@
 			</Grid.RowDefinitions>
 
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="125"/>
 				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="1.75*"/>
 
 			</Grid.ColumnDefinitions>
 			<!-- Registration Number Input -->
 			<Label VerticalAlignment="Center" FontSize="14" Margin="0,0,10,0">Station Code:</Label>
-			<TextBox Grid.Column="1" Margin="10" FontSize="14" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding Code, Mode=OneWay}"
-					 TextAlignment="Center"/>
+			<TextBox Grid.Column="1" Margin="10" FontSize="14" Text="{Binding Code, Mode=OneWay}" IsReadOnly="True" IsReadOnlyCaretVisible="True" HorizontalContentAlignment="Center"/>
 			<!-- " PreviewTextInput="TextBoxDigitOnly" -->
 
 			<!-- Registration Date Input -->
 			<Label Grid.Row="1" VerticalAlignment="Center" FontSize="14" Margin="0,0,10,0">Station Name:</Label>
-			<TextBox Grid.Column="1" Grid.Row="1" Margin="10" FontSize="14" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+			<TextBox Grid.Column="1" Grid.Row="1" Margin="10"  FontSize="14" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
 					 TextAlignment="Center"/>
 
 			<!-- Kilometrage Input -->
@@ -65,7 +64,7 @@
 		</Grid>
 		<!--#endregion-->
 		<!--#region Adjacents list-->
-		<ListView Grid.Column="1" Margin="5" ItemsSource="{Binding AdjacentStations}">
+		<ListView Grid.Column="1" Margin="5" BorderThickness="1" BorderBrush="Gray" ItemsSource="{Binding AdjacentStations}">
 			<ListView.View>
 				<GridView>
 					<GridViewColumn Header="Code" DisplayMemberBinding="{Binding Adjacent.ToStation.Code}"/>
@@ -73,7 +72,7 @@
 					<GridViewColumn Header="Distance">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
-								<TextBox MinWidth="40" Text="{Binding Adjacent.Distance, UpdateSourceTrigger=PropertyChanged}"/>
+								<TextBox MinWidth="40" Text="{Binding Adjacent.Distance, UpdateSourceTrigger=PropertyChanged, StringFormat=n2}"/>
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>

@@ -10,19 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace PL
 {
-    /// <summary>
-    /// Interaction logic for AdminPage.xaml
-    /// </summary>
-    public partial class AdminPage : Page
-    {
-        public AdminPage()
-        {
-            InitializeComponent();
-        }
+	/// <summary>
+	/// Interaction logic for StationDetailsDialog.xaml
+	/// </summary>
+	public partial class StationDetailsDialog : Window
+	{
+		public StationDetailsDialog(StationDetailsViewModel stationDetailsVM)
+		{
+			InitializeComponent();
+			DataContext = stationDetailsVM;
+		}
 	}
 }

@@ -50,6 +50,7 @@ namespace BLAPI
         #region BusLine, LineStation
         IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute();
         IEnumerable<BO.BusLine> GetAllBusLines();
+        IEnumerable<BO.BusLine> GetLinesPassingTheStation(int code);
         #endregion
     }
 }

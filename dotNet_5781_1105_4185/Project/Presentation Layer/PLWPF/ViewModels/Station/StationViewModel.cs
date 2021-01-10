@@ -40,8 +40,12 @@ namespace PL
         }
         private void _Details()
 		{
-
-		}
+            var detailsVM = new StationDetailsViewModel(Station.Code);
+            if (DialogService.ShowStationDetailsDialog(detailsVM) == true)
+            {
+                OnPropertyChanged(nameof(Station));
+            }
+        }
 
         public delegate void RemoveStationEventHandler(object sender);
         public event RemoveStationEventHandler Remove;

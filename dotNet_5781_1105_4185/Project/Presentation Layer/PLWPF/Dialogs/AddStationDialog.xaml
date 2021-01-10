@@ -28,8 +28,8 @@
 			</Grid.RowDefinitions>
 
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="125"/>
 				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="1.75*"/>
 
 			</Grid.ColumnDefinitions>
 			<!-- Registration Number Input -->
