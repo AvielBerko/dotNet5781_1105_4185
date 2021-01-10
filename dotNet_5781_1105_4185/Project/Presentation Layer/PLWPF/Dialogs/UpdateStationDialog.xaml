@@ -89,14 +89,18 @@
 							<Button Background="Transparent"
 										BorderThickness="0" VerticalAlignment="Center"
 										Command="{Binding RemoveAdjacents}">
-								<!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
-								Remove
-							</Button>
+									<Image Source="/Images/delete_48px.png"/>
+								</Button>
 						</DataTemplate>
 					</GridViewColumn.CellTemplate>
 					</GridViewColumn>
 				</GridView>
 			</ListView.View>
+			<ListView.Resources>
+				<Style TargetType="{x:Type ListViewItem}">
+					<Setter Property="Height" Value="30"/>
+				</Style>
+			</ListView.Resources>
 		</ListView>
 		<Button Grid.Column="1" Grid.Row="1" Margin="5" Command="{Binding AddAdjacent}">Add Adjacent Station</Button>
 		<!--#endregion-->

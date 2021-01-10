@@ -115,9 +115,9 @@ namespace PL
 			CloseDialog(window, false);
 		}
 
-		public delegate void AddedStationEventHandler(object sender, BO.Station station);
-		public event AddedStationEventHandler AddedStaion;
-		protected virtual void OnAddedStation(BO.Station station) => AddedStaion?.Invoke(this, station);
+		/*public delegate void UpdatedStationEventHandler(object sender, BO.Station station);
+		public event UpdatedStationEventHandler UpdatedStaion;
+		protected virtual void OnUpdateddStation(BO.Station station) => UpdatedStaion?.Invoke(this, station);*/
 
 		public string this[string columnName]
 		{

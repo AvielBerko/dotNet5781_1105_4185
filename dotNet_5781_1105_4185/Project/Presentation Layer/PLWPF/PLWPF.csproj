@@ -172,5 +172,9 @@
       <Name>BL</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\info_48px.png" />
+    <Resource Include="Images\synchronize_48px.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

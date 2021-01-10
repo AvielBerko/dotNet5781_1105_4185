@@ -115,12 +115,12 @@
 							</GridViewColumn>
 						</GridView>
 					</ListView.View>
-                    <ListView.Resources>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Height" Value="40"/>
-                        </Style>
-                    </ListView.Resources>
-                </ListView>
+					<ListView.Resources>
+						<Style TargetType="{x:Type ListViewItem}">
+							<Setter Property="Height" Value="30"/>
+						</Style>
+					</ListView.Resources>
+				</ListView>
 			</Grid>
 		</TabItem>
 		<!--#endregion-->
@@ -138,7 +138,7 @@
 					<Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllStations}">Remove All Stations</Button>
 				</StackPanel>
 
-				<ListView ItemsSource="{Binding Stations}">
+				<ListView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}">
 					<ListView.View>
 						<GridView>
 							<GridViewColumn Header="Code" DisplayMemberBinding="{Binding Station.Code}" />
@@ -149,8 +149,7 @@
 										<Button Margin="0" Background="Transparent"
 										BorderThickness="0" VerticalAlignment="Center"
 										Command="{Binding StationDetails}">
-											<!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
-											Details
+											<Image Source="/Images/info_48px.png"/>
 										</Button>
 									</DataTemplate>
 								</GridViewColumn.CellTemplate>
@@ -161,8 +160,7 @@
 										<Button Margin="0" Background="Transparent"
 										BorderThickness="0" VerticalAlignment="Center"
 										Command="{Binding UpdateStation}">
-											<!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
-											Update
+											<Image Source="/Images/synchronize_48px.png"/>
 										</Button>
 									</DataTemplate>
 								</GridViewColumn.CellTemplate>
@@ -173,15 +171,18 @@
 										<Button Margin="0" Background="Transparent"
 										BorderThickness="0" VerticalAlignment="Center"
 										Command="{Binding RemoveStation}">
-											<!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
-											Remove
+											<Image Source="/Images/delete_48px.png"/>
 										</Button>
 									</DataTemplate>
 								</GridViewColumn.CellTemplate>
 							</GridViewColumn>
-							
 						</GridView>
 					</ListView.View>
+					<ListView.Resources>
+						<Style TargetType="{x:Type ListViewItem}">
+							<Setter Property="Height" Value="30"/>
+						</Style>
+					</ListView.Resources>
 				</ListView>
 			</Grid>
 		</TabItem>

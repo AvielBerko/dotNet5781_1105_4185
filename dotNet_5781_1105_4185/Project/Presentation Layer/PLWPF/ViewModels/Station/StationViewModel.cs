@@ -35,6 +35,7 @@ namespace PL
             var updateVM = new UpdateStationViewModel(Station.Code);
             if (DialogService.ShowUpdateStationDialog(updateVM) == true) 
             {
+                Station = (BO.Station)BlWork(bl => bl.GetStation(Station.Code));
                 OnPropertyChanged(nameof(Station));
             }
         }
