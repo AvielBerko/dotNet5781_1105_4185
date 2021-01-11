@@ -155,24 +155,48 @@ namespace BO
             Location = location;
         }
     }
-	#endregion
+    #endregion
 
-	#region Adjacent
+    #region BusLine
+    public class BadBusLineIDException : Exception
+	{
+        public Guid LineID { get; }
+
+        public BadBusLineIDException(Guid lineID)
+        {
+            LineID = lineID;
+        }
+        public BadBusLineIDException(Guid lineID, string message) : base(message)
+        {
+            LineID = lineID;
+        }
+        public BadBusLineIDException(Guid lineID, string message, Exception innerException) : base(message, innerException)
+        {
+            LineID = lineID;
+        }
+    }
+    #endregion
+
+    #region Adjacent
     public class BadAdjacentStationsCodeException : Exception
 	{
-        public AdjacentStation Adjacents { get; }
+        public int FromStationCode { get; }
+        public int ToStationCode { get; }
 
-        public BadAdjacentStationsCodeException(AdjacentStation adjacents)
+        public BadAdjacentStationsCodeException(int fromCode, int toCode)
         {
-            Adjacents = adjacents;
+            FromStationCode = fromCode;
+            ToStationCode = toCode;
         }
-        public BadAdjacentStationsCodeException(AdjacentStation adjacents, string message) : base(message)
+        public BadAdjacentStationsCodeException(int fromCode, int toCode, string message) : base(message)
         {
-            Adjacents = adjacents;
+            FromStationCode = fromCode;
+            ToStationCode = toCode;
         }
-        public BadAdjacentStationsCodeException(AdjacentStation adjacents, string message, Exception innerException) : base(message, innerException)
+        public BadAdjacentStationsCodeException(int fromCode, int toCode, string message, Exception innerException) : base(message, innerException)
         {
-            Adjacents = adjacents;
+            FromStationCode = fromCode;
+            ToStationCode = toCode;
         }
     }
     #endregion

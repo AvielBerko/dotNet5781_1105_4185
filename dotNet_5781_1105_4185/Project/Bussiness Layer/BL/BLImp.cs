@@ -94,21 +94,21 @@ namespace BL
 
             return result;
         }
-        
+
         public void DeleteAdjacent(BO.AdjacentStation adjacent, int fromStationCode)
-		{
+        {
             try
-			{
+            {
                 dl.DeleteAdjacentStations(fromStationCode, adjacent.ToStation.Code);
-			}
-            catch (DO.BadAdjacentStationsCodeException e)
-			{
-                throw new BO.BadAdjacentStationsCodeException(adjacent, e.Message);
             }
-		}
+            catch (DO.BadAdjacentStationsCodeException e)
+            {
+                throw new BO.BadAdjacentStationsCodeException(fromStationCode, adjacent.ToStation.Code, e.Message);
+            }
+        }
 
         public IEnumerable<BO.Station> GetRestOfStations(IEnumerable<BO.Station> stations)
-		{
+        {
             var restStations = dl.GetStationsBy(st => !stations.Any(st2 => st.Code == st2.Code));
 
             return from st in restStations select StationDoToBoWithoutAdjacents(st);
@@ -156,6 +156,18 @@ namespace BL
         {
             try
             {
+                // Removing start and end stations from buslines.
+                var lines = dl.GetBusLinesBy(l => l.StartStationCode == station.Code || l.EndStationCode == station.Code).ToArray();
+                foreach (var line in lines)
+                {
+                    line.HasFullRoute = false;
+                    if (line.StartStationCode == station.Code)
+                        line.StartStationCode = null;
+                    else
+                        line.EndStationCode = null;
+                    dl.UpdateBusLine(line);
+                }
+
                 dl.DeleteStationAdjacents(station.Code);
                 dl.DeleteLineStationByStation(station.Code);
                 dl.DeleteStation(station.Code);
@@ -168,6 +180,17 @@ namespace BL
 
         public void DeleteAllStations()
         {
+            foreach (var line in dl.GetAllBusLines().ToArray())
+            {
+                line.HasFullRoute = false;
+                line.StartStationCode = null;
+                line.EndStationCode = null;
+
+                dl.UpdateBusLine(line);
+            }
+
+            dl.DeleteAllAdjacentStations();
+            dl.DeleteLineStationsBy(ls => true);
             dl.DeleteAllStations();
         }
 
@@ -193,16 +216,16 @@ namespace BL
         public BO.Station GetStationWithoutAdjacents(int code)
         {
             try
-			{
+            {
                 return StationDoToBoWithoutAdjacents(dl.GetStation(code));
-			}
+            }
             catch (DO.BadStationCodeException e)
-			{
+            {
                 throw new BO.BadStationCodeException(code, e.Message);
-			}
+            }
         }
         public BO.Station GetStation(int code)
-		{
+        {
             try
             {
                 return StationDoToBo(dl.GetStation(code));
@@ -338,64 +361,76 @@ namespace BL
         #endregion
 
         #region BusLine, LineStation
-        BO.LineStation LineStationDoBoAdapter(DO.LineStation doLineStation, BO.LineStation lastStation = null)
+        BO.LineStation LineStationDoToBo(DO.LineStation doLineStation, BO.LineStation lastStation = null)
         {
             if (lastStation != null)
             {
-                var doAdjStations = dl.GetAdjacentStations(lastStation.Station.Code, doLineStation.StationCode);
-                return new BO.LineStation
+                try
                 {
-                    Station = GetStationWithoutAdjacents(doLineStation.StationCode),
-                    Distance = doAdjStations.Distance,
-                    DrivingTime = doAdjStations.DrivingTime,
-                };
+                    var doAdjStations = dl.GetAdjacentStations(lastStation.Station.Code, doLineStation.StationCode);
+                    return new BO.LineStation
+                    {
+                        Station = GetStationWithoutAdjacents(doLineStation.StationCode),
+                        LastStationRoute = new BO.LastStationRoute
+                        {
+                            Distance = doAdjStations.Distance,
+                            DrivingTime = doAdjStations.DrivingTime,
+                        },
+                    };
+                }
+                catch (DO.BadAdjacentStationsCodeException)
+                {
+                    return new BO.LineStation
+                    {
+                        Station = GetStationWithoutAdjacents(doLineStation.StationCode),
+                        LastStationRoute = null,
+                    };
+                }
             }
 
             return new BO.LineStation
             {
                 Station = GetStationWithoutAdjacents(doLineStation.StationCode),
-                Distance = null,
-                DrivingTime = null,
+                LastStationRoute = null,
             };
         }
 
-        private BO.BusLine BusLineDoBoWithoutFullRouteAdapter(DO.BusLine doBusLine)
+        private BO.BusLine BusLineDoToBoWithoutFullRoute(DO.BusLine doBusLine)
         {
             var busLine = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
+            var startEnd = new List<BO.LineStation>();
 
-            var doStart = dl.GetLineStationByStation(busLine.ID, doBusLine.StartStationCode);
-            var doEnd = dl.GetLineStationByStation(busLine.ID, doBusLine.EndStationCode);
-            busLine.Route = new BO.LineStation[2]
+            if (doBusLine.StartStationCode != null)
             {
-                LineStationDoBoAdapter(doStart),
-                LineStationDoBoAdapter(doEnd),
-            };
+                var doStart = dl.GetLineStationByStation(busLine.ID, doBusLine.StartStationCode ?? 0);
+                startEnd.Add(LineStationDoToBo(doStart));
+            }
+            if (doBusLine.EndStationCode != null)
+            {
+                var doEnd = dl.GetLineStationByStation(busLine.ID, doBusLine.EndStationCode ?? 0);
+                startEnd.Add(LineStationDoToBo(doEnd));
+            }
+
+            busLine.Route = startEnd;
 
             return busLine;
         }
 
-        BO.BusLine BusLineDoBoAdapter(DO.BusLine doBusLine)
+        BO.BusLine BusLineDoToBo(DO.BusLine doBusLine)
         {
             var busLine = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
 
             List<BO.LineStation> route = new List<BO.LineStation>();
-            for (int i = 0; ; i++)
+            for (int i = 0; i < doBusLine.RouteLength; i++)
             {
-                try
+                var doLineStation = dl.GetLineStationByIndex(busLine.ID, i);
+                if (i == 0)
                 {
-                    var doLineStation = dl.GetLineStationByIndex(busLine.ID, i);
-                    if (i == 0)
-                    {
-                        route.Add(LineStationDoBoAdapter(doLineStation));
-                    }
-                    else
-                    {
-                        route.Add(LineStationDoBoAdapter(doLineStation, route[i - 1]));
-                    }
+                    route.Add(LineStationDoToBo(doLineStation));
                 }
-                catch (DO.BadLineStationIndexException)
+                else
                 {
-                    break;
+                    route.Add(LineStationDoToBo(doLineStation, route[i - 1]));
                 }
             }
             busLine.Route = route;
@@ -406,21 +441,81 @@ namespace BL
         public IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute()
         {
             return from doBusLine in dl.GetAllBusLines()
-                   select BusLineDoBoWithoutFullRouteAdapter(doBusLine);
+                   select BusLineDoToBoWithoutFullRoute(doBusLine);
         }
 
         public IEnumerable<BO.BusLine> GetAllBusLines()
         {
             return from doBusLine in dl.GetAllBusLines()
-                   select BusLineDoBoAdapter(doBusLine);
+                   select BusLineDoToBo(doBusLine);
         }
+
         public IEnumerable<BO.BusLine> GetLinesPassingTheStation(int code)
-		{
+        {
             var busLinesIDs = (from st in dl.GetLineStationsBy(st => st.StationCode == code) select st.LineID).Distinct();
 
-            return from busLine in dl.GetBusLinesBy(bl => busLinesIDs.Any(id => bl.ID == id)) select BusLineDoBoWithoutFullRouteAdapter(busLine);
+            return from busLine in dl.GetBusLinesBy(bl => bl.HasFullRoute && busLinesIDs.Any(id => bl.ID == id)) select BusLineDoToBoWithoutFullRoute(busLine);
         }
 
+        public BO.BusLine DuplicateBusLine(Guid ID)
+        {
+            try
+            {
+                var busLine = dl.GetBusLine(ID);
+                busLine.ID = Guid.NewGuid();
+                dl.AddBusLine(busLine);
+
+                var lineStations = from st in dl.GetAllLineStations(ID)
+                                   select new DO.LineStation
+                                   {
+                                       LineID = busLine.ID,
+                                       RouteIndex = st.RouteIndex,
+                                       StationCode = st.StationCode,
+                                   };
+
+                foreach (var ls in lineStations.ToArray())
+                {
+                    dl.AddLineStation(ls);
+                }
+
+                return BusLineDoToBoWithoutFullRoute(busLine);
+            }
+            catch (DO.BadBusLineIDException e)
+            {
+                throw new BO.BadBusLineIDException(ID, e.Message);
+            }
+        }
+
+        public bool BusLineHasFullRoute(Guid ID)
+        {
+            try
+            {
+                return dl.GetBusLine(ID).HasFullRoute;
+            }
+            catch (DO.BadBusLineIDException e)
+            {
+                throw new BO.BadBusLineIDException(ID, e.Message);
+            }
+        }
+
+        public void DeleteBusLine(Guid ID)
+        {
+            try
+            {
+                dl.DeleteAllLineStations(ID);
+                dl.DeleteBusLine(ID);
+            }
+            catch (DO.BadBusLineIDException e)
+            {
+                throw new BO.BadBusLineIDException(ID, e.Message);
+            }
+        }
+
+        public void DeleteAllBusLines()
+        {
+            dl.DeleteLineStationsBy(st => true);
+            dl.DeleteAllBusLines();
+        }
         #endregion
     }
 }

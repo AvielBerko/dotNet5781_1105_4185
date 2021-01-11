@@ -18,8 +18,35 @@ namespace PL
                 OnPropertyChanged(nameof(BusLine));
             }
         }
-        public string StartName => busLine.Route.First().Station.Name;
-        public string EndName => busLine.Route.Last().Station.Name;
+        public string StartName
+        {
+            get
+            {
+                try
+                {
+                    return busLine.Route.First().Station.Name;
+                }
+                catch
+                {
+                    return "Not Set";
+                }
+            }
+        }
+        public string EndName
+        {
+            get
+            {
+                try
+                {
+                    return busLine.Route.Last().Station.Name;
+                }
+                catch
+                {
+                    return "Not Set";
+                }
+            }
+        }
+        public bool HasFullRoute => (bool)BlWork(bl => bl.BusLineHasFullRoute(busLine.ID));
 
         public RelayCommand RemoveBusLine { get; }
         public RelayCommand UpdateBusLine { get; }
@@ -29,12 +56,13 @@ namespace PL
         {
             BusLine = busLine;
 
-            RemoveBusLine = new RelayCommand(obj => { }/*{ BlWork(bl => bl.DeleteStation(Station)); OnRemove(); }*/);
+            RemoveBusLine = new RelayCommand(obj => _Remove());
             UpdateBusLine = new RelayCommand(obj => _Update());
-            DuplicateBusLine = new RelayCommand(obj => { });
+            DuplicateBusLine = new RelayCommand(obj => _Duplicate());
         }
+
         private void _Update()
-		{
+        {
             //var updateVM = new UpdateStationViewModel { Station = station };
             //if (DialogService.ShowUpdateStationDialog(updateVM) == true) 
             //{
@@ -42,8 +70,25 @@ namespace PL
             //}
         }
 
+        private void _Duplicate()
+        {
+            var duplicated = (BO.BusLine)BlWork(bl => bl.DuplicateBusLine(busLine.ID));
+            OnDupliate(duplicated);
+        }
+
+        private void _Remove()
+        {
+            BlWork(bl => bl.DeleteBusLine(busLine.ID));
+            OnRemove();
+        }
+
+        public delegate void DuplicateBusEventHandler(object sender, BO.BusLine duplicated);
+        public event DuplicateBusEventHandler Duplicate;
+        protected virtual void OnDupliate(BO.BusLine duplicated) => Duplicate?.Invoke(this, duplicated);
+
         public delegate void RemoveBusEventHandler(object sender);
         public event RemoveBusEventHandler Remove;
         protected virtual void OnRemove() => Remove?.Invoke(this);
+
     }
 }

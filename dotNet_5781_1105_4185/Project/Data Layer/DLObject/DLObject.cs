@@ -202,8 +202,15 @@ namespace DL
                 throw new BadBusLineIDException(busLine.ID, $"bus line with ID {busLine.ID} already exists");
 
             // Checks for the start and end stations
-            GetStation(busLine.StartStationCode);
-            GetStation(busLine.EndStationCode);
+            if (busLine.StartStationCode != null)
+                GetStation(busLine.StartStationCode ?? 0);
+            if (busLine.EndStationCode != null)
+                GetStation(busLine.EndStationCode ?? 0);
+
+            if (busLine.HasFullRoute &&
+                (busLine.StartStationCode == null ||
+                busLine.EndStationCode == null))
+                throw new InvalidOperationException("BusLine without start or stop stations cannot have full route");
 
             DataSet.Lines.Add(busLine.Clone());
         }
@@ -215,7 +222,7 @@ namespace DL
             if (exists == null) throw new BadBusLineIDException(busLine.ID, $"no bus line with ID {busLine.ID}");
 
             DataSet.Lines.Remove(exists);
-            DataSet.Lines.Add(exists);
+            DataSet.Lines.Add(busLine);
         }
 
         public void DeleteBusLine(Guid ID)
@@ -337,6 +344,11 @@ namespace DL
         {
             DataSet.LineStations.RemoveAll(lineStation => lineStation.LineID == lineID);
         }
+
+        public void DeleteLineStationsBy(Predicate<LineStation> predicate)
+        {
+            DataSet.LineStations.RemoveAll(ls => predicate(ls.Clone()));
+        }
         #endregion
 
         #region AdjacentStations
@@ -394,6 +406,9 @@ namespace DL
 
         public void DeleteStationAdjacents(int code)
 		{
+            if (!DataSet.Stations.Any(st => st.Code == code))
+                throw new BadStationCodeException(code, $"Station with code {code} not found.");
+
             DataSet.AdjacentStations.RemoveAll(ad => ad.Station1Code == code || ad.Station2Code == code);
 		}
 

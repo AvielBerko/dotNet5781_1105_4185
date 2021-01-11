@@ -60,6 +60,7 @@ namespace DLAPI
         void DeleteLineStationByStation(int stationCode);
         void DeleteLineStationByIndex(Guid lineID, int index);
         void DeleteAllLineStations(Guid lineID);
+        void DeleteLineStationsBy(Predicate<DO.LineStation> predicate);
         #endregion
 
         #region AdjacentStations

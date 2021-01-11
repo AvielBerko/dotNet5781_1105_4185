@@ -81,6 +81,8 @@ namespace DS
                     Region = DO.Regions.Jerusalem,
                     StartStationCode = 174,
                     EndStationCode = 175,
+					HasFullRoute = true,
+					RouteLength = 2,
                 },
                 new DO.BusLine
                 {
@@ -89,6 +91,8 @@ namespace DS
                     Region = DO.Regions.Jerusalem,
                     StartStationCode = 175,
                     EndStationCode = 176,
+					HasFullRoute = true,
+					RouteLength = 2,
                 },
             };
 

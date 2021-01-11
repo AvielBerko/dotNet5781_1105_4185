@@ -24,5 +24,15 @@ namespace PL
         {
             InitializeComponent();
         }
-	}
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var tabControl = (TabControl)sender;
+            if (tabControl.SelectedItem == LineListTab)
+            {
+                var vm = (BusLinesListViewModel)LineListTab.DataContext;
+                vm.Refresh.Execute(null);
+            }
+        }
+    }
 }
