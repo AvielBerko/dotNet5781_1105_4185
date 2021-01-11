@@ -84,7 +84,7 @@ namespace PL
 			AddAdjacent = new RelayCommand(obj => _AddAdjacent());
 		}
 
-		private AdjacentStationViewModel _CreateAdjacentVM(BO.AdjacentStations adjacents)
+		private AdjacentStationViewModel _CreateAdjacentVM(BO.AdjacentStation adjacents)
 		{
 			var result = new AdjacentStationViewModel(adjacents);
 			result.Remove += (sender) => AdjacentStations.Remove(result); 
@@ -98,7 +98,7 @@ namespace PL
 			var vm = new AddAdjacentViewModel(restStations);
 			if (DialogService.ShowAddAdjacentDialog(vm) == true)
 			{
-				var addedAdjacents = from st in vm.SelectedStations select new BO.AdjacentStations { FromStation = Station, ToStation = st };
+				var addedAdjacents = from st in vm.SelectedStations select new BO.AdjacentStation { ToStation = st };
 				foreach (var ad in addedAdjacents)
 					AdjacentStations.Add(_CreateAdjacentVM(ad));
 			}

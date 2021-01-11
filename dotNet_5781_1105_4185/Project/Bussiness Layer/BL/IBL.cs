@@ -16,9 +16,10 @@ namespace BLAPI
         #endregion
 
         #region AdjacentStation
-        void DeleteAdjacent(BO.AdjacentStations adjacents);
+        void DeleteAdjacent(BO.AdjacentStation adjacents, int fromStationCode);
         IEnumerable<BO.Station> GetRestOfStations(IEnumerable<BO.Station> stations);
         #endregion
+
         #region Station
         IEnumerable<BO.Station> GetAllStationsWithoutAdjacents();
         IEnumerable<BO.Station> GetAllStations();

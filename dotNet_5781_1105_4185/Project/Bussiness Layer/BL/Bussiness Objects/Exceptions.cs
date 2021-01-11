@@ -160,17 +160,17 @@ namespace BO
 	#region Adjacent
     public class BadAdjacentStationsCodeException : Exception
 	{
-        public AdjacentStations Adjacents { get; }
+        public AdjacentStation Adjacents { get; }
 
-        public BadAdjacentStationsCodeException(AdjacentStations adjacents)
+        public BadAdjacentStationsCodeException(AdjacentStation adjacents)
         {
             Adjacents = adjacents;
         }
-        public BadAdjacentStationsCodeException(AdjacentStations adjacents, string message) : base(message)
+        public BadAdjacentStationsCodeException(AdjacentStation adjacents, string message) : base(message)
         {
             Adjacents = adjacents;
         }
-        public BadAdjacentStationsCodeException(AdjacentStations adjacents, string message, Exception innerException) : base(message, innerException)
+        public BadAdjacentStationsCodeException(AdjacentStation adjacents, string message, Exception innerException) : base(message, innerException)
         {
             Adjacents = adjacents;
         }

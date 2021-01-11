@@ -8,8 +8,8 @@ namespace PL
 {
     public class AdjacentStationViewModel : BaseViewModel
     {
-        private BO.AdjacentStations adjacent;
-        public BO.AdjacentStations Adjacent
+        private BO.AdjacentStation adjacent;
+        public BO.AdjacentStation Adjacent
         {
             get => adjacent;
             set
@@ -20,7 +20,7 @@ namespace PL
         }
         public RelayCommand RemoveAdjacents { get; }
 
-        public AdjacentStationViewModel(BO.AdjacentStations adjacent)
+        public AdjacentStationViewModel(BO.AdjacentStation adjacent)
         {
             Adjacent = adjacent;
 

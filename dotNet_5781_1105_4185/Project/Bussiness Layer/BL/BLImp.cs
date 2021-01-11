@@ -79,28 +79,27 @@ namespace BL
         #endregion
 
         #region AdjacentStation
-        private BO.AdjacentStations AdjacentDoToBo(DO.AdjacentStations doAdjacntStation, int station1Code, int station2Code)
+        private BO.AdjacentStation AdjacentDoToBo(DO.AdjacentStations doAdjacntStation, int toStationCode)
         {
-            BO.AdjacentStations result = (BO.AdjacentStations)doAdjacntStation.CopyPropertiesToNew(typeof(BO.AdjacentStations));
-            result.FromStation = GetStationWithoutAdjacents(station1Code);
-            result.ToStation = GetStationWithoutAdjacents(station2Code);
+            BO.AdjacentStation result = (BO.AdjacentStation)doAdjacntStation.CopyPropertiesToNew(typeof(BO.AdjacentStation));
+            result.ToStation = GetStationWithoutAdjacents(toStationCode);
 
             return result;
         }
-        private DO.AdjacentStations AdjacentBoToDo(BO.AdjacentStations boAdjacntStation)
+        private DO.AdjacentStations AdjacentBoToDo(BO.AdjacentStation boAdjacntStation, int fromStationCode)
         {
             DO.AdjacentStations result = (DO.AdjacentStations)boAdjacntStation.CopyPropertiesToNew(typeof(DO.AdjacentStations));
-            result.Station1Code = boAdjacntStation.FromStation.Code;
+            result.Station1Code = fromStationCode;
             result.Station2Code = boAdjacntStation.ToStation.Code;
 
             return result;
         }
         
-        public void DeleteAdjacent(BO.AdjacentStations adjacent)
+        public void DeleteAdjacent(BO.AdjacentStation adjacent, int fromStationCode)
 		{
             try
 			{
-                dl.DeleteAdjacentStations(adjacent.FromStation.Code, adjacent.ToStation.Code);
+                dl.DeleteAdjacentStations(fromStationCode, adjacent.ToStation.Code);
 			}
             catch (DO.BadAdjacentStationsCodeException e)
 			{
@@ -129,7 +128,7 @@ namespace BL
             BO.Station result = StationDoToBoWithoutAdjacents(doStation);
 
             var doAdjacents = dl.GetAdjacentStationsBy(adjacent => adjacent.Station1Code == result.Code || adjacent.Station2Code == result.Code);
-            result.AdjacentStations = from doAdjacent in doAdjacents select AdjacentDoToBo(doAdjacent, result.Code, doAdjacent.Station1Code == result.Code ? doAdjacent.Station2Code : doAdjacent.Station1Code);
+            result.AdjacentStations = from doAdjacent in doAdjacents select AdjacentDoToBo(doAdjacent, doAdjacent.Station1Code == result.Code ? doAdjacent.Station2Code : doAdjacent.Station1Code);
 
             return result;
         }
@@ -150,7 +149,7 @@ namespace BL
 
             dl.AddStation(StationBoToDo(station));
             foreach (var ad in station.AdjacentStations)
-                dl.AddAdjacentStations(AdjacentBoToDo(ad));
+                dl.AddAdjacentStations(AdjacentBoToDo(ad, station.Code));
         }
 
         public void DeleteStation(BO.Station station)
@@ -220,7 +219,7 @@ namespace BL
             {
                 dl.DeleteStationAdjacents(station.Code);
                 foreach (var ad in station.AdjacentStations)
-                    dl.AddAdjacentStations(AdjacentBoToDo(ad));
+                    dl.AddAdjacentStations(AdjacentBoToDo(ad, station.Code));
                 dl.UpdateStation(StationBoToDo(station));
             }
             catch (DO.BadStationCodeException e)

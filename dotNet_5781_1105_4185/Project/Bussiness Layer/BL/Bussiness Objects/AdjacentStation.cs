@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace BO
 {
-    public class AdjacentStations
+    public class AdjacentStation
     {
-        public Station FromStation { get; set; }
         public Station ToStation { get; set; }
         public double Distance { get; set; }
         public TimeSpan DrivingTime { get; set; }
