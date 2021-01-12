@@ -36,9 +36,9 @@ namespace PL
             return dialog.ShowDialog();
         }
 
-        public static bool? ShowAddAdjacentDialog(AddAdjacentViewModel addAdjacent)
+        public static bool? ShowSelectStationsDialog(SelectStationsViewModel selectStations)
         {
-            AddAdjacentDialog dialog = new AddAdjacentDialog(addAdjacent);
+            SelectStationsDialog dialog = new SelectStationsDialog(selectStations);
 
             return dialog.ShowDialog();
         }
@@ -46,6 +46,13 @@ namespace PL
         public static bool? ShowStationDetailsDialog(StationDetailsViewModel stationDetails)
         {
             StationDetailsDialog dialog = new StationDetailsDialog(stationDetails);
+
+            return dialog.ShowDialog();
+        }
+
+        public static bool? ShowAddBusLineDialog(AddBusLineViewModel addBusline)
+        {
+            AddBusLineDialog dialog = new AddBusLineDialog(addBusline);
 
             return dialog.ShowDialog();
         }

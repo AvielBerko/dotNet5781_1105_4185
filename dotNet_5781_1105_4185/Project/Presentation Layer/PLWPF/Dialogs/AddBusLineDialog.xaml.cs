@@ -14,15 +14,15 @@ using System.Windows.Shapes;
 
 namespace PL
 {
-	/// <summary>
-	/// Interaction logic for AddAdjacentDialog.xaml
-	/// </summary>
-	public partial class SelectStationsDialog : Window
-	{
-		public SelectStationsDialog(SelectStationsViewModel addAdjacentVM)
-		{
-			InitializeComponent();
-			DataContext = addAdjacentVM;
-		}
-	}
+    /// <summary>
+    /// Interaction logic for AddBusLineDialog.xaml
+    /// </summary>
+    public partial class AddBusLineDialog : Window
+    {
+        public AddBusLineDialog(AddBusLineViewModel vm)
+        {
+            InitializeComponent();
+            DataContext = vm;
+        }
+    }
 }

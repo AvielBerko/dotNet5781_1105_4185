@@ -371,7 +371,7 @@ namespace BL
                     return new BO.LineStation
                     {
                         Station = GetStationWithoutAdjacents(doLineStation.StationCode),
-                        LastStationRoute = new BO.LastStationRoute
+                        NextStationRoute = new BO.NextStationRoute
                         {
                             Distance = doAdjStations.Distance,
                             DrivingTime = doAdjStations.DrivingTime,
@@ -383,7 +383,7 @@ namespace BL
                     return new BO.LineStation
                     {
                         Station = GetStationWithoutAdjacents(doLineStation.StationCode),
-                        LastStationRoute = null,
+                        NextStationRoute = null,
                     };
                 }
             }
@@ -391,7 +391,7 @@ namespace BL
             return new BO.LineStation
             {
                 Station = GetStationWithoutAdjacents(doLineStation.StationCode),
-                LastStationRoute = null,
+                NextStationRoute = null,
             };
         }
 

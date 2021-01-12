@@ -51,13 +51,7 @@ namespace PL
             }
         }
 
-        public IEnumerable<BO.BusTypes> BusTypes
-        {
-            get
-            {
-                return Enum.GetValues(typeof(BO.BusTypes)).Cast<BO.BusTypes>();
-            }
-        }
+        public IEnumerable<BO.BusTypes> BusTypes => Enum.GetValues(typeof(BO.BusTypes)).Cast<BO.BusTypes>();
 
         public RelayCommand Ok { get; }
         public RelayCommand Cancel { get; }

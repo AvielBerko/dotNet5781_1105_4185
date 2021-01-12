@@ -9,10 +9,10 @@ namespace BO
 	public class LineStation
 	{
 		public Station Station { get; set; }
-		public LastStationRoute? LastStationRoute { get; set; }
+		public NextStationRoute? NextStationRoute { get; set; }
 	}
 
-	public struct LastStationRoute
+	public struct NextStationRoute
     {
         public double Distance { get; set; }
         public TimeSpan DrivingTime { get; set; }

@@ -61,6 +61,9 @@
     <Compile Include="Dialogs\AddBusDialog.xaml.cs">
       <DependentUpon>AddBusDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\AddBusLineDialog.xaml.cs">
+      <DependentUpon>AddBusLineDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\StationDetailsDialog.xaml.cs">
       <DependentUpon>StationDetailsDialog.xaml</DependentUpon>
     </Compile>
@@ -75,12 +78,14 @@
       <DependentUpon>AdminPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="ViewModels\AdjacentStation\AddAdjacentViewModel.cs" />
+    <Compile Include="ViewModels\AdjacentStation\SelectStationsViewModel.cs" />
     <Compile Include="ViewModels\AdjacentStation\AdjacentStationViewModel.cs" />
     <Compile Include="ViewModels\AdjacentStation\SelectableStationsViewModel.cs" />
+    <Compile Include="ViewModels\BusLines\AddBusLineViewModel.cs" />
     <Compile Include="ViewModels\BusLines\BusLinesListViewModel.cs" />
     <Compile Include="ViewModels\BusLines\BusLineViewModel.cs" />
     <Compile Include="ViewModels\Bus\AddBusViewModel.cs" />
+    <Compile Include="ViewModels\LineStation\LineStationViewModel.cs" />
     <Compile Include="ViewModels\Station\StationDetailsViewModel.cs" />
     <Compile Include="ViewModels\Station\UpdateStationViewModel.cs" />
     <Compile Include="ViewModels\Station\AddStationViewModel.cs" />
@@ -98,6 +103,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\AddBusDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\AddBusLineDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

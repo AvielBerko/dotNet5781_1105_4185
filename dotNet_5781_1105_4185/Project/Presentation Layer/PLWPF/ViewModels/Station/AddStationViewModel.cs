@@ -87,8 +87,8 @@ namespace PL
         {
             var currentStations = (from ad in AdjacentStations select ad.Adjacent.ToStation).Append(station);
             var restStations = (IEnumerable<BO.Station>)BlWork(bl => bl.GetRestOfStations(currentStations));
-            var vm = new AddAdjacentViewModel(restStations);
-            if (DialogService.ShowAddAdjacentDialog(vm) == true)
+            var vm = new SelectStationsViewModel(restStations);
+            if (DialogService.ShowSelectStationsDialog(vm) == true)
             {
                 var addedAdjacents = from st in vm.SelectedStations select new BO.AdjacentStation { ToStation = st };
                 foreach (var ad in addedAdjacents)
