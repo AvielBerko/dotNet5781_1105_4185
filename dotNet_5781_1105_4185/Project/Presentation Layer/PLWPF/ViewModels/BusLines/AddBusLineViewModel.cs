@@ -25,9 +25,8 @@ namespace PL
             LineStations = new ObservableCollection<LineStationViewModel>();
             LineStations.CollectionChanged += (sender, e) =>
             {
-                if (e.NewItems.Count > 0)
+                if (LineStations.Count > 0)
                 {
-                    //var vms = e.NewItems.Cast<LineStationViewModel>();
                     foreach (var vm in LineStations)
                     {
                         vm.IsLast = false;
