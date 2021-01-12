@@ -81,7 +81,18 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <Button Grid.Row="1" Content="Add Route" Visibility="Visible" Command="{Binding AddRoute}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="17"/>
+        <Button Grid.Row="1" Content="Add Route" Command="{Binding AddRoute}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="17">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Visibility" Value="Hidden"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding LineStations.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
         <!--#endregion-->
 
         <!--#region Ok and Cancel-->
