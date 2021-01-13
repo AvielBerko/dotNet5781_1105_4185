@@ -31,7 +31,7 @@ namespace PL
 
         public RelayCommand Ok { get; }
         public RelayCommand Cancel { get; }
-        public RelayCommand AddRoute { get; }
+        public RelayCommand InsertStation { get; }
         public RelayCommand Reverse { get; }
 
         public AddUpdateBusLineViewModel(Guid? updateId = null)
@@ -52,7 +52,7 @@ namespace PL
 
             Ok = new RelayCommand(_Ok);
             Cancel = new RelayCommand(_Cancel);
-            AddRoute = new RelayCommand(obj => _AddRoute());
+            InsertStation = new RelayCommand(obj => _AddRoute());
             Reverse = new RelayCommand(obj => _Reverse(), obj => LineStations.Count > 0);
         }
 
@@ -73,7 +73,7 @@ namespace PL
                 if (after == null)
                 {
                     foreach (var st in addedStations)
-                        LineStations.Add(_CreateLineStationViewModel(st));
+                        LineStations.Insert(0, _CreateLineStationViewModel(st));
                 }
                 else
                 {

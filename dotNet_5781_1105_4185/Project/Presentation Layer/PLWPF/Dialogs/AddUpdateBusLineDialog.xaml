@@ -35,10 +35,14 @@
             <Grid Grid.Row="2" Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="80" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="1" Content="Reverse" Command="{Binding Reverse}"/>
+                <Button Grid.Column="2" Content="Insert Station" Command="{Binding InsertStation}"/>
+                <Button Grid.Column="4" Content="Reverse" Command="{Binding Reverse}"/>
             </Grid>
         </Grid>
         <!--#endregion-->
@@ -155,9 +159,9 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <Button Grid.Row="1" Content="Add Route" Command="{Binding AddRoute}" Padding="5" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="17">
-            <Button.Style>
-                <Style TargetType="Button">
+        <Label Grid.Row="1" Content="Route is empty" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="17">
+            <Label.Style>
+                <Style TargetType="Label">
                     <Setter Property="Visibility" Value="Hidden"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding LineStations.Count}" Value="0">
@@ -165,8 +169,8 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Button.Style>
-        </Button>
+            </Label.Style>
+        </Label>
         <!--#endregion-->
 
         <!--#region Ok and Cancel-->
