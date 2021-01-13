@@ -53,6 +53,7 @@ namespace BLAPI
         IEnumerable<BO.BusLine> GetLinesPassingTheStation(int code);
         BO.BusLine DuplicateBusLine(Guid ID);
         bool BusLineHasFullRoute(Guid ID);
+        void AddBusLine(BO.BusLine busLine);
         void DeleteAllBusLines();
         void DeleteBusLi‎ne(Guid ID);
 

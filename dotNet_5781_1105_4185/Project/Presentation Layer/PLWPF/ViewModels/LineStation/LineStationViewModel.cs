@@ -28,7 +28,6 @@ namespace PL
         public LineStationViewModel(BO.LineStation lineStation)
         {
             LineStation = lineStation;
-
             Remove = new RelayCommand(obj => OnRemove());
             InverseAdjacents = new RelayCommand(obj => _InverseAdjacents());
             Insert = new RelayCommand(obj => OnInsertStation());
@@ -36,6 +35,15 @@ namespace PL
 
         private void _InverseAdjacents()
         {
+            if (LineStation.NextStationRoute == null)
+			{
+                LineStation.NextStationRoute = new BO.NextStationRoute();
+            }
+            else
+			{
+                LineStation.NextStationRoute = null;
+            }
+            OnPropertyChanged(nameof(LineStation));
         }
 
         public delegate void MyEventHandler(LineStationViewModel sender);

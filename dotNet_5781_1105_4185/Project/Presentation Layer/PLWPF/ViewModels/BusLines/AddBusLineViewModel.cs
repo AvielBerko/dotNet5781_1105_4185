@@ -72,6 +72,8 @@ namespace PL
 
         private void _Ok(object window)
         {
+            BusLine.Route = from vm in LineStations select vm.LineStation;
+            BlWork(bl => bl.AddBusLine(BusLine));
             CloseDialog(window, true);
         }
 

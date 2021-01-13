@@ -361,33 +361,17 @@ namespace BL
         #endregion
 
         #region BusLine, LineStation
-        BO.LineStation LineStationDoToBo(DO.LineStation doLineStation, BO.LineStation lastStation = null)
+        BO.LineStation LineStationDoToBo(DO.LineStation doLineStation, BO.LineStation prevStation = null)
         {
-            if (lastStation != null)
+            if (prevStation != null)
             {
                 try
                 {
-                    var doAdjStations = dl.GetAdjacentStations(lastStation.Station.Code, doLineStation.StationCode);
-                    return new BO.LineStation
-                    {
-                        Station = GetStationWithoutAdjacents(doLineStation.StationCode),
-                        NextStationRoute = new BO.NextStationRoute
-                        {
-                            Distance = doAdjStations.Distance,
-                            DrivingTime = doAdjStations.DrivingTime,
-                        },
-                    };
+                    var doAdjStations = dl.GetAdjacentStations(prevStation.Station.Code, doLineStation.StationCode);
+                    prevStation.NextStationRoute = new BO.NextStationRoute() { Distance = doAdjStations.Distance, DrivingTime = doAdjStations.DrivingTime, };
                 }
-                catch (DO.BadAdjacentStationsCodeException)
-                {
-                    return new BO.LineStation
-                    {
-                        Station = GetStationWithoutAdjacents(doLineStation.StationCode),
-                        NextStationRoute = null,
-                    };
-                }
+                catch (DO.BadAdjacentStationsCodeException) { }
             }
-
             return new BO.LineStation
             {
                 Station = GetStationWithoutAdjacents(doLineStation.StationCode),
@@ -397,23 +381,23 @@ namespace BL
 
         private BO.BusLine BusLineDoToBoWithoutFullRoute(DO.BusLine doBusLine)
         {
-            var busLine = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
+            var result = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
             var startEnd = new List<BO.LineStation>();
 
             if (doBusLine.StartStationCode != null)
             {
-                var doStart = dl.GetLineStationByStation(busLine.ID, doBusLine.StartStationCode ?? 0);
+                var doStart = dl.GetLineStationByStation(result.ID, doBusLine.StartStationCode ?? 0);
                 startEnd.Add(LineStationDoToBo(doStart));
             }
             if (doBusLine.EndStationCode != null)
             {
-                var doEnd = dl.GetLineStationByStation(busLine.ID, doBusLine.EndStationCode ?? 0);
+                var doEnd = dl.GetLineStationByStation(result.ID, doBusLine.EndStationCode ?? 0);
                 startEnd.Add(LineStationDoToBo(doEnd));
             }
 
-            busLine.Route = startEnd;
+            result.Route = startEnd;
 
-            return busLine;
+            return result;
         }
 
         BO.BusLine BusLineDoToBo(DO.BusLine doBusLine)
@@ -430,12 +414,24 @@ namespace BL
                 }
                 else
                 {
+
                     route.Add(LineStationDoToBo(doLineStation, route[i - 1]));
                 }
             }
             busLine.Route = route;
 
             return busLine;
+        }
+
+        DO.BusLine BusLineBoToDo(BO.BusLine boBusLine)
+        {
+            var result = (DO.BusLine)boBusLine.CopyPropertiesToNew(typeof(DO.BusLine));
+            result.RouteLength = boBusLine.Route.Count();
+            result.HasFullRoute = !boBusLine.Route.Where(b => b != boBusLine.Route.Last()).Any(ls => ls.NextStationRoute == null);
+            result.StartStationCode = boBusLine.Route.First().Station.Code;
+            result.EndStationCode = boBusLine.Route.Last().Station.Code;
+            
+            return result;
         }
 
         public IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute()
@@ -497,6 +493,51 @@ namespace BL
                 throw new BO.BadBusLineIDException(ID, e.Message);
             }
         }
+
+        public void AddBusLine(BO.BusLine busLine)
+		{
+            busLine.Route.Last().NextStationRoute = null;
+            try
+            {
+                dl.AddBusLine(BusLineBoToDo(busLine));
+                int index = 0;
+                var query = from left in busLine.Route
+                            where left != busLine.Route.Last()
+                            from right in busLine.Route
+                            where right != busLine.Route.First()
+                            select new { Left = left, Right = right };
+
+                foreach (var ls in query)
+                {
+                    dl.AddLineStation(new DO.LineStation() { LineID = busLine.ID, RouteIndex = index++, StationCode = ls.Left.Station.Code, });
+                    if (ls.Left.NextStationRoute != null)
+                    {
+                        var adj = new DO.AdjacentStations() { Station1Code = ls.Left.Station.Code, Station2Code = ls.Right.Station.Code, Distance = ls.Left.NextStationRoute?.Distance ?? 0, DrivingTime = ls.Left.NextStationRoute?.DrivingTime ?? TimeSpan.Zero };
+                        try
+                        {
+                            dl.AddAdjacentStations(adj);
+                        }
+                        catch (DO.BadAdjacentStationsCodeException)
+                        {
+                            dl.UpdateAdjacentStations(adj);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            dl.DeleteAdjacentStations(ls.Left.Station.Code, ls.Right.Station.Code);
+                        }
+                        catch (DO.BadAdjacentStationsCodeException) { }
+                    }
+                    dl.AddLineStation(new DO.LineStation() { LineID = busLine.ID, RouteIndex = index++, StationCode = busLine.Route.Last().Station.Code, });
+                }
+            }
+            catch (DO.BadBusLineIDException e)
+            {
+                throw new BO.BadBusLineIDException(busLine.ID, e.Message);
+            }            
+		}
 
         public void DeleteBusLine(Guid ID)
         {

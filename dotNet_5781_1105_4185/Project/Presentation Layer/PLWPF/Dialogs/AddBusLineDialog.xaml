@@ -43,8 +43,24 @@
                             <RowDefinition />
                         </Grid.RowDefinitions>
 
-                        <Border BorderThickness="1" Height="50" BorderBrush="DarkGreen" Background="LightGreen">
-                            <DockPanel Margin="5" LastChildFill="True">
+                        <Border BorderThickness="1" Height="50">
+							<Border.Style>
+								<Style TargetType="Border">
+									<Setter Property="Background" Value="LightGreen"/>
+									<Setter Property="BorderBrush" Value="DarkGreen"/>
+									<Style.Triggers>
+										<MultiDataTrigger>
+											<MultiDataTrigger.Conditions>
+												<Condition Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}"/>
+												<Condition Binding="{Binding IsLast}" Value="False"/>
+											</MultiDataTrigger.Conditions>
+											<Setter Property="Background" Value="LightSalmon"/>
+											<Setter Property="BorderBrush" Value="Red"/>
+										</MultiDataTrigger>
+									</Style.Triggers>
+								</Style>
+							</Border.Style>
+							<DockPanel Margin="5" LastChildFill="True">
                                 <Button Content="X" Command="{Binding Remove}"/>
                                 <Label Content="Station's Code: " VerticalAlignment="Center"/>
                                 <TextBox IsReadOnly="True" MinWidth="50" IsReadOnlyCaretVisible="True" Text="{Binding LineStation.Station.Code}" VerticalAlignment="Center"/>
@@ -59,21 +75,47 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <!--#region Connected-->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
 
-                                <Label Grid.Column="0" Content="Distance:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding LineStation.NextStationRoute.Distance}" />
-                                <Label Grid.Column="2" Content="Time:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                <TextBox Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding LineStation.NextStationRoute.DrivingTime}" />
-                            </Grid>
-                            <!--#endregion-->
-                            <Button Grid.Column="1" Content="Connect" Margin="5" Command="{Binding InverseAdjacents}"/>
+								<Label Grid.Column="0" Content="Distance:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+								<TextBox Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding LineStation.NextStationRoute.Distance, StringFormat=n2}" />
+								<Label Grid.Column="2" Content="Time:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+								<TextBox Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding LineStation.NextStationRoute.DrivingTime}" />
+								<Grid.Style>
+									<Style TargetType="Grid">
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding IsLast}" Value="True">
+												<Setter Property="Visibility" Value="Hidden"/>
+											</DataTrigger>
+											<DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
+												<Setter Property="Visibility" Value="Hidden"/>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</Grid.Style>
+							</Grid>
+							<!--#endregion-->
+							<Button Grid.Column="1" Margin="5" Command="{Binding InverseAdjacents}">
+								<Button.Style>
+									<Style TargetType="Button">
+										<Setter Property="Content" Value="Disconnect"/>
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding IsLast}" Value="True">
+												<Setter Property="Visibility" Value="Hidden"/>
+											</DataTrigger>
+											<DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
+												<Setter Property="Content" Value="Connect"/>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</Button.Style>
+							</Button>
                             <Button Grid.Column="2" Content="Insert After" Margin="5" Command="{Binding Insert}" />
                         </Grid>
                     </Grid>
