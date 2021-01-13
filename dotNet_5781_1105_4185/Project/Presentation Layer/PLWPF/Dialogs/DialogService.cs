@@ -50,9 +50,9 @@ namespace PL
             return dialog.ShowDialog();
         }
 
-        public static bool? ShowAddBusLineDialog(AddBusLineViewModel addBusline)
+        public static bool? ShowAddBusLineDialog(AddUpdateBusLineViewModel addBusline)
         {
-            AddBusLineDialog dialog = new AddBusLineDialog(addBusline);
+            AddUpdateBusLineDialog dialog = new AddUpdateBusLineDialog(addBusline);
 
             return dialog.ShowDialog();
         }

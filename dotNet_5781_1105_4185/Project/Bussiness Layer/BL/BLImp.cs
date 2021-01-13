@@ -427,10 +427,13 @@ namespace BL
         {
             var result = (DO.BusLine)boBusLine.CopyPropertiesToNew(typeof(DO.BusLine));
             result.RouteLength = boBusLine.Route.Count();
-            result.HasFullRoute = !boBusLine.Route.Where(b => b != boBusLine.Route.Last()).Any(ls => ls.NextStationRoute == null);
-            result.StartStationCode = boBusLine.Route.First().Station.Code;
-            result.EndStationCode = boBusLine.Route.Last().Station.Code;
-            
+            if (boBusLine.Route.Count() > 0)
+            {
+                result.HasFullRoute = !boBusLine.Route.Where(b => b != boBusLine.Route.Last()).Any(ls => ls.NextStationRoute == null);
+                result.StartStationCode = boBusLine.Route.First().Station.Code;
+                result.EndStationCode = boBusLine.Route.Last().Station.Code;
+            }
+
             return result;
         }
 
@@ -451,6 +454,32 @@ namespace BL
             var busLinesIDs = (from st in dl.GetLineStationsBy(st => st.StationCode == code) select st.LineID).Distinct();
 
             return from busLine in dl.GetBusLinesBy(bl => bl.HasFullRoute && busLinesIDs.Any(id => bl.ID == id)) select BusLineDoToBoWithoutFullRoute(busLine);
+        }
+
+        public BO.BusLine GetBusLine(Guid ID)
+        {
+            try
+            {
+                var doBusLine = dl.GetBusLine(ID);
+                return BusLineDoToBo(doBusLine);
+            }
+            catch (DO.BadBusLineIDException e)
+            {
+                throw new BO.BadBusLineIDException(ID, e.Message);
+            }
+        }
+
+        public BO.BusLine GetBusLineWithoutRoute(Guid ID)
+        {
+            try
+            {
+                var doBusLine = dl.GetBusLine(ID);
+                return BusLineDoToBoWithoutFullRoute(doBusLine);
+            }
+            catch (DO.BadBusLineIDException e)
+            {
+                throw new BO.BadBusLineIDException(ID, e.Message);
+            }
         }
 
         public BO.BusLine DuplicateBusLine(Guid ID)
@@ -496,48 +525,57 @@ namespace BL
 
         public void AddBusLine(BO.BusLine busLine)
 		{
-            busLine.Route.Last().NextStationRoute = null;
             try
             {
                 dl.AddBusLine(BusLineBoToDo(busLine));
-                int index = 0;
-                var query = from left in busLine.Route
-                            where left != busLine.Route.Last()
-                            from right in busLine.Route
-                            where right != busLine.Route.First()
-                            select new { Left = left, Right = right };
-
-                foreach (var ls in query)
+                if (busLine.Route.Count() > 0)
                 {
-                    dl.AddLineStation(new DO.LineStation() { LineID = busLine.ID, RouteIndex = index++, StationCode = ls.Left.Station.Code, });
-                    if (ls.Left.NextStationRoute != null)
+                    int index = 0;
+                    busLine.Route.Last().NextStationRoute = null;
+                    var query = from left in busLine.Route
+                                where left != busLine.Route.Last()
+                                from right in busLine.Route
+                                where right != busLine.Route.First()
+                                select new { Left = left, Right = right };
+
+                    foreach (var ls in query)
                     {
-                        var adj = new DO.AdjacentStations() { Station1Code = ls.Left.Station.Code, Station2Code = ls.Right.Station.Code, Distance = ls.Left.NextStationRoute?.Distance ?? 0, DrivingTime = ls.Left.NextStationRoute?.DrivingTime ?? TimeSpan.Zero };
-                        try
+                        dl.AddLineStation(new DO.LineStation() { LineID = busLine.ID, RouteIndex = index++, StationCode = ls.Left.Station.Code, });
+                        if (ls.Left.NextStationRoute != null)
                         {
-                            dl.AddAdjacentStations(adj);
+                            var adj = new DO.AdjacentStations() { Station1Code = ls.Left.Station.Code, Station2Code = ls.Right.Station.Code, Distance = ls.Left.NextStationRoute?.Distance ?? 0, DrivingTime = ls.Left.NextStationRoute?.DrivingTime ?? TimeSpan.Zero };
+                            try
+                            {
+                                dl.AddAdjacentStations(adj);
+                            }
+                            catch (DO.BadAdjacentStationsCodeException)
+                            {
+                                dl.UpdateAdjacentStations(adj);
+                            }
                         }
-                        catch (DO.BadAdjacentStationsCodeException)
+                        else
                         {
-                            dl.UpdateAdjacentStations(adj);
+                            try
+                            {
+                                dl.DeleteAdjacentStations(ls.Left.Station.Code, ls.Right.Station.Code);
+                            }
+                            catch (DO.BadAdjacentStationsCodeException) { }
                         }
+                        dl.AddLineStation(new DO.LineStation() { LineID = busLine.ID, RouteIndex = index++, StationCode = busLine.Route.Last().Station.Code, });
                     }
-                    else
-                    {
-                        try
-                        {
-                            dl.DeleteAdjacentStations(ls.Left.Station.Code, ls.Right.Station.Code);
-                        }
-                        catch (DO.BadAdjacentStationsCodeException) { }
-                    }
-                    dl.AddLineStation(new DO.LineStation() { LineID = busLine.ID, RouteIndex = index++, StationCode = busLine.Route.Last().Station.Code, });
                 }
             }
             catch (DO.BadBusLineIDException e)
             {
                 throw new BO.BadBusLineIDException(busLine.ID, e.Message);
-            }            
+            }
 		}
+
+        public void UpdateBusLine(BO.BusLine busLine)
+        {
+            DeleteBusLine(busLine.ID);
+            AddBusLine(busLine);
+        }
 
         public void DeleteBusLine(Guid ID)
         {

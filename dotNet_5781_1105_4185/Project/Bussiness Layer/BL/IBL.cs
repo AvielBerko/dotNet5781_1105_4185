@@ -51,9 +51,12 @@ namespace BLAPI
         IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute();
         IEnumerable<BO.BusLine> GetAllBusLines();
         IEnumerable<BO.BusLine> GetLinesPassingTheStation(int code);
+        BO.BusLine GetBusLine(Guid ID);
+        BO.BusLine GetBusLineWithoutRoute(Guid ID);
         BO.BusLine DuplicateBusLine(Guid ID);
         bool BusLineHasFullRoute(Guid ID);
         void AddBusLine(BO.BusLine busLine);
+        void UpdateBusLine(BO.BusLine busLine);
         void DeleteAllBusLines();
         void DeleteBusLi‎ne(Guid ID);
 

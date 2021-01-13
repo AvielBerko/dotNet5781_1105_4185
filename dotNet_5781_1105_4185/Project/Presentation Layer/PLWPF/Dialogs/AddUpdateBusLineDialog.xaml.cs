@@ -17,9 +17,9 @@ namespace PL
     /// <summary>
     /// Interaction logic for AddBusLineDialog.xaml
     /// </summary>
-    public partial class AddBusLineDialog : Window
+    public partial class AddUpdateBusLineDialog : Window
     {
-        public AddBusLineDialog(AddBusLineViewModel vm)
+        public AddUpdateBusLineDialog(AddUpdateBusLineViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;

@@ -7,37 +7,59 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-    public class AddBusLineViewModel : BaseDialogViewModel
+    public class AddUpdateBusLineViewModel : BaseDialogViewModel
     {
-        public ObservableCollection<LineStationViewModel> LineStations { get; }
+        private ObservableCollection<LineStationViewModel> lineStations;
+        public ObservableCollection<LineStationViewModel> LineStations
+        {
+            get => lineStations;
+            private set
+            {
+                lineStations = value;
+                LineStations.CollectionChanged += (sender, e) => UpdateIsLast();
+                UpdateIsLast();
+                OnPropertyChanged(nameof(LineStations));
+            }
+        }
 
         public BO.BusLine BusLine { get; }
+
+        public string Title => (IsUpdate ? "Update" : "Add") + " Bus Line";
+        public bool IsUpdate { get; private set; }
 
         public IEnumerable<BO.Regions> Regions => Enum.GetValues(typeof(BO.Regions)).Cast<BO.Regions>();
 
         public RelayCommand Ok { get; }
         public RelayCommand Cancel { get; }
         public RelayCommand AddRoute { get; }
+        public RelayCommand Reverse { get; }
 
-        public AddBusLineViewModel()
+        public AddUpdateBusLineViewModel(Guid? updateId = null)
         {
-            BusLine = new BO.BusLine() { ID = Guid.NewGuid() };
-            LineStations = new ObservableCollection<LineStationViewModel>();
-            LineStations.CollectionChanged += (sender, e) =>
+            if (updateId == null)
             {
-                if (LineStations.Count > 0)
-                {
-                    foreach (var vm in LineStations)
-                    {
-                        vm.IsLast = false;
-                    }
-                    LineStations.Last().IsLast = true;
-                }
-            };
+                BusLine = new BO.BusLine() { ID = Guid.NewGuid() };
+                LineStations = new ObservableCollection<LineStationViewModel>();
+                IsUpdate = false;
+            }
+            else
+            {
+                BusLine = (BO.BusLine)BlWork(bl => bl.GetBusLine(updateId ?? Guid.Empty));
+                LineStations = new ObservableCollection<LineStationViewModel>
+                    (from ls in BusLine.Route select _CreateLineStationViewModel(ls));
+                IsUpdate = true;
+            }
 
             Ok = new RelayCommand(_Ok);
             Cancel = new RelayCommand(_Cancel);
             AddRoute = new RelayCommand(obj => _AddRoute());
+            Reverse = new RelayCommand(obj => _Reverse(), obj => LineStations.Count > 0);
+        }
+
+        private void _Reverse()
+        {
+            //TODO: Not working well...
+            LineStations = new ObservableCollection<LineStationViewModel>(LineStations.Reverse());
         }
 
         private void _AddRoute(LineStationViewModel after = null)
@@ -70,10 +92,29 @@ namespace PL
             return vm;
         }
 
+        private void UpdateIsLast()
+        {
+            if (LineStations.Count > 0)
+            {
+                foreach (var vm in LineStations)
+                {
+                    vm.IsLast = false;
+                }
+                LineStations.Last().IsLast = true;
+            }
+        }
+
         private void _Ok(object window)
         {
             BusLine.Route = from vm in LineStations select vm.LineStation;
-            BlWork(bl => bl.AddBusLine(BusLine));
+            if (IsUpdate)
+            {
+                BlWork(bl => bl.UpdateBusLine(BusLine));
+            }
+            else
+            {
+                BlWork(bl => bl.AddBusLine(BusLine));
+            }
             CloseDialog(window, true);
         }
 

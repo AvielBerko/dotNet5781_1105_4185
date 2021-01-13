@@ -3,6 +3,7 @@
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 	  xmlns:local="clr-namespace:PL"
 	  mc:Ignorable="d" 
 	  d:DesignHeight="350" d:DesignWidth="600"
@@ -59,6 +60,14 @@
         <!--#endregion-->
         <!--#region Line List-->
         <TabItem x:Name="LineListTab" Header="Lines Management" DataContext="{Binding BusLinesListViewModel}">
+            <TabItem.Resources>
+                <CollectionViewSource x:Key='collection' Source="{Binding BusLines}">
+                    <CollectionViewSource.SortDescriptions>
+                        <scm:SortDescription PropertyName="BusLine.LineNum" />
+                    </CollectionViewSource.SortDescriptions>
+                </CollectionViewSource>
+            </TabItem.Resources>
+
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -71,7 +80,7 @@
                     <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllBusLines}">Remove All Bus Lines</Button>
                 </StackPanel>
 
-                <ListView ItemsSource="{Binding BusLines}">
+                <ListView ItemsSource="{Binding Source={StaticResource collection}}">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Line" DisplayMemberBinding="{Binding BusLine.LineNum}" />
@@ -131,6 +140,14 @@
         <!--#endregion-->
         <!--#region Station List-->
         <TabItem Header="Station Management" DataContext="{Binding StationListViewModel}">
+            <TabItem.Resources>
+                <CollectionViewSource x:Key='collection' Source="{Binding Stations}">
+                    <CollectionViewSource.SortDescriptions>
+                        <scm:SortDescription PropertyName="Station.Code" />
+                    </CollectionViewSource.SortDescriptions>
+                </CollectionViewSource>
+            </TabItem.Resources>
+
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -143,7 +160,7 @@
                     <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllStations}">Remove All Stations</Button>
                 </StackPanel>
 
-                <ListView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}">
+                <ListView ItemsSource="{Binding Source={StaticResource collection}}">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Code" DisplayMemberBinding="{Binding Station.Code}" />

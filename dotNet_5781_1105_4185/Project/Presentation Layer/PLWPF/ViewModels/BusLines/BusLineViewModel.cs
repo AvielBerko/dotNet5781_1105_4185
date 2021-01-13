@@ -63,11 +63,11 @@ namespace PL
 
         private void _Update()
         {
-            //var updateVM = new UpdateStationViewModel { Station = station };
-            //if (DialogService.ShowUpdateStationDialog(updateVM) == true) 
-            //{
-            //    OnPropertyChanged(nameof(Station));
-            //}
+            var vm = new AddUpdateBusLineViewModel(BusLine.ID);
+            if (DialogService.ShowAddBusLineDialog(vm) == true)
+            {
+                OnUpdate();
+            }
         }
 
         private void _Duplicate()
@@ -82,13 +82,16 @@ namespace PL
             OnRemove();
         }
 
-        public delegate void DuplicateBusEventHandler(object sender, BO.BusLine duplicated);
-        public event DuplicateBusEventHandler Duplicate;
+        public delegate void DuplicateBusLineEventHandler(object sender, BO.BusLine duplicated);
+        public event DuplicateBusLineEventHandler Duplicate;
         protected virtual void OnDupliate(BO.BusLine duplicated) => Duplicate?.Invoke(this, duplicated);
 
-        public delegate void RemoveBusEventHandler(object sender);
-        public event RemoveBusEventHandler Remove;
+        public delegate void RemoveBusLineEventHandler(object sender);
+        public event RemoveBusLineEventHandler Remove;
         protected virtual void OnRemove() => Remove?.Invoke(this);
 
+        public delegate void UpdateBusLineEventHandler(object sender);
+        public event UpdateBusLineEventHandler Update;
+        protected virtual void OnUpdate() => Update?.Invoke(this);
     }
 }

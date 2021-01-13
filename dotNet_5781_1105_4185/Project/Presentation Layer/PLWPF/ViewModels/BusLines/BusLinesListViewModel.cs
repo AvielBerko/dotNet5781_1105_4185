@@ -50,12 +50,13 @@ namespace PL
             var vm = new BusLineViewModel(busLine);
             vm.Remove += (sender) => BusLines.Remove((BusLineViewModel)sender);
             vm.Duplicate += (sender, duplicated) => BusLines.Add(CreateBusLineViewModel(duplicated));
+            vm.Update += (sender) => Refresh.Execute(null);
             return vm;
         }
 
         private void _AddBusLine()
         {
-            var vm = new AddBusLineViewModel();
+            var vm = new AddUpdateBusLineViewModel();
             if (DialogService.ShowAddBusLineDialog(vm) == true)
                 BusLines.Add(CreateBusLineViewModel(vm.BusLine));
         }

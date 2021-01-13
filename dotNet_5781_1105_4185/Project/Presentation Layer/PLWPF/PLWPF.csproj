@@ -61,8 +61,8 @@
     <Compile Include="Dialogs\AddBusDialog.xaml.cs">
       <DependentUpon>AddBusDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\AddBusLineDialog.xaml.cs">
-      <DependentUpon>AddBusLineDialog.xaml</DependentUpon>
+    <Compile Include="Dialogs\AddUpdateBusLineDialog.xaml.cs">
+      <DependentUpon>AddUpdateBusLineDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\StationDetailsDialog.xaml.cs">
       <DependentUpon>StationDetailsDialog.xaml</DependentUpon>
@@ -81,7 +81,7 @@
     <Compile Include="ViewModels\AdjacentStation\SelectStationsViewModel.cs" />
     <Compile Include="ViewModels\AdjacentStation\AdjacentStationViewModel.cs" />
     <Compile Include="ViewModels\AdjacentStation\SelectableStationsViewModel.cs" />
-    <Compile Include="ViewModels\BusLines\AddBusLineViewModel.cs" />
+    <Compile Include="ViewModels\BusLines\AddUpdateBusLineViewModel.cs" />
     <Compile Include="ViewModels\BusLines\BusLinesListViewModel.cs" />
     <Compile Include="ViewModels\BusLines\BusLineViewModel.cs" />
     <Compile Include="ViewModels\Bus\AddBusViewModel.cs" />
@@ -106,7 +106,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\AddBusLineDialog.xaml">
+    <Page Include="Dialogs\AddUpdateBusLineDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -184,6 +184,15 @@
   <ItemGroup>
     <Resource Include="Images\info_48px.png" />
     <Resource Include="Images\synchronize_48px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\cancel_48px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\bus_stop_48px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\arrow_down_48px.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
