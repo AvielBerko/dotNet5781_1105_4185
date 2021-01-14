@@ -20,9 +20,9 @@ namespace DLAPI
         DO.Station GetStation(int code);
         void AddStation(DO.Station station);
         void UpdateStation(DO.Station station);
-        void UpdateStation(int code, Action<DO.Station> update);
         void DeleteStation(int code);
         void DeleteAllStations();
+        void DeleteStationsBy(Predicate<DO.Station> predicate);
         #endregion
 
         #region Bus
@@ -31,10 +31,9 @@ namespace DLAPI
         DO.Bus GetBus(int regNum);
         void AddBus(DO.Bus bus);
         void UpdateBus(DO.Bus bus);
-        //void UpdateBus(int regNum, Action<DO.Bus> update);
         void DeleteBus(int regNum);
         void DeleteAllBuses();
-
+        void DeleteBusesBy(Predicate<DO.Bus> predicate);
         #endregion
 
         #region BusLine
@@ -45,11 +44,11 @@ namespace DLAPI
         void UpdateBusLine(DO.BusLine busLine);
         void DeleteBusLine(Guid ID);
         void DeleteAllBusLines();
+        void DeleteBusLinesBy(Predicate<DO.BusLine> predicate);
         #endregion
 
         #region LineStation
-        IEnumerable<DO.LineStation> GetAllLineStations(Guid lineID);
-        IEnumerable<DO.LineStation> GetLineStationsBy(Guid lineID, Predicate<DO.LineStation> predicate);
+        IEnumerable<DO.LineStation> GetAllLineStations();
         IEnumerable<DO.LineStation> GetLineStationsBy(Predicate<DO.LineStation> predicate);
         DO.LineStation GetLineStationByStation(Guid lineID, int stationCode);
         DO.LineStation GetLineStationByIndex(Guid lineID, int index);
@@ -57,10 +56,9 @@ namespace DLAPI
         void UpdateLineStationByStation(DO.LineStation lineStation);
         void UpdateLineStationByIndex(DO.LineStation lineStation);
         void DeleteLineStationByStation(Guid lineID, int stationCode);
-        void DeleteLineStationByStation(int stationCode);
         void DeleteLineStationByIndex(Guid lineID, int index);
-        void DeleteAllLineStations(Guid lineID);
         void DeleteLineStationsBy(Predicate<DO.LineStation> predicate);
+        void DeleteAllLineStations();
         #endregion
 
         #region AdjacentStations
@@ -70,8 +68,8 @@ namespace DLAPI
         void AddAdjacentStations(DO.AdjacentStations adjacentStations);
         void UpdateAdjacentStations(DO.AdjacentStations adjacentStations);
         void DeleteAdjacentStations(int stationCode1, int stationCode2);
-        void DeleteStationAdjacents(int code);
         void DeleteAllAdjacentStations();
+        void DeleteAdjacentStationsBy(Predicate<DO.AdjacentStations> predicate);
         #endregion
     }
 }

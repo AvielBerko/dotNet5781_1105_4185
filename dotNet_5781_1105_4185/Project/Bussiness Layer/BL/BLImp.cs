@@ -168,8 +168,10 @@ namespace BL
                     dl.UpdateBusLine(line);
                 }
 
-                dl.DeleteStationAdjacents(station.Code);
-                dl.DeleteLineStationByStation(station.Code);
+                dl.DeleteAdjacentStationsBy(a =>
+                    a.Station1Code == station.Code ||
+                    a.Station2Code == station.Code);
+                dl.DeleteLineStationsBy(ls => ls.StationCode == station.Code);
                 dl.DeleteStation(station.Code);
             }
             catch (DO.BadStationCodeException e)
@@ -190,7 +192,7 @@ namespace BL
             }
 
             dl.DeleteAllAdjacentStations();
-            dl.DeleteLineStationsBy(ls => true);
+            dl.DeleteAllLineStations();
             dl.DeleteAllStations();
         }
 
@@ -240,9 +242,15 @@ namespace BL
         {
             try
             {
-                dl.DeleteStationAdjacents(station.Code);
+                dl.DeleteAdjacentStationsBy(a =>
+                    a.Station1Code == station.Code ||
+                    a.Station2Code == station.Code);
+
                 foreach (var ad in station.AdjacentStations)
+                {
                     dl.AddAdjacentStations(AdjacentBoToDo(ad, station.Code));
+                }
+
                 dl.UpdateStation(StationBoToDo(station));
             }
             catch (DO.BadStationCodeException e)
@@ -490,7 +498,7 @@ namespace BL
                 busLine.ID = Guid.NewGuid();
                 dl.AddBusLine(busLine);
 
-                var lineStations = from st in dl.GetAllLineStations(ID)
+                var lineStations = from st in dl.GetLineStationsBy(ls => ls.LineID == ID)
                                    select new DO.LineStation
                                    {
                                        LineID = busLine.ID,
@@ -524,7 +532,7 @@ namespace BL
         }
 
         public void AddBusLine(BO.BusLine busLine)
-		{
+        {
             try
             {
                 dl.AddBusLine(BusLineBoToDo(busLine));
@@ -532,15 +540,23 @@ namespace BL
                 {
                     int index = 0;
                     busLine.Route.Last().NextStationRoute = null;
-                    var query = from left in busLine.Route
-                                where left != busLine.Route.Last()
+                    var query = (from left in busLine.Route
+                                 where left != busLine.Route.Last()
+                                 select left).Zip(
                                 from right in busLine.Route
                                 where right != busLine.Route.First()
-                                select new { Left = left, Right = right };
+                                select right,
+                                (left, right) => new { Left = left, Right = right });
 
                     foreach (var ls in query)
                     {
-                        dl.AddLineStation(new DO.LineStation() { LineID = busLine.ID, RouteIndex = index++, StationCode = ls.Left.Station.Code, });
+                        dl.AddLineStation(new DO.LineStation()
+                        {
+                            LineID = busLine.ID,
+                            RouteIndex = index++,
+                            StationCode = ls.Left.Station.Code,
+                        });
+
                         if (ls.Left.NextStationRoute != null)
                         {
                             var adj = new DO.AdjacentStations() { Station1Code = ls.Left.Station.Code, Station2Code = ls.Right.Station.Code, Distance = ls.Left.NextStationRoute?.Distance ?? 0, DrivingTime = ls.Left.NextStationRoute?.DrivingTime ?? TimeSpan.Zero };
@@ -561,15 +577,21 @@ namespace BL
                             }
                             catch (DO.BadAdjacentStationsCodeException) { }
                         }
-                        dl.AddLineStation(new DO.LineStation() { LineID = busLine.ID, RouteIndex = index++, StationCode = busLine.Route.Last().Station.Code, });
                     }
+
+                    dl.AddLineStation(new DO.LineStation()
+                        {
+                            LineID = busLine.ID,
+                            RouteIndex = index++,
+                            StationCode = busLine.Route.Last().Station.Code,
+                        });
                 }
             }
             catch (DO.BadBusLineIDException e)
             {
                 throw new BO.BadBusLineIDException(busLine.ID, e.Message);
             }
-		}
+        }
 
         public void UpdateBusLine(BO.BusLine busLine)
         {
@@ -581,7 +603,7 @@ namespace BL
         {
             try
             {
-                dl.DeleteAllLineStations(ID);
+                dl.DeleteLineStationsBy(ls => ls.LineID == ID);
                 dl.DeleteBusLine(ID);
             }
             catch (DO.BadBusLineIDException e)
@@ -592,7 +614,7 @@ namespace BL
 
         public void DeleteAllBusLines()
         {
-            dl.DeleteLineStationsBy(st => true);
+            dl.DeleteAllLineStations();
             dl.DeleteAllBusLines();
         }
         #endregion
