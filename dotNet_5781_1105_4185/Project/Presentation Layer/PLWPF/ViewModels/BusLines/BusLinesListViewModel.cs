@@ -57,7 +57,7 @@ namespace PL
         private void _AddBusLine()
         {
             var vm = new AddUpdateBusLineViewModel();
-            if (DialogService.ShowAddBusLineDialog(vm) == true)
+            if (DialogService.ShowAddUpdateBusLineDialog(vm) == true)
                 BusLines.Add(CreateBusLineViewModel(vm.BusLine));
         }
 

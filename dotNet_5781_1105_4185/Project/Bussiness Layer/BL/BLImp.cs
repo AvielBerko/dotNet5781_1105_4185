@@ -145,7 +145,8 @@ namespace BL
             ValidateStationCode(station.Code);
             ValidateStationName(station.Name);
             ValidateStationAddress(station.Address);
-            ValidateStationLocation(station.Location);
+            ValidateStationLatitude(station.Location);
+            ValidateStationLongitude(station.Location);
 
             dl.AddStation(StationBoToDo(station));
             foreach (var ad in station.AdjacentStations)
@@ -285,12 +286,15 @@ namespace BL
             if (string.IsNullOrEmpty(address))
                 throw new BO.BadStationAddressException(address, "address cannot be empty");
         }
-        public void ValidateStationLocation(BO.Location location)
+        public void ValidateStationLatitude(BO.Location location)
         {
             if (location.Latitude < -90 || location.Latitude > 90)
-                throw new BO.BadStationLocationException(location, "Latitude should be between -90 and 90");
+                throw new BO.BadLocationLatitudeException(location, "Latitude should be between -90 and 90");
+        }
+        public void ValidateStationLongitude(BO.Location location)
+        {
             if (location.Longitude < -180 || location.Longitude > 180)
-                throw new BO.BadStationLocationException(location, "Longitude should be between - 180 and 180");
+                throw new BO.BadLocationLongitudeException(location, "Longitude should be between - 180 and 180");
         }
         #endregion
 
@@ -580,11 +584,11 @@ namespace BL
                     }
 
                     dl.AddLineStation(new DO.LineStation()
-                        {
-                            LineID = busLine.ID,
-                            RouteIndex = index++,
-                            StationCode = busLine.Route.Last().Station.Code,
-                        });
+                    {
+                        LineID = busLine.ID,
+                        RouteIndex = index++,
+                        StationCode = busLine.Route.Last().Station.Code,
+                    });
                 }
             }
             catch (DO.BadBusLineIDException e)
@@ -617,6 +621,32 @@ namespace BL
             dl.DeleteAllLineStations();
             dl.DeleteAllBusLines();
         }
+
+        public IEnumerable<BO.LineStation> ReverseLineStations(IEnumerable<BO.LineStation> stations)
+        {
+            var reversed = stations.Reverse();
+            var query = (from left in reversed
+                         where left != reversed.Last()
+                         select left).Zip(
+                                from right in reversed
+                                where right != reversed.First()
+                                select right,
+                                (left, right) => new { Left = left, Right = right });
+            foreach (var st in query) 
+            {
+                try
+                {
+                    var doAdjStations = dl.GetAdjacentStations(st.Left.Station.Code, st.Right.Station.Code);
+                    st.Left.NextStationRoute = new BO.NextStationRoute() { Distance = doAdjStations.Distance, DrivingTime = doAdjStations.DrivingTime, };
+                }
+                catch (DO.BadAdjacentStationsCodeException) 
+                {
+                    st.Left.NextStationRoute = null;
+                }
+            }
+            reversed.Last().NextStationRoute = null;
+            return reversed;
+        } 
         #endregion
     }
 }

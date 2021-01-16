@@ -155,6 +155,31 @@ namespace BO
             Location = location;
         }
     }
+    public class BadLocationLatitudeException : BadStationLocationException
+    {
+        public BadLocationLatitudeException(BO.Location location) : base(location)
+        {
+        }
+        public BadLocationLatitudeException(BO.Location location, string message) : base(location, message) 
+        {
+        }
+        public BadLocationLatitudeException(BO.Location location, string message, Exception innerException) : base(location, message, innerException)
+        {
+        }
+    }
+    public class BadLocationLongitudeException : BadStationLocationException
+    {
+        public BadLocationLongitudeException(BO.Location location) : base(location)
+        {
+        }
+        public BadLocationLongitudeException(BO.Location location, string message) : base(location, message)
+        {
+        }
+        public BadLocationLongitudeException(BO.Location location, string message, Exception innerException) : base(location, message, innerException)
+        {
+        }
+    }
+
     #endregion
 
     #region BusLine

@@ -17,12 +17,12 @@ namespace PL
 	/// <summary>
 	/// Interaction logic for AddStationDialog.xaml
 	/// </summary>
-	public partial class UpdateStationDialog : Window
+	public partial class AddUpdateStationDialog : Window
 	{
-		public UpdateStationDialog(UpdateStationViewModel updateStation)
+		public AddUpdateStationDialog(AddUpdateStationViewModel addStation)
 		{
 			InitializeComponent();
-			DataContext = updateStation;
+			DataContext = addStation;
 		}
 	}
 }

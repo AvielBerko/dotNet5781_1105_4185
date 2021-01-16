@@ -55,8 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Dialogs\AddAdjacentDialog.xaml.cs">
-      <DependentUpon>AddAdjacentDialog.xaml</DependentUpon>
+    <Compile Include="Dialogs\SelectStationsDialog.xaml.cs">
+      <DependentUpon>SelectStationsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\AddBusDialog.xaml.cs">
       <DependentUpon>AddBusDialog.xaml</DependentUpon>
@@ -67,11 +67,8 @@
     <Compile Include="Dialogs\StationDetailsDialog.xaml.cs">
       <DependentUpon>StationDetailsDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\UpdateStationDialog.xaml.cs">
-      <DependentUpon>UpdateStationDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\AddStationDialog.xaml.cs">
-      <DependentUpon>AddStationDialog.xaml</DependentUpon>
+    <Compile Include="Dialogs\AddUpdateStationDialog.xaml.cs">
+      <DependentUpon>AddUpdateStationDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\DialogService.cs" />
     <Compile Include="Pages\AdminPage.xaml.cs">
@@ -87,8 +84,7 @@
     <Compile Include="ViewModels\Bus\AddBusViewModel.cs" />
     <Compile Include="ViewModels\LineStation\LineStationViewModel.cs" />
     <Compile Include="ViewModels\Station\StationDetailsViewModel.cs" />
-    <Compile Include="ViewModels\Station\UpdateStationViewModel.cs" />
-    <Compile Include="ViewModels\Station\AddStationViewModel.cs" />
+    <Compile Include="ViewModels\Station\AddUpdateStationViewModel.cs" />
     <Compile Include="ViewModels\BaseDialogViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\Bus\BusListViewModel.cs" />
@@ -98,7 +94,7 @@
     <Compile Include="ViewModels\User\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Station\StationListViewModel.cs" />
     <Compile Include="ViewModels\Station\StationViewModel.cs" />
-    <Page Include="Dialogs\AddAdjacentDialog.xaml">
+    <Page Include="Dialogs\SelectStationsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -114,11 +110,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\UpdateStationDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Dialogs\AddStationDialog.xaml">
+    <Page Include="Dialogs\AddUpdateStationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

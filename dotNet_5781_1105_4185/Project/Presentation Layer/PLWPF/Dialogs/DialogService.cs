@@ -22,16 +22,9 @@ namespace PL
             return dialog.ShowDialog();
         }
 
-        public static bool? ShowAddStationDialog(AddStationViewModel addStation)
+        public static bool? ShowAddUpdateStationDialog(AddUpdateStationViewModel addStation)
         {
-            AddStationDialog dialog = new AddStationDialog(addStation);
-
-            return dialog.ShowDialog();
-        }
-
-        public static bool? ShowUpdateStationDialog(UpdateStationViewModel updateStation)
-        {
-            UpdateStationDialog dialog = new UpdateStationDialog(updateStation);
+            AddUpdateStationDialog dialog = new AddUpdateStationDialog(addStation);
 
             return dialog.ShowDialog();
         }
@@ -50,7 +43,7 @@ namespace PL
             return dialog.ShowDialog();
         }
 
-        public static bool? ShowAddBusLineDialog(AddUpdateBusLineViewModel addBusline)
+        public static bool? ShowAddUpdateBusLineDialog(AddUpdateBusLineViewModel addBusline)
         {
             AddUpdateBusLineDialog dialog = new AddUpdateBusLineDialog(addBusline);
 

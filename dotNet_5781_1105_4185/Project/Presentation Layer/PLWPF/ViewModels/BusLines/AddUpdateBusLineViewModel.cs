@@ -58,8 +58,8 @@ namespace PL
 
         private void _Reverse()
         {
-            //TODO: Not working well...
-            LineStations = new ObservableCollection<LineStationViewModel>(LineStations.Reverse());
+            var reversedStations = (IEnumerable<BO.LineStation>)BlWork(bl => bl.ReverseLineStations(from vm in LineStations select vm.LineStation));
+            LineStations = new ObservableCollection<LineStationViewModel>(from reversed in reversedStations select _CreateLineStationViewModel(reversed));
         }
 
         private void _AddRoute(LineStationViewModel after = null)
@@ -72,8 +72,9 @@ namespace PL
                 var addedStations = from st in vm.SelectedStations select new BO.LineStation { Station = st };
                 if (after == null)
                 {
+                    int i = 0;
                     foreach (var st in addedStations)
-                        LineStations.Insert(0, _CreateLineStationViewModel(st));
+                        LineStations.Insert(i++, _CreateLineStationViewModel(st));
                 }
                 else
                 {
@@ -84,7 +85,7 @@ namespace PL
             }
         }
 
-        private LineStationViewModel _CreateLineStationViewModel(BO.LineStation lineStation)
+        private LineStationViewModel _CreateLineStationViewModel(BO.LineStation lineStation, BO.LineStation nextStation = null)
         {
             var vm = new LineStationViewModel(lineStation);
             vm.InsertStation += (sender) => _AddRoute(sender);

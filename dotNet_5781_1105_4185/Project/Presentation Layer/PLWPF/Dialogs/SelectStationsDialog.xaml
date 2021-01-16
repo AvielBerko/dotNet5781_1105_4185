@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Title="AddAdjacentDialog" Height="300" Width="300"
+        Title="SelectStationsDialog" Height="300" Width="300"
 		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Grid>
 		<Grid.RowDefinitions>

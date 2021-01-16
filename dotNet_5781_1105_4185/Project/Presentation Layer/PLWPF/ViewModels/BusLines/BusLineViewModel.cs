@@ -64,7 +64,7 @@ namespace PL
         private void _Update()
         {
             var vm = new AddUpdateBusLineViewModel(BusLine.ID);
-            if (DialogService.ShowAddBusLineDialog(vm) == true)
+            if (DialogService.ShowAddUpdateBusLineDialog(vm) == true)
             {
                 OnUpdate();
             }
