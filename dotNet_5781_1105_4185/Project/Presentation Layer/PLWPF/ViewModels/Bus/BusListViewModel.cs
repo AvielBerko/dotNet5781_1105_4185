@@ -41,9 +41,11 @@ namespace PL
 
         private void _RemoveAllBuses()
         {
-            // Are You Sure ? 
-            BlWork(bl => bl.DeleteAllBuses());
-            Buses.Clear();
+            if (DialogService.ShowYesNoDialog("Are you sure you want to removea all buses?", "Remove all buses") == DialogResult.Yes)
+            {
+                BlWork(bl => bl.DeleteAllBuses());
+                Buses.Clear();
+            }
         }
     }
 }

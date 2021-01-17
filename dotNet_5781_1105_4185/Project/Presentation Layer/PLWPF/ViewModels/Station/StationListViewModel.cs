@@ -40,9 +40,11 @@ namespace PL
 
         private void _RemoveAllStations()
         {
-            // Are You Sure ? 
-            BlWork(bl => bl.DeleteAllStations());
-            Stations.Clear();
+            if (DialogService.ShowYesNoDialog("Are you sure you want to removea all stations?", "Remove all stations") == DialogResult.Yes)
+            {
+                BlWork(bl => bl.DeleteAllStations());
+                Stations.Clear();
+            }
         }
     }
 }

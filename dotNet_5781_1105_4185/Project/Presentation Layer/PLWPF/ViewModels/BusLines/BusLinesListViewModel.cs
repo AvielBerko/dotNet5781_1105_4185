@@ -20,18 +20,13 @@ namespace PL
             }
         }
 
-        //public AddBusLineViewModel AddBusLineViewModel { get; }
         public RelayCommand AddBusLine { get; }
         public RelayCommand RemoveAllBusLines { get; }
         public RelayCommand Refresh { get; }
 
         public BusLinesListViewModel()
         {
-            //AddBusLineViewModel = new AddBusLineViewModel();
-
             UpdateList();
-
-            //AddBusLineViewModel.AddedBusLine += (sender, busLine) => BusLines.Add(CreateBusLineViewModel(busLine));
 
             AddBusLine = new RelayCommand(obj => _AddBusLine());
             RemoveAllBusLines = new RelayCommand(obj => _RemoveAllBusLines(), obj => BusLines.Count > 0);
@@ -66,9 +61,11 @@ namespace PL
 
         private void _RemoveAllBusLines()
         {
-            // Are You Sure ? 
-            BlWork(bl => bl.DeleteAllBusLines());
-            BusLines.Clear();
+            if (DialogService.ShowYesNoDialog("Are you sure you want to removea all bus lines?", "Remove all bus lines") == DialogResult.Yes)
+            {
+                BlWork(bl => bl.DeleteAllBusLines());
+                BusLines.Clear();
+            }
         }
     }
 }
