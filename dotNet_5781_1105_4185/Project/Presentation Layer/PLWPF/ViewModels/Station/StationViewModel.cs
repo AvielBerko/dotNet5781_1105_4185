@@ -27,7 +27,7 @@ namespace PL
             Station = station;
 
             StationDetails = new RelayCommand(obj => _Details());
-            RemoveStation = new RelayCommand(obj => { BlWork(bl => bl.DeleteStation(Station)); OnRemove(); });
+            RemoveStation = new RelayCommand(obj => { BlWork(bl => bl.DeleteStation(Station.Code)); OnRemove(); });
             UpdateStation = new RelayCommand(obj => _Update());
         }
         private void _Update()

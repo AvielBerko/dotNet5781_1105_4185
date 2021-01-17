@@ -28,8 +28,7 @@ namespace BLAPI
         BO.Station GetStation(int code);
         void AddStation(BO.Station station);
         void UpdateStation(BO.Station station);
-        void UpdateStation(int code, Action<BO.Station> update);
-        void DeleteStation(BO.Station station);
+        void DeleteStation(int code);
         void DeleteAllStations();
         void ValidateStationCode(int code);
         void ValidateStationName(string name);
@@ -49,10 +48,11 @@ namespace BLAPI
         void RefuelBus(BO.Bus bus);
         #endregion
 
-        #region BusLine
+        #region BusLine, LineStations
         IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute();
         IEnumerable<BO.BusLine> GetAllBusLines();
         IEnumerable<BO.BusLine> GetLinesPassingTheStation(int code);
+        IEnumerable<BO.LineStation> ReverseLineStations(IEnumerable<BO.LineStation> stations);
         BO.BusLine GetBusLine(Guid ID);
         BO.BusLine GetBusLineWithoutRoute(Guid ID);
         BO.BusLine DuplicateBusLine(Guid ID);
@@ -61,9 +61,10 @@ namespace BLAPI
         void UpdateBusLine(BO.BusLine busLine);
         void DeleteAllBusLines();
         void DeleteBusLi‎ne(Guid ID);
-        IEnumerable<BO.LineStation> ReverseLineStations(IEnumerable<BO.LineStation> stations);
-
-        //IEnumerable<BO.BusLine> GetBusLinesPassingIn(BO.AdjacentStation)
+        void UpdateBusLineFullRoute(Guid ID);
+        void UpdateAllBusLinesFullRoute();
+        void DeleteLineStationByStation(Guid lineID, int stationCode);
+        void DeleteLineStationByIndex(Guid lineID, int index);
         #endregion
     }
 }

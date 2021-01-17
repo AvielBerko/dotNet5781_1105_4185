@@ -58,7 +58,10 @@ namespace PL
         {
             var vm = new AddUpdateBusLineViewModel();
             if (DialogService.ShowAddUpdateBusLineDialog(vm) == true)
+            {
                 BusLines.Add(CreateBusLineViewModel(vm.BusLine));
+                Refresh.Execute(null);
+            }
         }
 
         private void _RemoveAllBusLines()
