@@ -307,7 +307,10 @@ namespace DL
 
         public void UpdateLineStationByStation(LineStation lineStation)
         {
-            var exists = GetLineStationByStation(lineStation.LineID, lineStation.StationCode);
+            var exists = DataSet.LineStations.Find(ls => lineStation.LineID == ls.LineID && lineStation.StationCode == ls.StationCode);
+
+            if (exists == null)
+                throw new BadLineStationStationCodeException(lineStation.LineID, lineStation.StationCode);
 
             DataSet.LineStations.Remove(exists);
             DataSet.LineStations.Add(lineStation.Clone());
@@ -315,7 +318,10 @@ namespace DL
 
         public void UpdateLineStationByIndex(LineStation lineStation)
         {
-            var exists = GetLineStationByIndex(lineStation.LineID, lineStation.RouteIndex);
+            var exists = DataSet.LineStations.Find(ls => lineStation.LineID == ls.LineID && lineStation.RouteIndex == ls.RouteIndex);
+
+            if (exists == null)
+                throw new BadLineStationIndexException(lineStation.LineID, lineStation.RouteIndex);
 
             DataSet.LineStations.Remove(exists);
             DataSet.LineStations.Add(lineStation.Clone());

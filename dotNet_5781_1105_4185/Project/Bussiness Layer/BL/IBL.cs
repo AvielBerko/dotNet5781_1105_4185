@@ -16,7 +16,6 @@ namespace BLAPI
         #endregion
 
         #region AdjacentStation
-        void DeleteAdjacent(BO.AdjacentStation adjacents, int fromStationCode);
         #endregion
 
         #region Station
@@ -35,7 +34,6 @@ namespace BLAPI
         void ValidateStationAddress(string address);
         void ValidateStationLatitude(BO.Location location);
         void ValidateStationLongitude(BO.Location location);
-
         #endregion
 
         #region Bus
@@ -52,6 +50,8 @@ namespace BLAPI
         IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute();
         IEnumerable<BO.BusLine> GetAllBusLines();
         IEnumerable<BO.BusLine> GetLinesPassingTheStation(int code);
+        IEnumerable<BO.BusLine> GetLinesAffectedByDisconnectingStations(int fromStationCode, int toStationCode);
+        IEnumerable<BO.BusLine> GetLinesAffectedByConnectingStations(int fromStationCode, int toStationCode);
         IEnumerable<BO.LineStation> ReverseLineStations(IEnumerable<BO.LineStation> stations);
         BO.BusLine GetBusLine(Guid ID);
         BO.BusLine GetBusLineWithoutRoute(Guid ID);
@@ -61,10 +61,6 @@ namespace BLAPI
         void UpdateBusLine(BO.BusLine busLine);
         void DeleteAllBusLines();
         void DeleteBusLi‎ne(Guid ID);
-        void UpdateBusLineFullRoute(Guid ID);
-        void UpdateAllBusLinesFullRoute();
-        void DeleteLineStationByStation(Guid lineID, int stationCode);
-        void DeleteLineStationByIndex(Guid lineID, int index);
         #endregion
     }
 }

@@ -147,7 +147,9 @@ namespace BL
 
             dl.AddStation(StationBoToDo(station));
             foreach (var ad in station.AdjacentStations)
+            {
                 dl.AddAdjacentStations(AdjacentBoToDo(ad, station.Code));
+            }
         }
 
         public void DeleteStation(int code)
@@ -159,9 +161,11 @@ namespace BL
                 foreach (var line in lines)
                 {
                     line.HasFullRoute = false;
+
+                    // Start station and end station could be the same.
                     if (line.StartStationCode == code)
                         line.StartStationCode = null;
-                    else
+                    if (line.EndStationCode == code)
                         line.EndStationCode = null;
                     dl.UpdateBusLine(line);
                 }
@@ -169,8 +173,10 @@ namespace BL
                 dl.DeleteAdjacentStationsBy(a =>
                     a.Station1Code == code ||
                     a.Station2Code == code);
-                dl.DeleteLineStationsBy(ls => ls.StationCode == code);
+                DeleteLineStationsBy(ls => ls.StationCode == code);
                 dl.DeleteStation(code);
+
+                UpdateAllBusLinesFullRoute();
             }
             catch (DO.BadStationCodeException e)
             {
@@ -259,6 +265,8 @@ namespace BL
                 }
 
                 dl.UpdateStation(StationBoToDo(station));
+
+                UpdateAllBusLinesFullRoute();
             }
             catch (DO.BadStationCodeException e)
             {
@@ -652,7 +660,7 @@ namespace BL
             return reversed;
         }
 
-        public void UpdateBusLineFullRoute(Guid ID)
+        private void UpdateBusLineFullRoute(Guid ID)
         {
             try
             {
@@ -687,7 +695,7 @@ namespace BL
                 // set to have full route.
                 if (i == line.RouteLength)
                 {
-                    line.HasFullRoute = true;
+                    line.HasFullRoute = line.RouteLength > 1;
                 }
 
                 dl.UpdateBusLine(line);
@@ -698,22 +706,31 @@ namespace BL
             }
         }
 
-        public void UpdateAllBusLinesFullRoute()
+        private void UpdateAllBusLinesFullRoute()
         {
-            foreach (var id in (from line in dl.GetAllBusLines() select line.ID).ToArray())
+            var ids = (from line in dl.GetAllBusLines() select line.ID).ToArray();
+            foreach (var id in ids)
             {
                 UpdateBusLineFullRoute(id);
             }
         }
 
-        public void DeleteLineStationByStation(Guid lineID, int stationCode)
+        public void DeleteLineStationsBy(Predicate<DO.LineStation> predicate)
         {
-            throw new NotImplementedException();
-        }
+            foreach (var toDelete in dl.GetLineStationsBy(predicate).ToArray())
+            {
+                dl.DeleteLineStationByIndex(toDelete.LineID, toDelete.RouteIndex);
 
-        public void DeleteLineStationByIndex(Guid lineID, int index)
-        {
-            throw new NotImplementedException();
+                var doLine = dl.GetBusLine(toDelete.LineID);
+                for (int i = toDelete.RouteIndex + 1; i < doLine.RouteLength; i++)
+                {
+                    var doLs = dl.GetLineStationByIndex(toDelete.LineID, i);
+                    doLs.RouteIndex -= 1;
+                    dl.UpdateLineStationByIndex(doLs);
+                }
+                doLine.RouteLength -= 1;
+                dl.UpdateBusLine(doLine);
+            }
         }
         #endregion
     }

@@ -15,6 +15,8 @@ namespace PL
                 default:
                 case "view":
                     return ViewDialogService.Instance;
+                case "test":
+                    throw new NotImplementedException();
             }
         }
     }
