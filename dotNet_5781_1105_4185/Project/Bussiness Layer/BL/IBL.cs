@@ -50,8 +50,6 @@ namespace BLAPI
         IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute();
         IEnumerable<BO.BusLine> GetAllBusLines();
         IEnumerable<BO.BusLine> GetLinesPassingTheStation(int code);
-        IEnumerable<BO.BusLine> GetLinesAffectedByDisconnectingStations(int fromStationCode, int toStationCode);
-        IEnumerable<BO.BusLine> GetLinesAffectedByConnectingStations(int fromStationCode, int toStationCode);
         IEnumerable<BO.LineStation> ReverseLineStations(IEnumerable<BO.LineStation> stations);
         BO.BusLine GetBusLine(Guid ID);
         BO.BusLine GetBusLineWithoutRoute(Guid ID);
