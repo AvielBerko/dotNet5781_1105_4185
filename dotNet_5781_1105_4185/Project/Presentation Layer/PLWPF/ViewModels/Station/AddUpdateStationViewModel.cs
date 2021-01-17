@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace PL
 {
-    public class AddUpdateStationViewModel : BaseDialogViewModel, IDataErrorInfo
+    public class AddUpdateStationViewModel : BaseViewModel, IDataErrorInfo
     {
         public ObservableCollection<AdjacentStationViewModel> AdjacentStations { get; }
         BO.Station station;
@@ -115,7 +115,7 @@ namespace PL
             var currentStations = (from ad in AdjacentStations select ad.Adjacent.ToStation).Append(station);
             var restStations = (IEnumerable<BO.Station>)BlWork(bl => bl.GetRestOfStations(currentStations));
             var vm = new SelectStationsViewModel(restStations);
-            if (DialogService.ShowSelectStationsDialog(vm) == true)
+            if (DialogService.ShowSelectStationsDialog(vm) == DialogResult.Ok)
             {
                 var addedAdjacents = from st in vm.SelectedStations select new BO.AdjacentStation { ToStation = st };
                 foreach (var ad in addedAdjacents)
@@ -135,12 +135,12 @@ namespace PL
                 BlWork(bl => bl.AddStation(station));
                 OnAddedStation(station);
             }
-                CloseDialog(window, true);
+            DialogService.CloseDialog(window, DialogResult.Ok);
         }
 
         private void _Cancel(object window)
         {
-            CloseDialog(window, false);
+            DialogService.CloseDialog(window, DialogResult.Ok);
         }
 
         public delegate void AddedStationEventHandler(object sender, BO.Station station);

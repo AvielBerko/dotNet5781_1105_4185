@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-    public class LoginViewModel : BaseDialogViewModel
+    public class LoginViewModel : BaseViewModel
     {
         string name;
         public string Name
@@ -58,7 +58,7 @@ namespace PL
                 BO.User user = (BO.User)BlWork(bl => bl.UserAuthentication(Name, Password));
                 AuthFailure = false;
                 OnLoggedIn(user);
-                CloseDialog(window, true);
+                DialogService.CloseDialog(window, DialogResult.Ok);
             }
             catch (BO.BadAuthenticationException)
             {

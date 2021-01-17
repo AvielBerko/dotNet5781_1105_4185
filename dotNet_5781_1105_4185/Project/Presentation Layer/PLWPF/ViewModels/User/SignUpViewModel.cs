@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace PL
 {
-    public class SignUpViewModel : BaseDialogViewModel, IDataErrorInfo
+    public class SignUpViewModel : BaseViewModel, IDataErrorInfo
     {
         string name;
         public string Name
@@ -58,7 +58,7 @@ namespace PL
         {
             BO.User user = (BO.User)BlWork(bl => bl.UserSignUp(Name, Password));
             OnSignedUp(user);
-            CloseDialog(window, true);
+            DialogService.CloseDialog(window, DialogResult.Ok);
         }
 
         public delegate void SignedUpEventHandler(object sender, BO.User user);

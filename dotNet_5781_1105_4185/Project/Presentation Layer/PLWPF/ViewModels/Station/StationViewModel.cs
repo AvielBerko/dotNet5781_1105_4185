@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-	public class StationViewModel : BaseViewModel
-	{
+    public class StationViewModel : BaseViewModel
+    {
         private BO.Station station;
         public BO.Station Station
         {
@@ -27,25 +27,32 @@ namespace PL
             Station = station;
 
             StationDetails = new RelayCommand(obj => _Details());
-            RemoveStation = new RelayCommand(obj => { BlWork(bl => bl.DeleteStation(Station.Code)); OnRemove(); });
+            RemoveStation = new RelayCommand(obj => _Remove());
             UpdateStation = new RelayCommand(obj => _Update());
         }
         private void _Update()
-		{
+        {
             var updateVM = new AddUpdateStationViewModel(Station.Code);
-            if (DialogService.ShowAddUpdateStationDialog(updateVM) == true) 
+            if (DialogService.ShowAddUpdateStationDialog(updateVM) == DialogResult.Ok)
             {
                 Station = (BO.Station)BlWork(bl => bl.GetStation(Station.Code));
                 OnPropertyChanged(nameof(Station));
             }
         }
+
         private void _Details()
-		{
+        {
             var detailsVM = new StationDetailsViewModel(Station.Code);
-            if (DialogService.ShowStationDetailsDialog(detailsVM) == true)
+            if (DialogService.ShowStationDetailsDialog(detailsVM) == DialogResult.Cancel)
             {
                 OnPropertyChanged(nameof(Station));
             }
+        }
+
+        private void _Remove()
+        {
+            BlWork(bl => bl.DeleteStation(Station.Code));
+            OnRemove();
         }
 
         public delegate void RemoveStationEventHandler(object sender);

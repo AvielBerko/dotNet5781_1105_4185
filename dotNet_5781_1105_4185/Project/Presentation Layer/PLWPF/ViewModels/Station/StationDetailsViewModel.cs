@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-	public class StationDetailsViewModel : BaseDialogViewModel
+	public class StationDetailsViewModel : BaseViewModel
 	{
 		public BO.Station Station { get; }
 		public ObservableCollection<AdjacentStationViewModel> AdjacentStations { get; }

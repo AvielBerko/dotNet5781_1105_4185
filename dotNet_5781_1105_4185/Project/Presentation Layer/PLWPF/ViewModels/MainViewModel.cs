@@ -36,7 +36,7 @@ namespace PL
             LoginViewModel.LoggedIn += LoggedIn;
             SignUpViewModel.SignedUp += LoggedIn;
 
-            if (DialogService.ShowLoginDialog(LoginViewModel, SignUpViewModel) != true)
+            if (DialogService.ShowLoginDialog(LoginViewModel, SignUpViewModel) != DialogResult.Ok)
             {
                 OnShutdown();
             }

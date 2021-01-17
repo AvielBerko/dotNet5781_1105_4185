@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-    public class AddUpdateBusLineViewModel : BaseDialogViewModel
+    public class AddUpdateBusLineViewModel : BaseViewModel
     {
         private ObservableCollection<LineStationViewModel> lineStations;
         public ObservableCollection<LineStationViewModel> LineStations
@@ -67,7 +67,7 @@ namespace PL
             var currentStations = (from ls in LineStations select ls.LineStation.Station);
             var restStations = (IEnumerable<BO.Station>)BlWork(bl => bl.GetRestOfStations(currentStations));
             var vm = new SelectStationsViewModel(restStations);
-            if (DialogService.ShowSelectStationsDialog(vm) == true)
+            if (DialogService.ShowSelectStationsDialog(vm) == DialogResult.Ok)
             {
                 var addedStations = from st in vm.SelectedStations select new BO.LineStation { Station = st };
                 if (after == null)
@@ -116,12 +116,12 @@ namespace PL
             {
                 BlWork(bl => bl.AddBusLine(BusLine));
             }
-            CloseDialog(window, true);
+            DialogService.CloseDialog(window, DialogResult.Ok);
         }
 
         private void _Cancel(object window)
         {
-            CloseDialog(window, false);
+            DialogService.CloseDialog(window, DialogResult.Cancel);
         }
     }
 }

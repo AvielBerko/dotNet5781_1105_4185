@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-	public class SelectStationsViewModel : BaseDialogViewModel
+	public class SelectStationsViewModel : BaseViewModel
 	{
 		public ObservableCollection<SelectableStationsViewModel> Stations { get; set; }
 		public BO.Station[] SelectedStations => (from st in Stations where st.IsSelected select st.Station).ToArray();
@@ -22,12 +22,12 @@ namespace PL
 		}
 		private void _Ok(object window)
 		{
-			CloseDialog(window, true);
+			DialogService.CloseDialog(window, DialogResult.Ok);
 		}
 
 		private void _Cancel(object window)
 		{
-			CloseDialog(window, false);
+			DialogService.CloseDialog(window, DialogResult.Cancel);
 		}
 	}
 }

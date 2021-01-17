@@ -55,6 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DialogService\DialogResult.cs" />
+    <Compile Include="DialogService\DialogServiceFactory.cs" />
+    <Compile Include="DialogService\IDialogService.cs" />
     <Compile Include="Dialogs\SelectStationsDialog.xaml.cs">
       <DependentUpon>SelectStationsDialog.xaml</DependentUpon>
     </Compile>
@@ -70,7 +73,7 @@
     <Compile Include="Dialogs\AddUpdateStationDialog.xaml.cs">
       <DependentUpon>AddUpdateStationDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\DialogService.cs" />
+    <Compile Include="DialogService\ViewDialogService.cs" />
     <Compile Include="Pages\AdminPage.xaml.cs">
       <DependentUpon>AdminPage.xaml</DependentUpon>
     </Compile>
@@ -85,7 +88,6 @@
     <Compile Include="ViewModels\LineStation\LineStationViewModel.cs" />
     <Compile Include="ViewModels\Station\StationDetailsViewModel.cs" />
     <Compile Include="ViewModels\Station\AddUpdateStationViewModel.cs" />
-    <Compile Include="ViewModels\BaseDialogViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\Bus\BusListViewModel.cs" />
     <Compile Include="ViewModels\Bus\BusViewModel.cs" />

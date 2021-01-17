@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace PL
 {
-    public class AddBusViewModel : BaseDialogViewModel, IDataErrorInfo
+    public class AddBusViewModel : BaseViewModel, IDataErrorInfo
     {
         BO.Bus bus;
 
@@ -67,14 +67,14 @@ namespace PL
         {
             BlWork(bl => bl.AddBus(bus));
             OnAddedBus(bus);
-            CloseDialog(window, true);
+            DialogService.CloseDialog(window, DialogResult.Ok);
 
            // bus = new BO.Bus();
         }
 
         private void _Cancel(object window)
         {
-            CloseDialog(window, false);
+            DialogService.CloseDialog(window, DialogResult.Cancel);
         }
 
         public delegate void AddedBusEventHandler(object sender, BO.Bus bus);
