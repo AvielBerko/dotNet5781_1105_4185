@@ -376,7 +376,11 @@ namespace DL
         public AdjacentStations GetAdjacentStations(int stationCode1, int stationCode2)
         {
             var adjacent = DataSet.AdjacentStations.Find(a => a.Station1Code == stationCode1 && a.Station2Code == stationCode2 || a.Station1Code == stationCode2 && a.Station2Code == stationCode1);
-            if (adjacent == null) throw new BadAdjacentStationsCodeException(stationCode1, stationCode2, $"no adjacent stations matches these stations");
+            if (adjacent == null)
+            {
+                throw new BadAdjacentStationsCodeException(stationCode1, stationCode2,
+                $"Stations with code {stationCode1} and {stationCode2} are not adjacents");
+            }
 
             return adjacent.Clone();
         }
