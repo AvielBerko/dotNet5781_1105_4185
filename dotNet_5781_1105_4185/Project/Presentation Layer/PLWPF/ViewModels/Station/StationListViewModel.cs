@@ -9,19 +9,50 @@ namespace PL
 {
 	public class StationListViewModel : BaseViewModel
     {
-        public ObservableCollection<StationViewModel> Stations { get; }
+        private ObservableCollection<StationViewModel> stations;
+        public ObservableCollection<StationViewModel> Stations
+        {
+            get => stations;
+            private set
+            {
+                stations = value;
+                OnPropertyChanged(nameof(Stations));
+            }
+        }
+
+        private bool loading;
+        public bool Loading
+        {
+            get => loading;
+            set
+            {
+                loading = value;
+                OnPropertyChanged(nameof(Loading));
+            }
+        }
+
         public RelayCommand AddStation { get; }
         public RelayCommand RemoveAllStations { get; }
 
         public StationListViewModel()
         {
-
-            Stations = new ObservableCollection<StationViewModel>(
-                from station in (IEnumerable<BO.Station>)BlWork(bl => bl.GetAllStationsWithoutAdjacents())
-                select CreateStationViewModel(station));
+            Loading = false;
+            Stations = new ObservableCollection<StationViewModel>();
+            _ = GetStationsFromBL();
 
             AddStation = new RelayCommand(obj => _AddStation());
-            RemoveAllStations = new RelayCommand(obj => _RemoveAllStations(), obj => Stations.Count > 0);
+            RemoveAllStations = new RelayCommand(async obj => await _RemoveAllStations(), obj => Stations.Count > 0);
+        }
+
+        private async Task GetStationsFromBL()
+        {
+            Loading = true;
+            await Task.Delay(5000);
+            var blStations = await BlWorkAsync(bl => bl.GetAllStationsWithoutAdjacents());
+            Stations = new ObservableCollection<StationViewModel>(
+                from station in (IEnumerable<BO.Station>)blStations
+                select CreateStationViewModel(station));
+            Loading = false;
         }
 
         private StationViewModel CreateStationViewModel(BO.Station station)
@@ -38,12 +69,15 @@ namespace PL
             DialogService.ShowAddUpdateStationDialog(addStationVM);
         }
 
-        private void _RemoveAllStations()
+        private async Task _RemoveAllStations()
         {
             if (DialogService.ShowYesNoDialog("Are you sure you want to removea all stations?", "Remove all stations") == DialogResult.Yes)
             {
-                BlWork(bl => bl.DeleteAllStations());
+                Loading = true;
+                await Task.Delay(5000);
+                await BlWorkAsync(bl => bl.DeleteAllStations());
                 Stations.Clear();
+                Loading = false;
             }
         }
     }
