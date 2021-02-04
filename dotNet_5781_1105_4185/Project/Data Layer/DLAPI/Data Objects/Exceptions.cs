@@ -165,4 +165,24 @@ namespace DO
         }
     }
     #endregion
+
+    #region XML
+    public class XMLFileException : Exception
+    {
+        public string FileName { get; }
+
+        public XMLFileException(string fileName)
+        {
+            FileName = fileName;
+        }
+        public XMLFileException(string fileName, string message) : base(message)
+        {
+            FileName = fileName;
+        }
+        public XMLFileException(string fileName, string message, Exception innerException) : base(message, innerException)
+        {
+            FileName = fileName;
+        }
+    }
+    #endregion
 }

@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace PL
 {
-    public class ViewDialogService : IDialogService
+    public sealed class ViewDialogService : IDialogService
     {
         static readonly Lazy<ViewDialogService> lazy = new Lazy<ViewDialogService>(() => new ViewDialogService());
         public static ViewDialogService Instance => lazy.Value;
