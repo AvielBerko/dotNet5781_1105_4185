@@ -214,6 +214,19 @@ namespace DL
             var exists = DataSet.Lines.Find(b => b.ID == busLine.ID);
             if (exists == null) throw new BadBusLineIDException(busLine.ID, $"no bus line with ID {busLine.ID}");
 
+            // Checks for the start and end stations
+            if (busLine.StartStationCode != null &&
+                !DataSet.Stations.Any(st => st.Code == busLine.StartStationCode))
+                throw new BadStationCodeException(busLine.StartStationCode ?? 0, $"BusLine's start station with code {busLine.StartStationCode} couldn't be found.");
+            if (busLine.EndStationCode != null &&
+                !DataSet.Stations.Any(st => st.Code == busLine.EndStationCode))
+                throw new BadStationCodeException(busLine.EndStationCode ?? 0, $"BusLine's start station with code {busLine.EndStationCode} couldn't be found.");
+
+            if (busLine.HasFullRoute &&
+                (busLine.StartStationCode == null ||
+                busLine.EndStationCode == null))
+                throw new InvalidOperationException("BusLine without start or stop stations cannot have full route");
+
             DataSet.Lines.Remove(exists);
             DataSet.Lines.Add(busLine);
         }

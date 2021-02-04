@@ -99,6 +99,102 @@ namespace DL
         }
         #endregion
 
+        #region BusLine
+        public IEnumerable<BusLine> GetAllBusLines()
+        {
+            return XMLTools.LoadListFromXMLSerializer<BusLine>(FileName<BusLine>());
+        }
+
+        public IEnumerable<BusLine> GetBusLinesBy(Predicate<BusLine> predicate)
+        {
+            var busLines = XMLTools.LoadListFromXMLSerializer<BusLine>(FileName<BusLine>());
+            return from busLine in busLines
+                   where predicate(busLine)
+                   select busLine;
+        }
+
+        public BusLine GetBusLine(Guid ID)
+        {
+            var busLines = XMLTools.LoadListFromXMLSerializer<BusLine>(FileName<BusLine>());
+
+            var busLine = (from bl in busLines
+                           where bl.ID == ID
+                           select bl).FirstOrDefault();
+            if (busLine == null) throw new BadBusLineIDException(ID, $"no bus line with ID {ID}");
+
+            return busLine;
+        }
+
+        public void AddBusLine(BusLine busLine)
+        {
+
+            var busLines = XMLTools.LoadListFromXMLSerializer<BusLine>(FileName<BusLine>());
+            if (busLines.Any(s => s.ID == busLine.ID))
+                throw new BadBusLineIDException(busLine.ID, $"bus line with ID {busLine.ID} already exists");
+
+            // Checks for the start and end stations
+            if (busLine.StartStationCode != null) GetStation(busLine.StartStationCode ?? 0);
+            if (busLine.EndStationCode != null) GetStation(busLine.EndStationCode ?? 0);
+
+            if (busLine.HasFullRoute &&
+                (busLine.StartStationCode == null ||
+                busLine.EndStationCode == null))
+                throw new InvalidOperationException("BusLine without start or stop stations cannot have full route");
+
+            busLines.Add(busLine);
+
+            XMLTools.SaveListToXMLSerializer(busLines, FileName<BusLine>());
+        }
+
+        public void UpdateBusLine(BusLine busLine)
+        {
+            var busLines = XMLTools.LoadListFromXMLSerializer<BusLine>(FileName<BusLine>());
+            var exists = busLines.Find(bl => bl.ID == busLine.ID);
+            if (exists == null) throw new BadBusLineIDException(busLine.ID, $"no bus line with ID {busLine.ID}");
+
+            // Checks for the start and end stations
+            if (busLine.StartStationCode != null) GetStation(busLine.StartStationCode ?? 0);
+            if (busLine.EndStationCode != null) GetStation(busLine.EndStationCode ?? 0);
+
+            if (busLine.HasFullRoute &&
+                (busLine.StartStationCode == null ||
+                busLine.EndStationCode == null))
+                throw new InvalidOperationException("BusLine without start or stop stations cannot have full route");
+
+            busLines.Remove(exists);
+            busLines.Add(busLine);
+
+            XMLTools.SaveListToXMLSerializer(busLines, FileName<BusLine>());
+        }
+
+        public void DeleteBusLine(Guid ID)
+        {
+            var busLines = XMLTools.LoadListFromXMLSerializer<BusLine>(FileName<BusLine>());
+            var exists = busLines.Find(bl => bl.ID == ID);
+            if (exists == null) throw new BadBusLineIDException(ID, $"no bus line with ID {ID}");
+
+            busLines.Remove(exists);
+
+            XMLTools.SaveListToXMLSerializer(busLines, FileName<BusLine>());
+        }
+
+        public void DeleteAllBusLines()
+        {
+            XMLTools.SaveListToXMLSerializer(new List<BusLine>(), FileName<BusLine>());
+        }
+
+        public void DeleteBusLinesBy(Predicate<BusLine> predicate)
+        {
+            var busLines = XMLTools.LoadListFromXMLSerializer<BusLine>(FileName<BusLine>());
+
+            var updatedStations = from busLine in busLines
+                                  where !predicate(busLine)
+                                  select busLine;
+
+            XMLTools.SaveListToXMLSerializer(updatedStations.ToList(), FileName<BusLine>());
+        }
+        #endregion
+
         #region AdjacentStations
         public IEnumerable<AdjacentStations> GetAllAdjacentStations()
         {
@@ -202,7 +298,7 @@ namespace DL
             }
 
             adjElem.Element("Station1Code").Value = adjacentStations.Station1Code.ToString();
-            adjElem.Element("Station2Code").Value =  adjacentStations.Station2Code.ToString();
+            adjElem.Element("Station2Code").Value = adjacentStations.Station2Code.ToString();
             adjElem.Element("Distance").Value = adjacentStations.Distance.ToString();
             adjElem.Element("DrivingTime").Value = adjacentStations.DrivingTime.ToString();
 
@@ -240,18 +336,14 @@ namespace DL
 
         public void DeleteAdjacentStationsBy(Predicate<AdjacentStations> predicate)
         {
-            foreach(var adj in GetAdjacentStationsBy(predicate))
+            foreach (var adj in GetAdjacentStationsBy(predicate))
             {
                 DeleteAdjacentStations(adj.Station1Code, adj.Station2Code);
             }
         }
         #endregion
-        public void AddBus(Bus bus)
-        {
-            throw new NotImplementedException();
-        }
 
-        public void AddBusLine(BusLine busLine)
+        public void AddBus(Bus bus)
         {
             throw new NotImplementedException();
         }
@@ -271,27 +363,12 @@ namespace DL
             throw new NotImplementedException();
         }
 
-        public void DeleteAllBusLines()
-        {
-            throw new NotImplementedException();
-        }
-
         public void DeleteBus(int regNum)
         {
             throw new NotImplementedException();
         }
 
         public void DeleteBusesBy(Predicate<Bus> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteBusLine(Guid ID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteBusLinesBy(Predicate<BusLine> predicate)
         {
             throw new NotImplementedException();
         }
@@ -321,11 +398,6 @@ namespace DL
             throw new NotImplementedException();
         }
 
-        public IEnumerable<BusLine> GetAllBusLines()
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<LineStation> GetAllLineStations()
         {
             throw new NotImplementedException();
@@ -337,16 +409,6 @@ namespace DL
         }
 
         public IEnumerable<Bus> GetBusesBy(Predicate<Bus> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public BusLine GetBusLine(Guid ID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<BusLine> GetBusLinesBy(Predicate<BusLine> predicate)
         {
             throw new NotImplementedException();
         }
@@ -372,11 +434,6 @@ namespace DL
         }
 
         public void UpdateBus(Bus bus)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateBusLine(BusLine busLine)
         {
             throw new NotImplementedException();
         }
