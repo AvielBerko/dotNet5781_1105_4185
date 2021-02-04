@@ -27,6 +27,7 @@ namespace PL
                     ((Window)window).DialogResult = false;
                     break;
                 default:
+                case DialogResult.None:
                     ((Window)window).DialogResult = null;
                     break;
             }

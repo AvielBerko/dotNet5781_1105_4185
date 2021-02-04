@@ -16,7 +16,8 @@ namespace PL
         protected object BlWork(Func<IBL, object> work) => work(bl);
         protected void BlWork(Action<IBL> work) => work(bl);
 
-        protected IDialogService DialogService => DialogServiceFactory.GetDialogService("view");
+        public static string DialogServiceType { get; set; } = "view";
+        protected IDialogService DialogService => DialogServiceFactory.GetDialogService(DialogServiceType);
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
