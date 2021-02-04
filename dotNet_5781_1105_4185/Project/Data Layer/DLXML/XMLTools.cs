@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
-namespace DLXML
+namespace DL
 {
     static class XMLTools
     {
-        const string DIRECTORY = @".\xml\";
+        const string DIRECTORY = @".\xml-data\";
 
         static XMLTools()
         {
@@ -40,7 +40,7 @@ namespace DLXML
             {
                 if (File.Exists(DIRECTORY + fileName))
                 {
-                    return    XElement.Load(DIRECTORY + fileName);
+                    return XElement.Load(DIRECTORY + fileName);
                 }
                 else
                 {
@@ -84,7 +84,7 @@ namespace DLXML
                     file.Close();
                     return list;
                 }
-                else 
+                else
                     return new List<T>();
             }
             catch (Exception ex)

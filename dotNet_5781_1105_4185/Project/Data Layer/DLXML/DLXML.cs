@@ -7,49 +7,93 @@ using System.Threading.Tasks;
 using DLAPI;
 using DO;
 
-namespace DLXML
+namespace DL
 {
     sealed class DLXML : IDL
     {
+        #region Singleton
+        static readonly Lazy<DLXML> lazy = new Lazy<DLXML>(() => new DLXML());
+        public static DLXML Instance => lazy.Value;
+
+        private DLXML() { }
+        #endregion
+
+        private static string FileName(Type type) => type.Name + ".xml";
+
         #region Station
         public IEnumerable<Station> GetAllStations()
         {
-            throw new NotImplementedException();
+            return XMLTools.LoadListFromXMLSerializer<Station>(FileName(typeof(Station)));
         }
 
         public IEnumerable<Station> GetStationsBy(Predicate<Station> predicate)
         {
-            throw new NotImplementedException();
+            var stations = XMLTools.LoadListFromXMLSerializer<Station>(FileName(typeof(Station)));
+            return from station in stations
+                   where predicate(station)
+                   select station;
         }
 
         public Station GetStation(int code)
         {
-            throw new NotImplementedException();
+            var stations = XMLTools.LoadListFromXMLSerializer<Station>(FileName(typeof(Station)));
+
+            var station = (from s in stations
+                           where s.Code == code
+                           select s).FirstOrDefault();
+            if (station == null) throw new BadStationCodeException(code, $"Station with code {code} not found");
+
+            return station;
         }
 
         public void AddStation(Station station)
         {
-            throw new NotImplementedException();
+            var stations = XMLTools.LoadListFromXMLSerializer<Station>(FileName(typeof(Station)));
+            if (stations.Any(s => s.Code == station.Code))
+                throw new BadStationCodeException(station.Code, $"Station with code {station.Code} already exists");
+
+            stations.Add(station);
+
+            XMLTools.SaveListToXMLSerializer(stations, FileName(typeof(Station)));
         }
 
         public void UpdateStation(Station station)
         {
-            throw new NotImplementedException();
+            var stations = XMLTools.LoadListFromXMLSerializer<Station>(FileName(typeof(Station)));
+            var exists = stations.Find(s => s.Code == station.Code);
+            if (exists == null) throw new BadStationCodeException(station.Code, $"no station with code {station.Code}");
+
+            stations.Remove(exists);
+            stations.Add(station);
+
+            XMLTools.SaveListToXMLSerializer(stations, FileName(typeof(Station)));
         }
 
         public void DeleteStation(int code)
         {
-            throw new NotImplementedException();
+            var stations = XMLTools.LoadListFromXMLSerializer<Station>(FileName(typeof(Station)));
+            var exists = stations.Find(s => s.Code == code);
+            if (exists == null) throw new BadStationCodeException(code, $"no station with code {code}");
+
+            stations.Remove(exists);
+
+            XMLTools.SaveListToXMLSerializer(stations, FileName(typeof(Station)));
         }
 
         public void DeleteAllStations()
         {
-            throw new NotImplementedException();
+            XMLTools.SaveListToXMLSerializer(new List<Station>(), FileName(typeof(Station)));
         }
 
         public void DeleteStationsBy(Predicate<Station> predicate)
         {
-            throw new NotImplementedException();
+            var stations = XMLTools.LoadListFromXMLSerializer<Station>(FileName(typeof(Station)));
+
+            var updatedStations = from station in stations
+                              where !predicate(station)
+                              select station;
+
+            XMLTools.SaveListToXMLSerializer(updatedStations.ToList(), FileName(typeof(Station)));
         }
         #endregion
 
