@@ -269,8 +269,7 @@ namespace DL
             if (lineStations.Count() == 0)
                 throw new BadBusLineIDException(lineID, $"no line station for line with id {lineID}");
 
-            var lineStation = lineStations.First(
-                b => b.LineID == lineID && b.StationCode == stationCode);
+            var lineStation = lineStations.FirstOrDefault(b => b.StationCode == stationCode);
 
             if (lineStation == null) throw new BadLineStationStationCodeException(lineID, stationCode,
                 $"no line station with station code {stationCode} found for line ID {lineID}");
@@ -284,8 +283,7 @@ namespace DL
             if (lineStations.Count() == 0)
                 throw new BadBusLineIDException(lineID, $"no line station for line with id {lineID}");
 
-            var lineStation = lineStations.First(
-                b => b.LineID == lineID && b.RouteIndex == index);
+            var lineStation = lineStations.FirstOrDefault(b => b.RouteIndex == index);
 
             if (lineStation == null) throw new BadLineStationIndexException(lineID, index,
                 $"no line station with index {index} found for line ID {lineID}");

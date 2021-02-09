@@ -47,7 +47,6 @@ namespace PL
         private async Task GetStationsFromBL()
         {
             Loading = true;
-            await Task.Delay(5000);
             var blStations = await BlWorkAsync(bl => bl.GetAllStationsWithoutAdjacents());
             Stations = new ObservableCollection<StationViewModel>(
                 from station in (IEnumerable<BO.Station>)blStations
@@ -74,7 +73,6 @@ namespace PL
             if (DialogService.ShowYesNoDialog("Are you sure you want to removea all stations?", "Remove all stations") == DialogResult.Yes)
             {
                 Loading = true;
-                await Task.Delay(5000);
                 await BlWorkAsync(bl => bl.DeleteAllStations());
                 Stations.Clear();
                 Loading = false;

@@ -361,18 +361,30 @@ namespace DL
 
         public LineStation GetLineStationByIndex(Guid lineID, int index)
         {
-            var lineStations = GetAllLineStations();
-            return (from ls in lineStations
-                   where ls.LineID == lineID && ls.RouteIndex == index
-                   select ls).FirstOrDefault();
+            var lineStations = GetLineStationsBy(ls => ls.LineID == lineID);
+            if (lineStations.Count() == 0)
+                throw new BadBusLineIDException(lineID, $"no line station for line with id {lineID}");
+
+            var lineStation = lineStations.FirstOrDefault(b => b.RouteIndex == index);
+
+            if (lineStation == null) throw new BadLineStationIndexException(lineID, index,
+                $"no line station with index {index} found for line ID {lineID}");
+
+            return lineStation;
         }
 
         public LineStation GetLineStationByStation(Guid lineID, int stationCode)
         {
-            var lineStations = GetAllLineStations();
-            return (from ls in lineStations
-                   where ls.LineID == lineID && ls.StationCode == stationCode
-                   select ls).FirstOrDefault();
+            var lineStations = GetLineStationsBy(ls => ls.LineID == lineID);
+            if (lineStations.Count() == 0)
+                throw new BadBusLineIDException(lineID, $"no line station for line with id {lineID}");
+
+            var lineStation = lineStations.FirstOrDefault(b => b.StationCode == stationCode);
+
+            if (lineStation == null) throw new BadLineStationStationCodeException(lineID, stationCode,
+                $"no line station with station code {stationCode} found for line ID {lineID}");
+
+            return lineStation;
         }
 
         public void AddLineStation(LineStation lineStation)
@@ -460,7 +472,7 @@ namespace DL
                    select new Bus
                    {
                        RegNum = int.Parse(element.Element("RegNum").Value),
-                       RegDate = DateTime.ParseExact(element.Element("Station2Code").Value, "G", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal),
+                       RegDate = DateTime.ParseExact(element.Element("RegDate").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture),
                        Kilometrage = int.Parse(element.Element("Kilometrage").Value),
                        FuelLeft = int.Parse(element.Element("FuelLeft").Value),
                        Status = (BusStatus)Enum.Parse(typeof(BusStatus), element.Element("Status").Value),
@@ -485,7 +497,7 @@ namespace DL
                        select new Bus
                        {
                            RegNum = regNum,
-                           RegDate = DateTime.ParseExact(element.Element("Station2Code").Value, "G", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal),
+                           RegDate = DateTime.ParseExact(element.Element("RegDate").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal),
                            Kilometrage = int.Parse(element.Element("Kilometrage").Value),
                            FuelLeft = int.Parse(element.Element("FuelLeft").Value),
                            Status = (BusStatus)Enum.Parse(typeof(BusStatus), element.Element("Status").Value),
