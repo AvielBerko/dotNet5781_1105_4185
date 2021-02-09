@@ -69,18 +69,12 @@ namespace PL
             var vm = new SelectStationsViewModel(restStations);
             if (DialogService.ShowSelectStationsDialog(vm) == DialogResult.Ok)
             {
-                var addedStations = from st in vm.SelectedStations select new BO.LineStation { Station = st };
-                if (after == null)
+                var addedStations = from st in vm.SelectedStations
+                                    select new BO.LineStation { Station = st };
+                int index = after == null ? 0 : LineStations.IndexOf(after) + 1;
+                foreach (var st in addedStations)
                 {
-                    int i = 0;
-                    foreach (var st in addedStations)
-                        LineStations.Insert(i++, _CreateLineStationViewModel(st));
-                }
-                else
-                {
-                    var index = LineStations.IndexOf(after);
-                    foreach (var st in addedStations)
-                        LineStations.Insert(++index, _CreateLineStationViewModel(st));
+                    LineStations.Insert(index++, _CreateLineStationViewModel(st));
                 }
             }
         }

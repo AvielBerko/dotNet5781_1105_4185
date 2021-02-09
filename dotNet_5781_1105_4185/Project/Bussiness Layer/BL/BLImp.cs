@@ -639,25 +639,32 @@ namespace BL
             var reversed = stations.Reverse();
             var query = (from left in reversed
                          where left != reversed.Last()
-                         select left).Zip(
-                                from right in reversed
-                                where right != reversed.First()
-                                select right,
-                                (left, right) => new { Left = left, Right = right });
+                         select left
+                         ).Zip(
+                         from right in reversed
+                         where right != reversed.First()
+                         select right,
+                         (left, right) => new { Left = left, Right = right });
+
             foreach (var st in query)
             {
-                try
-                {
-                    var doAdjStations = dl.GetAdjacentStations(st.Left.Station.Code, st.Right.Station.Code);
-                    st.Left.NextStationRoute = new BO.NextStationRoute() { Distance = doAdjStations.Distance, DrivingTime = doAdjStations.DrivingTime, };
-                }
-                catch (DO.BadAdjacentStationsCodeException)
-                {
-                    st.Left.NextStationRoute = null;
-                }
+                st.Left.NextStationRoute = st.Right.NextStationRoute;
             }
             reversed.Last().NextStationRoute = null;
             return reversed;
+
+            //foreach (var st in query)
+            //{
+            //    try
+            //    {
+            //        var doAdjStations = dl.GetAdjacentStations(st.Left.Station.Code, st.Right.Station.Code);
+            //        st.Left.NextStationRoute = new BO.NextStationRoute() { Distance = doAdjStations.Distance, DrivingTime = doAdjStations.DrivingTime, };
+            //    }
+            //    catch (DO.BadAdjacentStationsCodeException)
+            //    {
+            //        st.Left.NextStationRoute = null;
+            //    }
+            //}
         }
 
         private void UpdateBusLineFullRoute(Guid ID)
