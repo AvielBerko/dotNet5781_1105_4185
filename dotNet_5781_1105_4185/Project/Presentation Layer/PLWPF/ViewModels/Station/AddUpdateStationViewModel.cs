@@ -103,6 +103,7 @@ namespace PL
             Cancel = new RelayCommand(_Cancel);
             AddAdjacent = new RelayCommand(obj => _AddAdjacent());
         }
+
         private AdjacentStationViewModel _CreateAdjacentVM(BO.AdjacentStation adjacents)
         {
             var result = new AdjacentStationViewModel(adjacents);
@@ -110,6 +111,7 @@ namespace PL
 
             return result;
         }
+
         private void _AddAdjacent()
         {
             var currentStations = (from ad in AdjacentStations select ad.Adjacent.ToStation).Append(station);
@@ -122,6 +124,7 @@ namespace PL
                     AdjacentStations.Add(_CreateAdjacentVM(ad));
             }
         }
+
         private void _Ok(object window)
         {
             if (IsUpdate)
@@ -140,7 +143,7 @@ namespace PL
 
         private void _Cancel(object window)
         {
-            DialogService.CloseDialog(window, DialogResult.Ok);
+            DialogService.CloseDialog(window, DialogResult.Cancel);
         }
 
         public delegate void AddedStationEventHandler(object sender, BO.Station station);

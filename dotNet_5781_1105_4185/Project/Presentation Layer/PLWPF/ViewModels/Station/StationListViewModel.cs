@@ -7,27 +7,16 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-	public class StationListViewModel : BaseViewModel
+    public class StationListViewModel : BaseViewModel
     {
-        private ObservableCollection<StationViewModel> stations;
+        private ObservableCollection<StationViewModel> _stations;
         public ObservableCollection<StationViewModel> Stations
         {
-            get => stations;
+            get => _stations;
             private set
             {
-                stations = value;
+                _stations = value;
                 OnPropertyChanged(nameof(Stations));
-            }
-        }
-
-        private bool loading;
-        public bool Loading
-        {
-            get => loading;
-            set
-            {
-                loading = value;
-                OnPropertyChanged(nameof(Loading));
             }
         }
 
@@ -36,7 +25,6 @@ namespace PL
 
         public StationListViewModel()
         {
-            Loading = false;
             Stations = new ObservableCollection<StationViewModel>();
             _ = GetStationsFromBL();
 
@@ -46,12 +34,14 @@ namespace PL
 
         private async Task GetStationsFromBL()
         {
-            Loading = true;
-            var blStations = await BlWorkAsync(bl => bl.GetAllStationsWithoutAdjacents());
-            Stations = new ObservableCollection<StationViewModel>(
-                from station in (IEnumerable<BO.Station>)blStations
-                select CreateStationViewModel(station));
-            Loading = false;
+            await Load(async () =>
+            {
+                var blStations = await BlWorkAsync(bl => bl.GetAllStationsWithoutAdjacents());
+                Stations = new ObservableCollection<StationViewModel>(
+                    from station in (IEnumerable<BO.Station>)blStations
+                    select CreateStationViewModel(station)
+                );
+            });
         }
 
         private StationViewModel CreateStationViewModel(BO.Station station)
@@ -70,12 +60,13 @@ namespace PL
 
         private async Task _RemoveAllStations()
         {
-            if (DialogService.ShowYesNoDialog("Are you sure you want to removea all stations?", "Remove all stations") == DialogResult.Yes)
+            if (DialogService.ShowYesNoDialog("Are you sure you want to remove all stations?", "Remove all stations") == DialogResult.Yes)
             {
-                Loading = true;
-                await BlWorkAsync(bl => bl.DeleteAllStations());
-                Stations.Clear();
-                Loading = false;
+                await Load(async () =>
+                {
+                    await BlWorkAsync(bl => bl.DeleteAllStations());
+                    Stations.Clear();
+                });
             }
         }
     }

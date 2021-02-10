@@ -109,6 +109,7 @@
                                 <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding LineStation.NextStationRoute.Distance, StringFormat=n2, UpdateSourceTrigger=PropertyChanged}" />
                                 <Label Grid.Column="2" Content="Time:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 <TextBox Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding LineStation.NextStationRoute.DrivingTime, UpdateSourceTrigger=PropertyChanged}" />
+
                                 <Grid.Style>
                                     <Style TargetType="Grid">
                                         <Style.Triggers>

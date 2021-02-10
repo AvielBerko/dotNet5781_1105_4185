@@ -15,11 +15,38 @@ namespace PL
 
         protected object BlWork(Func<IBL, object> work) => work(bl);
         protected void BlWork(Action<IBL> work) => work(bl);
+
         protected async Task<object> BlWorkAsync(Func<IBL, object> work) => await Task.Run(() => work(bl));
         protected async Task BlWorkAsync(Action<IBL> work) => await Task.Run(() => work(bl));
 
         public static string DialogServiceType { get; set; } = "view";
         protected IDialogService DialogService => DialogServiceFactory.GetDialogService(DialogServiceType);
+
+        protected async Task Load(Func<Task> load)
+        {
+            IsLoading = true;
+            await load();
+            IsLoading = false;
+        }
+
+        protected async Task<object> Load(Func<Task<object>> load)
+        {
+            IsLoading = true;
+            object result = await load();
+            IsLoading = false;
+            return result;
+        }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

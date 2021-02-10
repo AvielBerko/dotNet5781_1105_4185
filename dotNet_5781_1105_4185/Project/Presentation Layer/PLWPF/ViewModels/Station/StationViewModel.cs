@@ -26,16 +26,17 @@ namespace PL
         {
             Station = station;
 
-            StationDetails = new RelayCommand(obj => _Details());
-            RemoveStation = new RelayCommand(obj => _Remove());
             UpdateStation = new RelayCommand(obj => _Update());
+            StationDetails = new RelayCommand(obj => _Details());
+            RemoveStation = new RelayCommand(async obj => await _Remove());
         }
+
         private void _Update()
         {
             var updateVM = new AddUpdateStationViewModel(Station.Code);
             if (DialogService.ShowAddUpdateStationDialog(updateVM) == DialogResult.Ok)
             {
-                Station = (BO.Station)BlWork(bl => bl.GetStation(Station.Code));
+                Station = updateVM.Station;
                 OnPropertyChanged(nameof(Station));
             }
         }
@@ -43,16 +44,16 @@ namespace PL
         private void _Details()
         {
             var detailsVM = new StationDetailsViewModel(Station.Code);
-            if (DialogService.ShowStationDetailsDialog(detailsVM) == DialogResult.Cancel)
-            {
-                OnPropertyChanged(nameof(Station));
-            }
+            DialogService.ShowStationDetailsDialog(detailsVM);
         }
 
-        private void _Remove()
+        private async Task _Remove()
         {
-            BlWork(bl => bl.DeleteStation(Station.Code));
-            OnRemove();
+            await Load(async () =>
+            {
+                await BlWorkAsync(bl => bl.DeleteStation(Station.Code));
+                OnRemove();
+            });
         }
 
         public delegate void RemoveStationEventHandler(object sender);

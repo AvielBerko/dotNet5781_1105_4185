@@ -200,18 +200,23 @@
                             </GridViewColumn>
                         </GridView>
                     </ListView.View>
-                    <ListView.Resources>
+                    <ListView.ItemContainerStyle>
                         <Style TargetType="{x:Type ListViewItem}">
                             <Setter Property="Height" Value="30"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
-                    </ListView.Resources>
+                    </ListView.ItemContainerStyle>
                 </ListView>
 
                 <Label Grid.Row ="0" Content="Loading..." VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="#50000000">
                     <Label.Style>
                         <Style TargetType="{x:Type Label}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Loading}" Value="False">
+                                <DataTrigger Binding="{Binding IsLoading}" Value="False">
                                     <Setter Property="Visibility" Value="Hidden" />
                                 </DataTrigger>
                             </Style.Triggers>
