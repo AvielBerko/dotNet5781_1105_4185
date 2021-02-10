@@ -8,13 +8,13 @@ namespace PL
 {
     public class StationViewModel : BaseViewModel
     {
-        private BO.Station station;
+        private BO.Station _station;
         public BO.Station Station
         {
-            get => station;
+            get => _station;
             set
             {
-                station = value;
+                _station = value;
                 OnPropertyChanged(nameof(Station));
             }
         }

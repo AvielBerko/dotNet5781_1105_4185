@@ -11,97 +11,85 @@ namespace PL
 {
     public class AddUpdateStationViewModel : BaseViewModel, IDataErrorInfo
     {
-        public ObservableCollection<AdjacentStationViewModel> AdjacentStations { get; }
-        BO.Station station;
-        public BO.Station Station
+        private ObservableCollection<AdjacentStationViewModel> _adjacentStations;
+        public ObservableCollection<AdjacentStationViewModel> AdjacentStations
         {
-            get => station;
+            get => _adjacentStations;
             set
             {
-                station = value;
-                OnPropertyChanged(nameof(Station));
-                OnPropertyChanged(nameof(Code));
-                OnPropertyChanged(nameof(Name));
-                OnPropertyChanged(nameof(Address));
-                OnPropertyChanged(nameof(Latitude));
-                OnPropertyChanged(nameof(Longitude));
+                _adjacentStations = value;
+                OnPropertyChanged(nameof(AdjacentStations));
             }
         }
 
-        public int Code
+        BO.Station _station;
+        public BO.Station Station
         {
-            get => station.Code;
+            get => _station;
             set
             {
-                station.Code = value;
-                OnPropertyChanged(nameof(Code));
-            }
-        }
-        public string Name
-        {
-            get => station.Name;
-            set
-            {
-                station.Name = value;
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-        public string Address
-        {
-            get => station.Address;
-            set
-            {
-                station.Address = value;
-                OnPropertyChanged(nameof(Address));
+                _station = value;
+                OnPropertyChanged(nameof(Station));
+                OnPropertyChanged(nameof(Longitude));
+                OnPropertyChanged(nameof(Latitude));
             }
         }
         public double Longitude
         {
-            get => station.Location.Longitude;
+            get => _station.Location.Longitude;
             set
             {
-                station.Location = new BO.Location(value, station.Location.Latitude);
+                _station.Location = new BO.Location(value, _station.Location.Latitude);
                 OnPropertyChanged(nameof(Longitude));
             }
         }
         public double Latitude
         {
-            get => station.Location.Latitude;
+            get => _station.Location.Latitude;
             set
             {
-                station.Location = new BO.Location(station.Location.Longitude, value);
+                _station.Location = new BO.Location(_station.Location.Longitude, value);
                 OnPropertyChanged(nameof(Latitude));
             }
         }
-		public bool IsUpdate { get; set; }
+        public bool IsUpdate { get; }
 
-		public RelayCommand Ok { get; }
+        public RelayCommand Ok { get; }
         public RelayCommand Cancel { get; }
         public RelayCommand AddAdjacent { get; }
 
 
         public AddUpdateStationViewModel(int? stationCode = null)
         {
-            if (stationCode == null)
+            _station = new BO.Station();
+            AdjacentStations = new ObservableCollection<AdjacentStationViewModel>();
+
+            IsUpdate = stationCode != null;
+            if (IsUpdate)
             {
-                station = new BO.Station();
-                AdjacentStations = new ObservableCollection<AdjacentStationViewModel>();
-                IsUpdate = false;
+                _ = GetStationFromBL(stationCode ?? 0);
             }
-            else
-			{
-                Station = (BO.Station)BlWork(bl => bl.GetStation(stationCode ?? 0));
-                AdjacentStations = new ObservableCollection<AdjacentStationViewModel>
-                    (from ad in Station.AdjacentStations select _CreateAdjacentVM(ad));
-                IsUpdate = true;
-            }
-            Ok = new RelayCommand(_Ok, obj => ValidateStationCode().IsValid &&
-                                              ValidateStationName().IsValid &&
-                                              ValidateStationAddress().IsValid &&
-                                              ValidateStationLatitude().IsValid &&
-                                              ValidateStationLongitude().IsValid);
+
+            Ok = new RelayCommand(async obj => await _Ok(obj),
+                obj => ValidateStationCode().IsValid &&
+                       ValidateStationName().IsValid &&
+                       ValidateStationAddress().IsValid &&
+                       ValidateStationLatitude().IsValid &&
+                       ValidateStationLongitude().IsValid);
             Cancel = new RelayCommand(_Cancel);
             AddAdjacent = new RelayCommand(obj => _AddAdjacent());
+        }
+
+        private async Task GetStationFromBL(int stationCode)
+        {
+            await Load(async () =>
+            {
+                Station = (BO.Station)(await BlWorkAsync(bl => bl.GetStation(stationCode)));
+                AdjacentStations = new ObservableCollection<AdjacentStationViewModel>(
+                    from ad in Station.AdjacentStations
+                    select _CreateAdjacentVM(ad)
+                );
+            });
         }
 
         private AdjacentStationViewModel _CreateAdjacentVM(BO.AdjacentStation adjacents)
@@ -114,31 +102,35 @@ namespace PL
 
         private void _AddAdjacent()
         {
-            var currentStations = (from ad in AdjacentStations select ad.Adjacent.ToStation).Append(station);
-            var restStations = (IEnumerable<BO.Station>)BlWork(bl => bl.GetRestOfStations(currentStations));
-            var vm = new SelectStationsViewModel(restStations);
+            var currentStations = (from ad in AdjacentStations
+                                   select ad.Adjacent.ToStation)
+                                   .Append(_station);
+
+            var vm = new SelectStationsViewModel(currentStations);
             if (DialogService.ShowSelectStationsDialog(vm) == DialogResult.Ok)
             {
-                var addedAdjacents = from st in vm.SelectedStations select new BO.AdjacentStation { ToStation = st };
+                var addedAdjacents = from st in vm.SelectedStations
+                                     select new BO.AdjacentStation { ToStation = st };
                 foreach (var ad in addedAdjacents)
+                {
                     AdjacentStations.Add(_CreateAdjacentVM(ad));
+                }
             }
         }
 
-        private void _Ok(object window)
+        private async Task _Ok(object window)
         {
-            if (IsUpdate)
+            await Load(async () =>
             {
-                Station.AdjacentStations = from ad in AdjacentStations select ad.Adjacent;
-                BlWork(bl => bl.UpdateStation(station));
-            }
-            else
-            {
-                station.AdjacentStations = from ad in AdjacentStations select ad.Adjacent;
-                BlWork(bl => bl.AddStation(station));
-                OnAddedStation(station);
-            }
-            DialogService.CloseDialog(window, DialogResult.Ok);
+                _station.AdjacentStations = from ad in AdjacentStations
+                                            select ad.Adjacent;
+                if (IsUpdate)
+                    await BlWorkAsync(bl => bl.UpdateStation(_station));
+                else
+                    await BlWorkAsync(bl => bl.AddStation(_station));
+
+                DialogService.CloseDialog(window, DialogResult.Ok);
+            });
         }
 
         private void _Cancel(object window)
@@ -146,21 +138,17 @@ namespace PL
             DialogService.CloseDialog(window, DialogResult.Cancel);
         }
 
-        public delegate void AddedStationEventHandler(object sender, BO.Station station);
-        public event AddedStationEventHandler AddedStaion;
-        protected virtual void OnAddedStation(BO.Station station) => AddedStaion?.Invoke(this, station);
-
         public string this[string columnName]
         {
             get
             {
                 switch (columnName)
                 {
-                    case nameof(Code):
+                    case nameof(Station.Code):
                         return ValidateStationCode().ErrorContent as string;
-                    case nameof(Name):
+                    case nameof(Station.Name):
                         return ValidateStationName().ErrorContent as string;
-                    case nameof(Address):
+                    case nameof(Station.Address):
                         return ValidateStationAddress().ErrorContent as string;
                     case nameof(Longitude):
                         return ValidateStationLongitude().ErrorContent as string;
@@ -179,7 +167,7 @@ namespace PL
             if (IsUpdate) return ValidationResult.ValidResult;
             try
             {
-                BlWork(bl => bl.ValidateStationCode(station.Code));
+                BlWork(bl => bl.ValidateStationCode(_station.Code));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadStationCodeException ex)
@@ -191,7 +179,7 @@ namespace PL
         {
             try
             {
-                BlWork(bl => bl.ValidateStationName(station.Name));
+                BlWork(bl => bl.ValidateStationName(_station.Name));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadStationNameException ex)
@@ -203,7 +191,7 @@ namespace PL
         {
             try
             {
-                BlWork(bl => bl.ValidateStationAddress(station.Address));
+                BlWork(bl => bl.ValidateStationAddress(_station.Address));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadStationAddressException ex)
@@ -215,7 +203,7 @@ namespace PL
         {
             try
             {
-                BlWork(bl => bl.ValidateStationLatitude(station.Location));
+                BlWork(bl => bl.ValidateStationLatitude(_station.Location));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadLocationLatitudeException ex)
@@ -231,7 +219,7 @@ namespace PL
         {
             try
             {
-                BlWork(bl => bl.ValidateStationLongitude(station.Location));
+                BlWork(bl => bl.ValidateStationLongitude(_station.Location));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadLocationLatitudeException)

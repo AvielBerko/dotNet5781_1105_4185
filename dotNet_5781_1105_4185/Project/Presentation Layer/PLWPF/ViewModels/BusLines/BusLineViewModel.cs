@@ -56,9 +56,9 @@ namespace PL
         {
             BusLine = busLine;
 
-            RemoveBusLine = new RelayCommand(obj => _Remove());
+            RemoveBusLine = new RelayCommand(async obj => await _Remove());
+            DuplicateBusLine = new RelayCommand(async obj => await _Duplicate());
             UpdateBusLine = new RelayCommand(obj => _Update());
-            DuplicateBusLine = new RelayCommand(obj => _Duplicate());
         }
 
         private void _Update()
@@ -70,28 +70,31 @@ namespace PL
             }
         }
 
-        private void _Duplicate()
+        private async Task _Duplicate()
         {
-            var duplicated = (BO.BusLine)BlWork(bl => bl.DuplicateBusLine(busLine.ID));
-            OnDupliate(duplicated);
+            await Load(async () =>
+            {
+                var duplicated = (BO.BusLine)await BlWorkAsync(bl => bl.DuplicateBusLine(busLine.ID));
+                OnDupliate(duplicated);
+            });
         }
 
-        private void _Remove()
+        private async Task _Remove()
         {
-            BlWork(bl => bl.DeleteBusLine(busLine.ID));
-            OnRemove();
+            await Load(async () =>
+            {
+                await BlWorkAsync(bl => bl.DeleteBusLine(busLine.ID));
+                OnRemove();
+            });
         }
 
-        public delegate void DuplicateBusLineEventHandler(object sender, BO.BusLine duplicated);
-        public event DuplicateBusLineEventHandler Duplicate;
+        public event Action<object, BO.BusLine> Duplicate;
         protected virtual void OnDupliate(BO.BusLine duplicated) => Duplicate?.Invoke(this, duplicated);
 
-        public delegate void RemoveBusLineEventHandler(object sender);
-        public event RemoveBusLineEventHandler Remove;
+        public event Action<object> Remove;
         protected virtual void OnRemove() => Remove?.Invoke(this);
 
-        public delegate void UpdateBusLineEventHandler(object sender);
-        public event UpdateBusLineEventHandler Update;
+        public event Action<object> Update;
         protected virtual void OnUpdate() => Update?.Invoke(this);
     }
 }

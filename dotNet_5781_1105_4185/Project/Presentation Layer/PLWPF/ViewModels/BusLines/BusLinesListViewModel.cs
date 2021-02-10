@@ -9,13 +9,13 @@ namespace PL
 {
     public class BusLinesListViewModel : BaseViewModel
     {
-        ObservableCollection<BusLineViewModel> busLines;
+        ObservableCollection<BusLineViewModel> _busLines;
         public ObservableCollection<BusLineViewModel> BusLines
         {
-            get => busLines;
+            get => _busLines;
             private set
             {
-                busLines = value;
+                _busLines = value;
                 OnPropertyChanged(nameof(BusLines));
             }
         }
@@ -26,18 +26,23 @@ namespace PL
 
         public BusLinesListViewModel()
         {
-            UpdateList();
+            _ = _UpdateList();
 
             AddBusLine = new RelayCommand(obj => _AddBusLine());
-            RemoveAllBusLines = new RelayCommand(obj => _RemoveAllBusLines(), obj => BusLines.Count > 0);
-            Refresh = new RelayCommand(obj => UpdateList());
+            RemoveAllBusLines = new RelayCommand(async obj => await _RemoveAllBusLines(),
+                obj => BusLines.Count > 0);
+            Refresh = new RelayCommand(async obj => await _UpdateList());
         }
 
-        private void UpdateList()
+        private async Task _UpdateList()
         {
-            BusLines = new ObservableCollection<BusLineViewModel>(
-                from busLine in (IEnumerable<BO.BusLine>)BlWork(bl => bl.GetAllBusLinesWithoutFullRoute())
-                select CreateBusLineViewModel(busLine));
+            await Load(async () =>
+            {
+                var busLines = (IEnumerable<BO.BusLine>)await BlWorkAsync(bl => bl.GetAllBusLinesWithoutFullRoute());
+                BusLines = new ObservableCollection<BusLineViewModel>(
+                    from busLine in busLines
+                    select CreateBusLineViewModel(busLine));
+            });
         }
 
         private BusLineViewModel CreateBusLineViewModel(BO.BusLine busLine)
@@ -59,12 +64,16 @@ namespace PL
             }
         }
 
-        private void _RemoveAllBusLines()
+        private async Task _RemoveAllBusLines()
         {
-            if (DialogService.ShowYesNoDialog("Are you sure you want to removea all bus lines?", "Remove all bus lines") == DialogResult.Yes)
+            if (DialogService.ShowYesNoDialog("Are you sure you want to removea all bus lines?",
+                "Remove all bus lines") == DialogResult.Yes)
             {
-                BlWork(bl => bl.DeleteAllBusLines());
-                BusLines.Clear();
+                await Load(async () =>
+                {
+                    await BlWorkAsync(bl => bl.DeleteAllBusLines());
+                    BusLines.Clear();
+                });
             }
         }
     }

@@ -10,13 +10,13 @@ namespace PL
     {
         public BO.LineStation LineStation { get; }
 
-        private bool isLast;
+        private bool _isLast;
         public bool IsLast
         {
-            get => isLast;
+            get => _isLast;
             set
             {
-                isLast = value;
+                _isLast = value;
                 OnPropertyChanged(nameof(IsLast));
             }
         }
@@ -46,11 +46,10 @@ namespace PL
             OnPropertyChanged(nameof(LineStation));
         }
 
-        public delegate void MyEventHandler(LineStationViewModel sender);
-
-        public event MyEventHandler InsertStation;
+        public event Action<LineStationViewModel> InsertStation;
         protected virtual void OnInsertStation() => InsertStation?.Invoke(this);
-        public event MyEventHandler RemoveLineStation;
+
+        public event Action<LineStationViewModel> RemoveLineStation;
         protected virtual void OnRemove() => RemoveLineStation?.Invoke(this);
     }
 }

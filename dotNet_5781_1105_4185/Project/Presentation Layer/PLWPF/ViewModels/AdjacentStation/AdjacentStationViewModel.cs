@@ -27,7 +27,7 @@ namespace PL
             RemoveAdjacents = new RelayCommand(obj => _Remove());
         }
         private void _Remove()
-		{
+        {
             OnRemove();
         }
 

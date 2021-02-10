@@ -54,8 +54,10 @@ namespace PL
         private void _AddStation()
         {
             var addStationVM = new AddUpdateStationViewModel();
-            addStationVM.AddedStaion += (sender, station) => Stations.Add(CreateStationViewModel(station));
-            DialogService.ShowAddUpdateStationDialog(addStationVM);
+            if (DialogService.ShowAddUpdateStationDialog(addStationVM) == DialogResult.Ok)
+            {
+                Stations.Add(CreateStationViewModel(addStationVM.Station));
+            }
         }
 
         private async Task _RemoveAllStations()

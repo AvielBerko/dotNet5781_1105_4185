@@ -36,37 +36,42 @@ namespace PL
 
         public AddUpdateBusLineViewModel(Guid? updateId = null)
         {
-            if (updateId == null)
-            {
-                BusLine = new BO.BusLine() { ID = Guid.NewGuid() };
-                LineStations = new ObservableCollection<LineStationViewModel>();
-                IsUpdate = false;
-            }
-            else
+            BusLine = new BO.BusLine() { ID = Guid.NewGuid() };
+            LineStations = new ObservableCollection<LineStationViewModel>();
+
+            IsUpdate = updateId != null;
+            if (IsUpdate)
             {
                 BusLine = (BO.BusLine)BlWork(bl => bl.GetBusLine(updateId ?? Guid.Empty));
                 LineStations = new ObservableCollection<LineStationViewModel>
                     (from ls in BusLine.Route select _CreateLineStationViewModel(ls));
-                IsUpdate = true;
             }
 
-            Ok = new RelayCommand(_Ok);
             Cancel = new RelayCommand(_Cancel);
+            Ok = new RelayCommand(async obj => await _Ok(obj));
             InsertStation = new RelayCommand(obj => _AddRoute());
-            Reverse = new RelayCommand(obj => _Reverse(), obj => LineStations.Count > 0);
+            Reverse = new RelayCommand(async obj => await _Reverse(), obj => LineStations.Count > 0);
         }
 
-        private void _Reverse()
+        private async Task _Reverse()
         {
-            var reversedStations = (IEnumerable<BO.LineStation>)BlWork(bl => bl.ReverseLineStations(from vm in LineStations select vm.LineStation));
-            LineStations = new ObservableCollection<LineStationViewModel>(from reversed in reversedStations select _CreateLineStationViewModel(reversed));
+            await Load(async () =>
+            {
+                var reversedStations = (IEnumerable<BO.LineStation>)await BlWorkAsync(
+                    bl => bl.ReverseLineStations(from vm in LineStations select vm.LineStation)
+                );
+
+                LineStations = new ObservableCollection<LineStationViewModel>(
+                    from reversed in reversedStations
+                    select _CreateLineStationViewModel(reversed)
+                );
+            });
         }
 
         private void _AddRoute(LineStationViewModel after = null)
         {
             var currentStations = (from ls in LineStations select ls.LineStation.Station);
-            var restStations = (IEnumerable<BO.Station>)BlWork(bl => bl.GetRestOfStations(currentStations));
-            var vm = new SelectStationsViewModel(restStations);
+            var vm = new SelectStationsViewModel(currentStations);
             if (DialogService.ShowSelectStationsDialog(vm) == DialogResult.Ok)
             {
                 var addedStations = from st in vm.SelectedStations
@@ -99,18 +104,19 @@ namespace PL
             }
         }
 
-        private void _Ok(object window)
+        private async Task _Ok(object window)
         {
-            BusLine.Route = from vm in LineStations select vm.LineStation;
-            if (IsUpdate)
+            await Load(async () =>
             {
-                BlWork(bl => bl.UpdateBusLine(BusLine));
-            }
-            else
-            {
-                BlWork(bl => bl.AddBusLine(BusLine));
-            }
-            DialogService.CloseDialog(window, DialogResult.Ok);
+                BusLine.Route = from vm in LineStations
+                                select vm.LineStation;
+                if (IsUpdate)
+                    await BlWorkAsync(bl => bl.UpdateBusLine(BusLine));
+                else
+                    await BlWorkAsync(bl => bl.AddBusLine(BusLine));
+
+                DialogService.CloseDialog(window, DialogResult.Ok);
+            });
         }
 
         private void _Cancel(object window)
