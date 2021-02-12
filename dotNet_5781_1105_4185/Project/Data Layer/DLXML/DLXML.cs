@@ -22,6 +22,175 @@ namespace DL
 
         private static string FileName<T>() => typeof(T).Name + ".xml";
 
+        #region User
+        public User GetUser(string name)
+        {
+            var users = XMLTools.LoadListFromXMLSerializer<User>(FileName<User>());
+
+            return (from user in users
+                    where user.Name == name
+                    select user).FirstOrDefault();
+        }
+        public void AddUser(User user)
+        {
+            var users = XMLTools.LoadListFromXMLSerializer<User>(FileName<User>());
+            if (users.Any(u => u.Name == user.Name))
+                throw new BadUserNameException(user.Name, $"User with the name {user.Name} already exists");
+
+            users.Add(user);
+
+            XMLTools.SaveListToXMLSerializer(users, FileName<User>());
+        }
+
+        public void DeleteUser(User user)
+        {
+            var users = XMLTools.LoadListFromXMLSerializer<User>(FileName<User>());
+            var exists = users.Find(u => u.Name == user.Name);
+            if (exists == null) throw new BadUserNameException(user.Name, $"User with the name {user.Name} dosen't exists");
+
+            users.Remove(exists);
+
+            XMLTools.SaveListToXMLSerializer(users, FileName<User>());
+        }
+        #endregion
+
+        #region Bus
+        public IEnumerable<Bus> GetAllBuses()
+        {
+            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
+
+            return from element in root.Elements()
+                   select new Bus
+                   {
+                       RegNum = int.Parse(element.Element("RegNum").Value),
+                       RegDate = DateTime.ParseExact(element.Element("RegDate").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture),
+                       Kilometrage = int.Parse(element.Element("Kilometrage").Value),
+                       FuelLeft = int.Parse(element.Element("FuelLeft").Value),
+                       Status = (BusStatus)Enum.Parse(typeof(BusStatus), element.Element("Status").Value),
+                       Type = (BusTypes)Enum.Parse(typeof(BusTypes), element.Element("Type").Value),
+                   };
+        }
+
+        public IEnumerable<Bus> GetBusesBy(Predicate<Bus> predicate)
+        {
+            return from bus in GetAllBuses()
+                   where predicate(bus)
+                   select bus;
+        }
+
+        public Bus GetBus(int regNum)
+        {
+            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
+
+            var result = (from element in root.Elements()
+                          let busRegNum = int.Parse(element.Element("RegNum").Value)
+                          where busRegNum == regNum
+                          select new Bus
+                          {
+                              RegNum = regNum,
+                              RegDate = DateTime.ParseExact(element.Element("RegDate").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal),
+                              Kilometrage = int.Parse(element.Element("Kilometrage").Value),
+                              FuelLeft = int.Parse(element.Element("FuelLeft").Value),
+                              Status = (BusStatus)Enum.Parse(typeof(BusStatus), element.Element("Status").Value),
+                              Type = (BusTypes)Enum.Parse(typeof(BusTypes), element.Element("Type").Value),
+                          }).FirstOrDefault();
+
+            if (result == null)
+            {
+                throw new BadBusRegistrationException(regNum, $"Bus number {regNum} doesn't exists");
+            }
+
+            return result;
+        }
+
+        public void AddBus(Bus bus)
+        {
+
+            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
+
+            var busElem = (from element in root.Elements()
+                           let busRegNum = int.Parse(element.Element("RegNum").Value)
+                           where busRegNum == bus.RegNum
+                           select element).FirstOrDefault();
+
+            if (busElem != null)
+            {
+                throw new BadBusRegistrationException(
+                    bus.RegNum, $"bus already exists");
+            }
+
+            root.Add(new XElement(nameof(Bus),
+                new XElement("RegNum", bus.RegNum),
+                new XElement("RegDate", bus.RegDate.ToString()),
+                new XElement("Kilometrage", bus.Kilometrage),
+                new XElement("FuelLeft", bus.FuelLeft),
+                new XElement("Status", bus.Status),
+                new XElement("Type", bus.Type)));
+
+            XMLTools.SaveListToXMLElement(root, FileName<Bus>());
+        }
+
+        public void UpdateBus(Bus bus)
+        {
+            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
+
+            var busElem = (from element in root.Elements()
+                           let busRegNum = int.Parse(element.Element("RegNum").Value)
+                           where busRegNum == bus.RegNum
+                           select element).FirstOrDefault();
+
+            if (busElem == null)
+            {
+                throw new BadBusRegistrationException(
+                    bus.RegNum, $"bus doesn't exists");
+            }
+
+            busElem.Element("RegNum").Value = bus.RegNum.ToString();
+            busElem.Element("RegDate").Value = bus.RegDate.ToString();
+            busElem.Element("Kilometrage").Value = bus.Kilometrage.ToString();
+            busElem.Element("FuelLeft").Value = bus.FuelLeft.ToString();
+            busElem.Element("Status").Value = bus.Status.ToString();
+            busElem.Element("Type").Value = bus.Type.ToString();
+
+            XMLTools.SaveListToXMLElement(root, FileName<Bus>());
+        }
+
+        public void DeleteBus(int regNum)
+        {
+            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
+
+            var busElem = (from element in root.Elements()
+                           let busRegNum = int.Parse(element.Element("RegNum").Value)
+                           where busRegNum == regNum
+                           select element).FirstOrDefault();
+
+            if (busElem == null)
+            {
+                throw new BadBusRegistrationException(regNum, $"bus doesn't exists");
+            }
+
+            busElem.Remove();
+
+            XMLTools.SaveListToXMLElement(root, FileName<Bus>());
+        }
+
+        public void DeleteBusesBy(Predicate<Bus> predicate)
+        {
+            foreach (var bus in GetBusesBy(predicate))
+            {
+                DeleteBus(bus.RegNum);
+            }
+        }
+
+        public void DeleteAllBuses()
+        {
+            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
+            root.Elements().Remove();
+            XMLTools.SaveListToXMLElement(root, FileName<Bus>());
+        }
+
+        #endregion
+
         #region Station
         public IEnumerable<Station> GetAllStations()
         {
@@ -196,6 +365,124 @@ namespace DL
         }
         #endregion
 
+        #region LineStation
+
+        public IEnumerable<LineStation> GetAllLineStations()
+        {
+            return XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
+        }
+
+        public IEnumerable<LineStation> GetLineStationsBy(Predicate<LineStation> predicate)
+        {
+            var lineStations = GetAllLineStations();
+            return from ls in lineStations
+                   where predicate(ls)
+                   select ls;
+        }
+
+        public LineStation GetLineStationByIndex(Guid lineID, int index)
+        {
+            var lineStations = GetLineStationsBy(ls => ls.LineID == lineID);
+            if (lineStations.Count() == 0)
+                throw new BadBusLineIDException(lineID, $"no line station for line with id {lineID}");
+
+            var lineStation = lineStations.FirstOrDefault(b => b.RouteIndex == index);
+
+            if (lineStation == null) throw new BadLineStationIndexException(lineID, index,
+                $"no line station with index {index} found for line ID {lineID}");
+
+            return lineStation;
+        }
+
+        public LineStation GetLineStationByStation(Guid lineID, int stationCode)
+        {
+            var lineStations = GetLineStationsBy(ls => ls.LineID == lineID);
+            if (lineStations.Count() == 0)
+                throw new BadBusLineIDException(lineID, $"no line station for line with id {lineID}");
+
+            var lineStation = lineStations.FirstOrDefault(b => b.StationCode == stationCode);
+
+            if (lineStation == null) throw new BadLineStationStationCodeException(lineID, stationCode,
+                $"no line station with station code {stationCode} found for line ID {lineID}");
+
+            return lineStation;
+        }
+
+        public void AddLineStation(LineStation lineStation)
+        {
+            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
+            if (lineStations.Any(s => s.LineID == lineStation.LineID && s.StationCode == lineStation.StationCode))
+                throw new BadLineStationStationCodeException(lineStation.LineID, lineStation.StationCode, $"Station {lineStation.StationCode} for line {lineStation.LineID} already exists");
+
+            lineStations.Add(lineStation);
+
+            XMLTools.SaveListToXMLSerializer(lineStations, FileName<LineStation>());
+        }
+
+        public void UpdateLineStationByIndex(LineStation lineStation)
+        {
+            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
+            var exists = lineStations.Find(s => s.LineID == lineStation.LineID && s.RouteIndex == lineStation.RouteIndex);
+            if (exists == null) throw new BadLineStationStationCodeException(lineStation.LineID, lineStation.StationCode, $"no line station with code {lineStation.StationCode} for line {lineStation.LineID}");
+
+            lineStations.Remove(exists);
+            lineStations.Add(lineStation);
+
+            XMLTools.SaveListToXMLSerializer(lineStations, FileName<LineStation>());
+        }
+
+        public void UpdateLineStationByStation(LineStation lineStation)
+        {
+            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
+            var exists = lineStations.Find(s => s.LineID == lineStation.LineID && s.StationCode == lineStation.StationCode);
+            if (exists == null) throw new BadLineStationStationCodeException(lineStation.LineID, lineStation.StationCode, $"no line station with code {lineStation.StationCode} for line {lineStation.LineID}");
+
+            lineStations.Remove(exists);
+            lineStations.Add(lineStation);
+
+            XMLTools.SaveListToXMLSerializer(lineStations, FileName<LineStation>());
+        }
+
+        public void DeleteLineStationByIndex(Guid lineID, int index)
+        {
+            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
+            var exists = lineStations.Find(s => s.LineID == lineID && s.RouteIndex == index);
+            if (exists == null) throw new BadLineStationStationCodeException(lineID, exists.StationCode, $"no such line station for line {lineID}");
+
+            lineStations.Remove(exists);
+
+            XMLTools.SaveListToXMLSerializer(lineStations, FileName<LineStation>());
+        }
+
+        public void DeleteLineStationByStation(Guid lineID, int stationCode)
+        {
+            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
+            var exists = lineStations.Find(s => s.LineID == lineID && s.StationCode == stationCode);
+            if (exists == null) throw new BadLineStationStationCodeException(lineID, stationCode, $"no line station with code {stationCode} for line {lineID}");
+
+            lineStations.Remove(exists);
+
+            XMLTools.SaveListToXMLSerializer(lineStations, FileName<LineStation>());
+        }
+
+        public void DeleteLineStationsBy(Predicate<LineStation> predicate)
+        {
+            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
+
+            var updatedLS = from ls in lineStations
+                            where !predicate(ls)
+                            select ls;
+
+            XMLTools.SaveListToXMLSerializer(updatedLS.ToList(), FileName<LineStation>());
+        }
+
+        public void DeleteAllLineStations()
+        {
+            XMLTools.SaveListToXMLSerializer(new List<LineStation>(), FileName<LineStation>());
+        }
+
+        #endregion
+
         #region AdjacentStations
         public IEnumerable<AdjacentStations> GetAllAdjacentStations()
         {
@@ -306,6 +593,18 @@ namespace DL
             XMLTools.SaveListToXMLElement(root, FileName<AdjacentStations>());
         }
 
+        public void AddOrUpdateAdjacentStations(AdjacentStations adjacentStations)
+        {
+            try
+            {
+                AddAdjacentStations(adjacentStations);
+            }
+            catch (BadAdjacentStationsCodeException)
+            {
+                UpdateAdjacentStations(adjacentStations);
+            }
+        }
+
         public void DeleteAdjacentStations(int stationCode1, int stationCode2)
         {
             var root = XMLTools.LoadListFromXMLElement(FileName<AdjacentStations>());
@@ -343,294 +642,5 @@ namespace DL
             }
         }
         #endregion
-
-        #region LineStation
-
-        public IEnumerable<LineStation> GetAllLineStations()
-        {
-            return XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
-        }
-
-        public IEnumerable<LineStation> GetLineStationsBy(Predicate<LineStation> predicate)
-        {
-            var lineStations = GetAllLineStations();
-            return from ls in lineStations
-                   where predicate(ls)
-                   select ls;
-        }
-
-        public LineStation GetLineStationByIndex(Guid lineID, int index)
-        {
-            var lineStations = GetLineStationsBy(ls => ls.LineID == lineID);
-            if (lineStations.Count() == 0)
-                throw new BadBusLineIDException(lineID, $"no line station for line with id {lineID}");
-
-            var lineStation = lineStations.FirstOrDefault(b => b.RouteIndex == index);
-
-            if (lineStation == null) throw new BadLineStationIndexException(lineID, index,
-                $"no line station with index {index} found for line ID {lineID}");
-
-            return lineStation;
-        }
-
-        public LineStation GetLineStationByStation(Guid lineID, int stationCode)
-        {
-            var lineStations = GetLineStationsBy(ls => ls.LineID == lineID);
-            if (lineStations.Count() == 0)
-                throw new BadBusLineIDException(lineID, $"no line station for line with id {lineID}");
-
-            var lineStation = lineStations.FirstOrDefault(b => b.StationCode == stationCode);
-
-            if (lineStation == null) throw new BadLineStationStationCodeException(lineID, stationCode,
-                $"no line station with station code {stationCode} found for line ID {lineID}");
-
-            return lineStation;
-        }
-
-        public void AddLineStation(LineStation lineStation)
-        {
-            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
-            if (lineStations.Any(s => s.LineID == lineStation.LineID && s.StationCode == lineStation.StationCode))
-                throw new BadLineStationStationCodeException(lineStation.LineID, lineStation.StationCode, $"Station {lineStation.StationCode} for line {lineStation.LineID} already exists");
-
-            lineStations.Add(lineStation);
-
-            XMLTools.SaveListToXMLSerializer(lineStations, FileName<LineStation>());
-        }
-
-        public void UpdateLineStationByIndex(LineStation lineStation)
-        {
-            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
-            var exists = lineStations.Find(s => s.LineID == lineStation.LineID && s.RouteIndex == lineStation.RouteIndex);
-            if (exists == null) throw new BadLineStationStationCodeException(lineStation.LineID, lineStation.StationCode , $"no line station with code {lineStation.StationCode} for line {lineStation.LineID}");
-
-            lineStations.Remove(exists);
-            lineStations.Add(lineStation);
-
-            XMLTools.SaveListToXMLSerializer(lineStations, FileName<LineStation>());
-        }
-
-        public void UpdateLineStationByStation(LineStation lineStation)
-        {
-            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
-            var exists = lineStations.Find(s => s.LineID == lineStation.LineID && s.StationCode == lineStation.StationCode);
-            if (exists == null) throw new BadLineStationStationCodeException(lineStation.LineID, lineStation.StationCode, $"no line station with code {lineStation.StationCode} for line {lineStation.LineID}");
-
-            lineStations.Remove(exists);
-            lineStations.Add(lineStation);
-
-            XMLTools.SaveListToXMLSerializer(lineStations, FileName<LineStation>());
-        }
-
-        public void DeleteLineStationByIndex(Guid lineID, int index)
-        {
-            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
-            var exists = lineStations.Find(s => s.LineID == lineID && s.RouteIndex == index);
-            if (exists == null) throw new BadLineStationStationCodeException(lineID, exists.StationCode , $"no such line station for line {lineID}");
-
-            lineStations.Remove(exists);
-
-            XMLTools.SaveListToXMLSerializer(lineStations, FileName<LineStation>());
-        }
-
-        public void DeleteLineStationByStation(Guid lineID, int stationCode)
-        {
-            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
-            var exists = lineStations.Find(s => s.LineID == lineID && s.StationCode == stationCode);
-            if (exists == null) throw new BadLineStationStationCodeException(lineID, stationCode, $"no line station with code {stationCode} for line {lineID}");
-
-            lineStations.Remove(exists);
-
-            XMLTools.SaveListToXMLSerializer(lineStations, FileName<LineStation>());
-        }
-
-        public void DeleteLineStationsBy(Predicate<LineStation> predicate)
-        {
-            var lineStations = XMLTools.LoadListFromXMLSerializer<LineStation>(FileName<LineStation>());
-
-            var updatedLS = from ls in lineStations
-                                  where !predicate(ls)
-                                  select ls;
-
-            XMLTools.SaveListToXMLSerializer(updatedLS.ToList(), FileName<LineStation>());
-        }
-
-        public void DeleteAllLineStations()
-        {
-            XMLTools.SaveListToXMLSerializer(new List<LineStation>(), FileName<LineStation>());
-        }
-
-        #endregion
-
-        #region Bus
-
-        public IEnumerable<Bus> GetAllBuses()
-        {
-            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
-
-            return from element in root.Elements()
-                   select new Bus
-                   {
-                       RegNum = int.Parse(element.Element("RegNum").Value),
-                       RegDate = DateTime.ParseExact(element.Element("RegDate").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture),
-                       Kilometrage = int.Parse(element.Element("Kilometrage").Value),
-                       FuelLeft = int.Parse(element.Element("FuelLeft").Value),
-                       Status = (BusStatus)Enum.Parse(typeof(BusStatus), element.Element("Status").Value),
-                       Type = (BusTypes)Enum.Parse(typeof(BusTypes), element.Element("Type").Value),
-                   };
-        }
-
-        public IEnumerable<Bus> GetBusesBy(Predicate<Bus> predicate)
-        {
-            return from bus in GetAllBuses()
-                   where predicate(bus)
-                   select bus;
-        }
-
-        public Bus GetBus(int regNum)
-        {
-            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
-
-            var result = (from element in root.Elements()
-                       let busRegNum = int.Parse(element.Element("RegNum").Value)
-                       where busRegNum == regNum
-                       select new Bus
-                       {
-                           RegNum = regNum,
-                           RegDate = DateTime.ParseExact(element.Element("RegDate").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal),
-                           Kilometrage = int.Parse(element.Element("Kilometrage").Value),
-                           FuelLeft = int.Parse(element.Element("FuelLeft").Value),
-                           Status = (BusStatus)Enum.Parse(typeof(BusStatus), element.Element("Status").Value),
-                           Type = (BusTypes)Enum.Parse(typeof(BusTypes), element.Element("Type").Value),
-                       }).FirstOrDefault();
-
-            if (result == null)
-            {
-                throw new BadBusRegistrationException(regNum, $"Bus number {regNum} doesn't exists");
-            }
-
-            return result;
-        }
-
-        public void AddBus(Bus bus)
-        {
-
-            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
-
-            var busElem = (from element in root.Elements()
-                          let busRegNum = int.Parse(element.Element("RegNum").Value)
-                          where busRegNum == bus.RegNum
-                          select element).FirstOrDefault();
-
-            if (busElem != null)
-            {
-                throw new BadBusRegistrationException(
-                    bus.RegNum, $"bus already exists");
-            }
-
-            root.Add(new XElement(nameof(Bus),
-                new XElement("RegNum", bus.RegNum),
-                new XElement("RegDate", bus.RegDate.ToString()),
-                new XElement("Kilometrage", bus.Kilometrage),
-                new XElement("FuelLeft", bus.FuelLeft),
-                new XElement("Status", bus.Status),
-                new XElement("Type", bus.Type)));
-
-            XMLTools.SaveListToXMLElement(root, FileName<Bus>());
-        }
-
-        public void UpdateBus(Bus bus)
-        {
-            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
-
-            var busElem = (from element in root.Elements()
-                           let busRegNum = int.Parse(element.Element("RegNum").Value)
-                           where busRegNum == bus.RegNum
-                           select element).FirstOrDefault();
-
-            if (busElem == null)
-            {
-                throw new BadBusRegistrationException(
-                    bus.RegNum, $"bus doesn't exists");
-            }
-
-            busElem.Element("RegNum").Value = bus.RegNum.ToString();
-            busElem.Element("RegDate").Value = bus.RegDate.ToString();
-            busElem.Element("Kilometrage").Value = bus.Kilometrage.ToString();
-            busElem.Element("FuelLeft").Value = bus.FuelLeft.ToString();
-            busElem.Element("Status").Value = bus.Status.ToString();
-            busElem.Element("Type").Value = bus.Type.ToString();
-
-            XMLTools.SaveListToXMLElement(root, FileName<Bus>());
-        }
-
-        public void DeleteBus(int regNum)
-        {
-            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
-
-            var busElem = (from element in root.Elements()
-                           let busRegNum = int.Parse(element.Element("RegNum").Value)
-                           where busRegNum == regNum
-                           select element).FirstOrDefault();
-
-            if (busElem == null)
-            {
-                throw new BadBusRegistrationException(regNum, $"bus doesn't exists");
-            }
-
-            busElem.Remove();
-
-            XMLTools.SaveListToXMLElement(root, FileName<Bus>());
-        }
-
-        public void DeleteBusesBy(Predicate<Bus> predicate)
-        {
-            foreach (var bus in GetBusesBy(predicate))
-            {
-                DeleteBus(bus.RegNum);
-            }
-        }
-
-        public void DeleteAllBuses()
-        {
-            var root = XMLTools.LoadListFromXMLElement(FileName<Bus>());
-            root.Elements().Remove();
-            XMLTools.SaveListToXMLElement(root, FileName<Bus>());
-        }
-
-		#endregion
-
-		#region User
-        public User GetUser(string name)
-        {
-            var users = XMLTools.LoadListFromXMLSerializer<User>(FileName<User>());
-
-            return (from user in users
-                    where user.Name == name
-                    select user).FirstOrDefault();
-        }
-		public void AddUser(User user)
-        {
-            var users = XMLTools.LoadListFromXMLSerializer<User>(FileName<User>());
-            if (users.Any(u => u.Name == user.Name))
-                throw new BadUserNameException(user.Name, $"User with the name {user.Name} already exists");
-
-            users.Add(user);
-
-            XMLTools.SaveListToXMLSerializer(users, FileName<User>());
-        }
-
-        public void DeleteUser(User user)
-        {
-            var users = XMLTools.LoadListFromXMLSerializer<User>(FileName<User>());
-            var exists = users.Find(u => u.Name == user.Name);
-            if (exists == null) throw new BadUserNameException(user.Name, $"User with the name {user.Name} dosen't exists");
-
-            users.Remove(exists);
-
-            XMLTools.SaveListToXMLSerializer(users, FileName<User>());
-        }
-		#endregion
-
-	}
+    }
 }

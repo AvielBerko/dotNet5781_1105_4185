@@ -9,20 +9,29 @@ namespace PL
 {
     public class AddUpdateBusLineViewModel : BaseViewModel
     {
-        private ObservableCollection<LineStationViewModel> lineStations;
+        private ObservableCollection<LineStationViewModel> _lineStations;
         public ObservableCollection<LineStationViewModel> LineStations
         {
-            get => lineStations;
+            get => _lineStations;
             private set
             {
-                lineStations = value;
+                _lineStations = value;
                 LineStations.CollectionChanged += (sender, e) => UpdateIsLast();
                 UpdateIsLast();
                 OnPropertyChanged(nameof(LineStations));
             }
         }
 
-        public BO.BusLine BusLine { get; }
+        private BO.BusLine _busLine;
+        public BO.BusLine BusLine
+        {
+            get => _busLine;
+            set
+            {
+                _busLine = value;
+                OnPropertyChanged(nameof(BusLine));
+            }
+        }
 
         public string Title => (IsUpdate ? "Update" : "Add") + " Bus Line";
         public bool IsUpdate { get; private set; }
@@ -36,36 +45,45 @@ namespace PL
 
         public AddUpdateBusLineViewModel(Guid? updateId = null)
         {
-            BusLine = new BO.BusLine() { ID = Guid.NewGuid() };
+            BusLine = new BO.BusLine() { ID = Guid.Empty };
             LineStations = new ObservableCollection<LineStationViewModel>();
 
             IsUpdate = updateId != null;
             if (IsUpdate)
             {
-                BusLine = (BO.BusLine)BlWork(bl => bl.GetBusLine(updateId ?? Guid.Empty));
-                LineStations = new ObservableCollection<LineStationViewModel>
-                    (from ls in BusLine.Route select _CreateLineStationViewModel(ls));
+                _ = GetBusLineFromBL(updateId ?? Guid.Empty);
+            }
+            else
+            {
+                BusLine.ID = Guid.NewGuid();
             }
 
             Cancel = new RelayCommand(_Cancel);
             Ok = new RelayCommand(async obj => await _Ok(obj));
             InsertStation = new RelayCommand(obj => _AddRoute());
-            Reverse = new RelayCommand(async obj => await _Reverse(), obj => LineStations.Count > 0);
+            Reverse = new RelayCommand(obj => _Reverse(), obj => LineStations.Count > 0);
         }
 
-        private async Task _Reverse()
+        private async Task GetBusLineFromBL(Guid id)
         {
             await Load(async () =>
             {
-                var reversedStations = (IEnumerable<BO.LineStation>)await BlWorkAsync(
-                    bl => bl.ReverseLineStations(from vm in LineStations select vm.LineStation)
-                );
-
-                LineStations = new ObservableCollection<LineStationViewModel>(
-                    from reversed in reversedStations
-                    select _CreateLineStationViewModel(reversed)
-                );
+                BusLine = (BO.BusLine)await BlWorkAsync(bl => bl.GetBusLine(id));
+                LineStations = new ObservableCollection<LineStationViewModel>
+                    (from ls in BusLine.Route select _CreateLineStationViewModel(ls));
             });
+        }
+
+        private void _Reverse()
+        {
+            var reversedStations = (IEnumerable<BO.LineStation>)BlWork(
+                bl => bl.ReverseLineStations(from vm in LineStations select vm.LineStation)
+            );
+
+            LineStations = new ObservableCollection<LineStationViewModel>(
+                from reversed in reversedStations
+                select _CreateLineStationViewModel(reversed)
+            );
         }
 
         private void _AddRoute(LineStationViewModel after = null)

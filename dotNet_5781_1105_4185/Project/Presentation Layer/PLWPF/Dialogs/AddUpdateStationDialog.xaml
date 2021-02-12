@@ -93,19 +93,19 @@
 		<ListView Grid.Column="1" Margin="5" ItemsSource="{Binding AdjacentStations}">
 			<ListView.View>
 				<GridView>
-					<GridViewColumn Header="Code" DisplayMemberBinding="{Binding Adjacent.ToStation.Code}"/>
-					<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Adjacent.ToStation.Name}"/>
+					<GridViewColumn Header="Code" DisplayMemberBinding="{Binding ToStation.Code}"/>
+					<GridViewColumn Header="Name" DisplayMemberBinding="{Binding ToStation.Name}"/>
 					<GridViewColumn Header="Distance">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
-								<TextBox MinWidth="40" Text="{Binding Adjacent.Distance, UpdateSourceTrigger=PropertyChanged}"/>
+								<TextBox MinWidth="40" Text="{Binding Adjacents.Distance, UpdateSourceTrigger=PropertyChanged}"/>
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>
 					<GridViewColumn Header="Time">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
-								<TextBox MinWidth="45" Text="{Binding Adjacent.DrivingTime, UpdateSourceTrigger=PropertyChanged}"/>
+								<TextBox MinWidth="45" Text="{Binding Adjacents.DrivingTime, UpdateSourceTrigger=PropertyChanged}"/>
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>

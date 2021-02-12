@@ -421,6 +421,18 @@ namespace DL
             DataSet.AdjacentStations.Add(adjacentStations.Clone());
         }
 
+        public void AddOrUpdateAdjacentStations(AdjacentStations adjacentStations)
+        {
+            try
+            {
+                AddAdjacentStations(adjacentStations);
+            }
+            catch (BadAdjacentStationsCodeException)
+            {
+                UpdateAdjacentStations(adjacentStations);
+            }
+        }
+
         public void DeleteAdjacentStations(int stationCode1, int stationCode2)
         {
             var adjacent = DataSet.AdjacentStations.Find(a => a.Station1Code == stationCode1 && a.Station2Code == stationCode2);

@@ -92,9 +92,9 @@ namespace PL
             });
         }
 
-        private AdjacentStationViewModel _CreateAdjacentVM(BO.AdjacentStation adjacents)
+        private AdjacentStationViewModel _CreateAdjacentVM(BO.AdjacentStations adjacents)
         {
-            var result = new AdjacentStationViewModel(adjacents);
+            var result = new AdjacentStationViewModel(adjacents, Station.Code);
             result.Remove += (sender) => AdjacentStations.Remove(result);
 
             return result;
@@ -102,15 +102,19 @@ namespace PL
 
         private void _AddAdjacent()
         {
-            var currentStations = (from ad in AdjacentStations
-                                   select ad.Adjacent.ToStation)
+            var currentStations = (from adj in AdjacentStations
+                                   select adj.Adjacents.GetOtherStation(Station.Code))
                                    .Append(_station);
 
             var vm = new SelectStationsViewModel(currentStations);
             if (DialogService.ShowSelectStationsDialog(vm) == DialogResult.Ok)
             {
                 var addedAdjacents = from st in vm.SelectedStations
-                                     select new BO.AdjacentStation { ToStation = st };
+                                     select new BO.AdjacentStations
+                                     {
+                                         Station1 = Station,
+                                         Station2 = st
+                                     };
                 foreach (var ad in addedAdjacents)
                 {
                     AdjacentStations.Add(_CreateAdjacentVM(ad));
@@ -123,7 +127,7 @@ namespace PL
             await Load(async () =>
             {
                 _station.AdjacentStations = from ad in AdjacentStations
-                                            select ad.Adjacent;
+                                            select ad.Adjacents;
                 if (IsUpdate)
                     await BlWorkAsync(bl => bl.UpdateStation(_station));
                 else
@@ -167,7 +171,7 @@ namespace PL
             if (IsUpdate) return ValidationResult.ValidResult;
             try
             {
-                BlWork(bl => bl.ValidateStationCode(_station.Code));
+                BlWork(bl => bl.ValidateNewStationCode(_station.Code));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadStationCodeException ex)
@@ -179,7 +183,7 @@ namespace PL
         {
             try
             {
-                BlWork(bl => bl.ValidateStationName(_station.Name));
+                BlWork(bl => bl.ValidateNewStationName(_station.Name));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadStationNameException ex)
@@ -191,7 +195,7 @@ namespace PL
         {
             try
             {
-                BlWork(bl => bl.ValidateStationAddress(_station.Address));
+                BlWork(bl => bl.ValidateNewStationAddress(_station.Address));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadStationAddressException ex)
@@ -203,7 +207,7 @@ namespace PL
         {
             try
             {
-                BlWork(bl => bl.ValidateStationLatitude(_station.Location));
+                BlWork(bl => bl.ValidateNewStationLatitude(_station.Location));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadLocationLatitudeException ex)
@@ -219,7 +223,7 @@ namespace PL
         {
             try
             {
-                BlWork(bl => bl.ValidateStationLongitude(_station.Location));
+                BlWork(bl => bl.ValidateNewStationLongitude(_station.Location));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadLocationLatitudeException)

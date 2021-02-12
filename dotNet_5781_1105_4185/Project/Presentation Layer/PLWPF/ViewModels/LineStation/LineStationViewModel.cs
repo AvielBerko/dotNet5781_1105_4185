@@ -10,6 +10,54 @@ namespace PL
     {
         public BO.LineStation LineStation { get; }
 
+        public double? Distance
+        {
+            get => LineStation.NextStationRoute?.Distance;
+            set
+            {
+                if (value == null)
+                {
+                    LineStation.NextStationRoute = null;
+                }
+                else
+                {
+                    LineStation.NextStationRoute = new BO.NextStationRoute
+                    {
+                        Distance = value ?? 0,
+                        DrivingTime = LineStation.NextStationRoute?.DrivingTime ?? TimeSpan.Zero
+                    };
+                }
+
+                OnPropertyChanged(nameof(LineStation));
+                OnPropertyChanged(nameof(Distance));
+                OnPropertyChanged(nameof(DrivingTime));
+            }
+        }
+
+        public TimeSpan? DrivingTime
+        {
+            get => LineStation.NextStationRoute?.DrivingTime;
+            set
+            {
+                if (value == null)
+                {
+                    LineStation.NextStationRoute = null;
+                }
+                else
+                {
+                    LineStation.NextStationRoute = new BO.NextStationRoute
+                    {
+                        Distance = LineStation.NextStationRoute?.Distance ?? 0,
+                        DrivingTime = value ?? TimeSpan.Zero
+                    };
+                }
+
+                OnPropertyChanged(nameof(LineStation));
+                OnPropertyChanged(nameof(Distance));
+                OnPropertyChanged(nameof(DrivingTime));
+            }
+        }
+
         private bool _isLast;
         public bool IsLast
         {
@@ -36,14 +84,17 @@ namespace PL
         private void _InverseAdjacents()
         {
             if (LineStation.NextStationRoute == null)
-			{
+            {
                 LineStation.NextStationRoute = new BO.NextStationRoute();
             }
             else
-			{
+            {
                 LineStation.NextStationRoute = null;
             }
+
             OnPropertyChanged(nameof(LineStation));
+            OnPropertyChanged(nameof(Distance));
+            OnPropertyChanged(nameof(DrivingTime));
         }
 
         public event Action<LineStationViewModel> InsertStation;

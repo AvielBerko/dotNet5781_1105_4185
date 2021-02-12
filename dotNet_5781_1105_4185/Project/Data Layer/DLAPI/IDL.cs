@@ -67,6 +67,7 @@ namespace DLAPI
         DO.AdjacentStations GetAdjacentStations(int stationCode1, int stationCode2);
         void AddAdjacentStations(DO.AdjacentStations adjacentStations);
         void UpdateAdjacentStations(DO.AdjacentStations adjacentStations);
+        void AddOrUpdateAdjacentStations(DO.AdjacentStations adjacentStations);
         void DeleteAdjacentStations(int stationCode1, int stationCode2);
         void DeleteAllAdjacentStations();
         void DeleteAdjacentStationsBy(Predicate<DO.AdjacentStations> predicate);

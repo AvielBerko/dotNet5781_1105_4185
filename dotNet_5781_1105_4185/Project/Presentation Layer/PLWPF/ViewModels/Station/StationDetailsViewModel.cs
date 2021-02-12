@@ -53,8 +53,8 @@ namespace PL
             {
                 Station = (BO.Station)(await BlWorkAsync(bl => bl.GetStation(code)));
                 AdjacentStations = new ObservableCollection<AdjacentStationViewModel> (
-                    from ad in Station.AdjacentStations
-                    select new AdjacentStationViewModel(ad)
+                    from adj in Station.AdjacentStations
+                    select new AdjacentStationViewModel(adj, Station.Code)
                 );
                 PassingLines = new ObservableCollection<BusLineViewModel>(
                     from line in (IEnumerable<BO.BusLine>)(await BlWorkAsync(bl => bl.GetLinesPassingTheStation(code)))

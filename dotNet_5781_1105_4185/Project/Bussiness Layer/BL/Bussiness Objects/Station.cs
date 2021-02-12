@@ -12,6 +12,6 @@ namespace BO
 		public string Name { get; set; }
 		public string Address { get; set; }
 		public Location Location { get; set; }
-		public IEnumerable<AdjacentStation> AdjacentStations { get; set; }
+		public IEnumerable<AdjacentStations> AdjacentStations { get; set; }
 	}
 }

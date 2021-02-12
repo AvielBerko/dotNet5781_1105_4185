@@ -8,21 +8,26 @@ namespace PL
 {
     public class AdjacentStationViewModel : BaseViewModel
     {
-        private BO.AdjacentStation adjacent;
-        public BO.AdjacentStation Adjacent
+        private BO.AdjacentStations _adjacents;
+        public BO.AdjacentStations Adjacents
         {
-            get => adjacent;
+            get => _adjacents;
             set
             {
-                adjacent = value;
-                OnPropertyChanged(nameof(Adjacent));
+                _adjacents = value;
+                OnPropertyChanged(nameof(Adjacents));
             }
         }
+
+        private int _fromStationCode;
+        public BO.Station ToStation => Adjacents.GetOtherStation(_fromStationCode);
+
         public RelayCommand RemoveAdjacents { get; }
 
-        public AdjacentStationViewModel(BO.AdjacentStation adjacent)
+        public AdjacentStationViewModel(BO.AdjacentStations adjacent, int fromStationCode)
         {
-            Adjacent = adjacent;
+            _fromStationCode = fromStationCode;
+            Adjacents = adjacent;
 
             RemoveAdjacents = new RelayCommand(obj => _Remove());
         }
