@@ -726,6 +726,31 @@ namespace BL
                 dl.UpdateBusLine(doLine);
             }
         }
+
+        public IEnumerable<BO.Trip> CollidingTrips(IEnumerable<BO.Trip> trips)
+        {
+            var pairs = trips.Zip(trips.Skip(1), (a,b) => new BO.Trip[]{ a, b });
+
+            var colliding = from pair in pairs
+                            where TripsColliding(pair[0], pair[1])
+                            from trip in pair
+                            select trip;
+
+            return colliding.Distinct();
+        }
+
+        private bool TripsColliding(BO.Trip a, BO.Trip b)
+        {
+            return 
+                // bStart < aStart < bFinish
+                a.StartTime < b.FinishTime && a.StartTime > b.StartTime ||
+                // bStart < aFinish < bFinish
+                a.FinishTime < b.FinishTime && a.FinishTime > b.StartTime ||
+                // aStart < bStart < aFinish
+                b.StartTime < a.FinishTime && b.StartTime > a.StartTime ||
+                // aStart < bFinish < aFinish
+                b.FinishTime < a.FinishTime && b.FinishTime > a.StartTime;
+        }
         #endregion
     }
 }

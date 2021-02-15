@@ -47,11 +47,12 @@ namespace BLAPI
         void RefuelBus(BO.Bus bus);
         #endregion
 
-        #region BusLine, LineStations
+        #region BusLine, LineStations, Trips
         IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute();
         IEnumerable<BO.BusLine> GetAllBusLines();
         IEnumerable<BO.BusLine> GetLinesPassingTheStation(int code);
         IEnumerable<BO.LineStation> ReverseLineStations(IEnumerable<BO.LineStation> stations);
+        IEnumerable<BO.Trip> CollidingTrips(IEnumerable<BO.Trip> trips);
         BO.BusLine GetBusLine(Guid ID);
         BO.BusLine GetBusLineWithoutRoute(Guid ID);
         BO.BusLine DuplicateBusLine(Guid ID);

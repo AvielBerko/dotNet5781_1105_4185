@@ -1,0 +1,194 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:PL">
+
+
+    <DataTemplate DataType="{x:Type local:LineStationViewModel}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="35" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="1" BorderThickness="1" Height="50">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="LightGreen"/>
+                        <Setter Property="BorderBrush" Value="DarkGreen"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}"/>
+                                    <Condition Binding="{Binding IsLast}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" Value="LightSalmon"/>
+                                <Setter Property="BorderBrush" Value="Red"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+
+                <DockPanel Margin="5" LastChildFill="True">
+                    <Button Command="{Binding Remove}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            BorderThickness="0" Background="Transparent">
+                        <Image Source="/Images/cancel_48px.png" />
+                    </Button>
+                    <Label Content="Station's Code: " VerticalAlignment="Center"/>
+                    <TextBox IsReadOnly="True" MinWidth="50" IsReadOnlyCaretVisible="True" Text="{Binding LineStation.Station.Code}" VerticalAlignment="Center"/>
+                    <Label Content="Name:" VerticalAlignment="Center"/>
+                    <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding LineStation.Station.Name}" VerticalAlignment="Center"/>
+                </DockPanel>
+            </Border>
+
+            <Grid Grid.Column="1" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Content="Distance:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding Distance, StringFormat=n2, UpdateSourceTrigger=PropertyChanged}" />
+                    <Label Grid.Column="2" Content="Time:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBox Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding DrivingTime, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLast}" Value="True">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                </Grid>
+
+                <Button Grid.Column="1" Margin="5" Command="{Binding InverseAdjacents}">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Content" Value="Disconnect"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLast}" Value="True">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
+                                    <Setter Property="Content" Value="Connect"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Grid.Column="2" Content="Insert After" Margin="5" Command="{Binding Insert}" />
+            </Grid>
+
+            <Image Grid.Column="0" Grid.Row="0" Source="/Images/bus_stop_48px.png" />
+            <Image Grid.Column="0" Grid.Row="1" Source="/Images/arrow_down_48px.png">
+                <Image.Style>
+                    <Style TargetType="Image">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type local:TripViewModel}">
+        <Border BorderThickness="1">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="LightGreen"/>
+                    <Setter Property="BorderBrush" Value="DarkGreen"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsColliding}" Value="True">
+                            <Setter Property="Background" Value="LightSalmon"/>
+                            <Setter Property="BorderBrush" Value="Red"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <DockPanel LastChildFill="True">
+                <Grid Width="57">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0" Command="{Binding Remove}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            BorderThickness="0" Background="Transparent">
+                        <Image Source="/Images/cancel_48px.png" />
+                    </Button>
+                    <ToggleButton Grid.Row="1" IsChecked="{Binding OneTime}">
+                        <TextBlock Text="One-Time Trip" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </ToggleButton>
+                </Grid>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0" Content="Start Time:" />
+                        <!-- StringFormat=t Means select time-only without seconds-->
+                        <TextBox Grid.Column="1" Text="{Binding Trip.StartTime, StringFormat=t, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Finish Time:" Margin="5"/>
+                        <Label Grid.Row="1" Grid.Column="0" Content="Frequency:" Margin="5"/>
+                        <!-- StringFormat=t Means select time-only without seconds-->
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Trip.FinishTime, StringFormat=t, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Margin="5"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Trip.Frequency, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"  Margin="5"/>
+
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding OneTime}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                    </Grid>
+                </Grid>
+            </DockPanel>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

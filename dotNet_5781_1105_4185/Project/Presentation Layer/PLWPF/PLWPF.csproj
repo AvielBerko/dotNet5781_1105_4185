@@ -86,6 +86,7 @@
     <Compile Include="ViewModels\BusLines\BusLineViewModel.cs" />
     <Compile Include="ViewModels\Bus\AddBusViewModel.cs" />
     <Compile Include="ViewModels\LineStation\LineStationViewModel.cs" />
+    <Compile Include="ViewModels\LineTrip\TripViewModel.cs" />
     <Compile Include="ViewModels\Station\StationDetailsViewModel.cs" />
     <Compile Include="ViewModels\Station\AddUpdateStationViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
@@ -139,6 +140,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Resources\AddUpdateBusLineResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -188,8 +193,6 @@
   <ItemGroup>
     <Resource Include="Images\arrow_down_48px.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\LineTrip\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

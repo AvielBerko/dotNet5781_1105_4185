@@ -22,6 +22,17 @@ namespace PL
             }
         }
 
+        private ObservableCollection<TripViewModel> _trips;
+        public ObservableCollection<TripViewModel> Trips
+        {
+            get => _trips;
+            private set
+            {
+                _trips = value;
+                OnPropertyChanged(nameof(Trips));
+            }
+        }
+
         private BO.BusLine _busLine;
         public BO.BusLine BusLine
         {
@@ -42,12 +53,18 @@ namespace PL
         public RelayCommand Cancel { get; }
         public RelayCommand InsertStation { get; }
         public RelayCommand Reverse { get; }
-        public RelayCommand Clear { get; }
+        public RelayCommand ClearRoute { get; }
+        public RelayCommand ClearTrips { get; }
+        public RelayCommand AddTrip { get; }
+
+        private List<BO.Trip> _collidingTrips;
 
         public AddUpdateBusLineViewModel(Guid? updateId = null)
         {
             BusLine = new BO.BusLine() { ID = Guid.Empty };
             LineStations = new ObservableCollection<LineStationViewModel>();
+            Trips = new ObservableCollection<TripViewModel>();
+            _collidingTrips = new List<BO.Trip>();
 
             IsUpdate = updateId != null;
             if (IsUpdate)
@@ -59,11 +76,15 @@ namespace PL
                 BusLine.ID = Guid.NewGuid();
             }
 
+            InsertStation = new RelayCommand(obj => _AddRoute());
+            Reverse = new RelayCommand(obj => _Reverse(), obj => LineStations.Count > 1);
+            ClearRoute = new RelayCommand(obj => _ClearRoute(), obj => LineStations.Count > 0);
+
+            ClearTrips = new RelayCommand(obj => _ClearTrips(), obj => Trips.Count > 0);
+            AddTrip = new RelayCommand(obj => _AddTrip());
+
             Cancel = new RelayCommand(_Cancel);
             Ok = new RelayCommand(async obj => await _Ok(obj));
-            InsertStation = new RelayCommand(obj => _AddRoute());
-            Reverse = new RelayCommand(obj => _Reverse(), obj => LineStations.Count > 0);
-            Clear = new RelayCommand(obj => _Clear(), obj => LineStations.Count > 0);
         }
 
         private async Task GetBusLineFromBL(Guid id)
@@ -88,13 +109,23 @@ namespace PL
             );
         }
 
-        private void _Clear()
+        private void _ClearRoute()
         {
             if (DialogService.ShowYesNoDialog(
                 "Are you sure you want to clear the route?",
                 "Clear Route") == DialogResult.Yes)
             {
                 LineStations.Clear();
+            }
+        }
+
+        private void _ClearTrips()
+        {
+            if (DialogService.ShowYesNoDialog(
+                "Are you sure you want to clear the trips?",
+                "Clear Trips") == DialogResult.Yes)
+            {
+                Trips.Clear();
             }
         }
 
@@ -118,8 +149,37 @@ namespace PL
         {
             var vm = new LineStationViewModel(lineStation);
             vm.InsertStation += (sender) => _AddRoute(sender);
-            vm.RemoveLineStation += (sender) => LineStations.Remove(sender);
+            vm.RemoveLineStation += sender => LineStations.Remove(sender);
             return vm;
+        }
+
+        private void _AddTrip()
+        {
+            Trips.Add(_CreateTripViewModel(new BO.Trip()));
+        }
+
+        private TripViewModel _CreateTripViewModel(BO.Trip trip)
+        {
+            var vm = new TripViewModel(trip, _CheckIsColliding);
+            vm.RemoveTrip += sender => Trips.Remove(sender);
+            vm.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == "Trip") _ValidateTrips();
+            };
+            return vm;
+        }
+
+        private bool _CheckIsColliding(TripViewModel vm)
+        {
+            return _collidingTrips.Any(trip => trip == vm.Trip);
+        }
+
+        private void _ValidateTrips()
+        {
+            var trips = from vm in Trips select vm.Trip;
+            _collidingTrips = ((IEnumerable<BO.Trip>)BlWork(bl => bl.CollidingTrips(trips))).ToList();
+
+            DialogService.ShowYesNoDialog($"colliding: {_collidingTrips.Count}", "test");
         }
 
         private void UpdateIsLast()
