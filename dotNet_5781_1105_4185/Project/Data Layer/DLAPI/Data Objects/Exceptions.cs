@@ -166,6 +166,48 @@ namespace DO
     }
     #endregion
 
+    #region LineTrip
+    public class BadLineTripIDAndTimeException : Exception
+    {
+        public Guid LineID { get; }
+        public DateTime StartTime { get; }
+
+        public BadLineTripIDAndTimeException(Guid lineID, DateTime startTime)
+        {
+            LineID = lineID;
+            StartTime = startTime;
+        }
+        public BadLineTripIDAndTimeException(Guid lineID, DateTime startTime, string message) : base(message)
+        {
+            LineID = lineID;
+            StartTime = startTime;
+        }
+        public BadLineTripIDAndTimeException(Guid lineID, DateTime startTime, string message, Exception innerException) : base(message, innerException)
+        {
+            LineID = lineID;
+            StartTime = startTime;
+        }
+    }
+
+    public class BadLineTripFrequencyAndFinishTime : Exception
+    {
+        public LineTrip LineTrip { get; }
+
+        public BadLineTripFrequencyAndFinishTime(LineTrip lineTrip)
+        {
+            LineTrip = lineTrip;
+        }
+        public BadLineTripFrequencyAndFinishTime(LineTrip lineTrip, string message) : base(message)
+        {
+            LineTrip = lineTrip;
+        }
+        public BadLineTripFrequencyAndFinishTime(LineTrip lineTrip, string message, Exception innerException) : base(message, innerException)
+        {
+            LineTrip = lineTrip;
+        }
+    }
+    #endregion
+
     #region XML
     public class XMLFileException : Exception
     {

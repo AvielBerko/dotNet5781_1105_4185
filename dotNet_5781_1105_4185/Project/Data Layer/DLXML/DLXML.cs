@@ -642,5 +642,159 @@ namespace DL
             }
         }
         #endregion
+
+        #region LineTrip
+        private DateTime? TryParseDateTime(string s)
+        {
+            if (DateTime.TryParseExact(s, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None,
+                out DateTime result))
+            {
+                return result;
+            }
+
+            return null;
+        }
+
+        private TimeSpan? TryParseTimeSpan(string s)
+        {
+            if (TimeSpan.TryParseExact(s, "hh\\:mm\\:ss", CultureInfo.InvariantCulture,
+                out TimeSpan result))
+            {
+                return result;
+            }
+
+            return null;
+        }
+
+        public IEnumerable<LineTrip> GetAllLineTrips()
+        {
+            //return from lt in DataSet.LineTrips select lt.Clone();
+
+            var root = XMLTools.LoadListFromXMLElement(FileName<LineTrip>());
+
+            return from element in root.Elements()
+                   select new LineTrip
+                   {
+                       LineID = Guid.Parse(element.Element("LineID").Value),
+                       StartTime = DateTime.ParseExact(element.Element("StartTime").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture),
+                       FinishTime = TryParseDateTime(element.Element("FinishTime").Value),
+                       Frequency = TryParseTimeSpan(element.Element("Frequency").Value),
+                   };
+        }
+
+        public IEnumerable<LineTrip> GetLineTripsBy(Predicate<LineTrip> predicate)
+        {
+            return from lt in GetAllLineTrips()
+                   where predicate(lt)
+                   select lt;
+        }
+
+        public LineTrip GetLineTrip(Guid lineID, DateTime startTime)
+        {
+            var root = XMLTools.LoadListFromXMLElement(FileName<LineTrip>());
+
+            var lt = (from element in root.Elements()
+                      let ltLineId = Guid.Parse(element.Element("LineID").Value)
+                      let ltStartTime = DateTime.ParseExact(element.Element("StartTime").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture)
+                      where ltLineId == lineID && ltStartTime == startTime
+                      select new LineTrip
+                      {
+                          LineID = ltLineId,
+                          StartTime = ltStartTime,
+                          FinishTime = TryParseDateTime(element.Element("FinishTime").Value),
+                          Frequency = TryParseTimeSpan(element.Element("Frequency").Value),
+                      }).FirstOrDefault();
+
+            if (lt == null) throw new BadLineTripIDAndTimeException(
+                lineID, startTime, $"No line trip for line with id {lineID} starts at {startTime}");
+
+            return lt;
+        }
+
+        public void AddLineTrip(LineTrip lineTrip)
+        {
+            // Checks if the bus line exists.
+            GetBusLine(lineTrip.LineID);
+            // XOR on bools, checks if one of them is null.
+            if (lineTrip.Frequency != null ^ lineTrip.FinishTime != null)
+                throw new BadLineTripFrequencyAndFinishTime(lineTrip,
+                    $"Finish time of line trip have to be set only if frequency is set");
+
+            var root = XMLTools.LoadListFromXMLElement(FileName<LineTrip>());
+
+            // Checks if the line trip already exists.
+            var ltElem = (from element in root.Elements()
+                          let ltLineId = Guid.Parse(element.Element("LineID").Value)
+                          let ltStartTime = DateTime.ParseExact(element.Element("StartTime").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture)
+                          where ltLineId == lineTrip.LineID && ltStartTime == lineTrip.StartTime
+                          select element).FirstOrDefault();
+            if (ltElem != null) throw new BadLineTripIDAndTimeException(lineTrip.LineID, lineTrip.StartTime,
+                    $"Line trip for line with id {lineTrip.LineID} that starts at {lineTrip.StartTime} already exists");
+
+            root.Add(new XElement(nameof(LineTrip),
+                new XElement("LineID", lineTrip.LineID),
+                new XElement("StartTime", lineTrip.StartTime.ToString()),
+                new XElement("FinishTime", lineTrip.FinishTime.ToString()),
+                new XElement("Frequency", lineTrip.Frequency.ToString())
+            ));
+
+            XMLTools.SaveListToXMLElement(root, FileName<AdjacentStations>());
+        }
+
+        public void UpdateLineTrip(LineTrip lineTrip)
+        {
+            // Checks if the bus line exists.
+            GetBusLine(lineTrip.LineID);
+            // XOR on bools, checks if one of them is null.
+            if (lineTrip.Frequency != null ^ lineTrip.FinishTime != null)
+                throw new BadLineTripFrequencyAndFinishTime(lineTrip,
+                    $"Finish time of line trip have to be set only if frequency is set");
+
+            var root = XMLTools.LoadListFromXMLElement(FileName<LineTrip>());
+
+            var ltElem = (from element in root.Elements()
+                          let ltLineId = Guid.Parse(element.Element("LineID").Value)
+                          let ltStartTime = DateTime.ParseExact(element.Element("StartTime").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture)
+                          where ltLineId == lineTrip.LineID && ltStartTime == lineTrip.StartTime
+                          select element).FirstOrDefault();
+            if (ltElem == null) throw new BadLineTripIDAndTimeException(
+                lineTrip.LineID, lineTrip.StartTime, $"No line trip for line with id {lineTrip.LineID} starts at {lineTrip.StartTime}");
+
+            ltElem.Element("FinishTime").Value = lineTrip.FinishTime.ToString();
+            ltElem.Element("Frequency").Value = lineTrip.Frequency.ToString();
+        }
+
+        public void DeleteLineTrip(Guid lineID, DateTime startTime)
+        {
+            var root = XMLTools.LoadListFromXMLElement(FileName<LineTrip>());
+
+            var ltElem = (from element in root.Elements()
+                          let ltLineId = Guid.Parse(element.Element("LineID").Value)
+                          let ltStartTime = DateTime.ParseExact(element.Element("StartTime").Value, "dd/MM/yyyy h:mm:ss", CultureInfo.InvariantCulture)
+                          where ltLineId == lineID && ltStartTime == startTime
+                          select element).FirstOrDefault();
+            if (ltElem == null) throw new BadLineTripIDAndTimeException(
+                lineID, startTime, $"No line trip for line with id {lineID} starts at {startTime}");
+
+            ltElem.Remove();
+
+            XMLTools.SaveListToXMLElement(root, FileName<LineTrip>());
+        }
+
+        public void DeleteAllLineTrips()
+        {
+            var root = XMLTools.LoadListFromXMLElement(FileName<LineTrip>());
+            root.Elements().Remove();
+            XMLTools.SaveListToXMLElement(root, FileName<LineTrip>());
+        }
+
+        public void DeleteLineTripsBy(Predicate<LineTrip> predicate)
+        {
+            foreach (var lt in GetLineTripsBy(predicate))
+            {
+                DeleteLineTrip(lt.LineID, lt.StartTime);
+            }
+        }
+        #endregion
     }
 }
