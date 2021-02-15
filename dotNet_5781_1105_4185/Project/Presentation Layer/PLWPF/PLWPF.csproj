@@ -188,5 +188,8 @@
   <ItemGroup>
     <Resource Include="Images\arrow_down_48px.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\LineTrip\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

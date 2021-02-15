@@ -42,6 +42,7 @@ namespace PL
         public RelayCommand Cancel { get; }
         public RelayCommand InsertStation { get; }
         public RelayCommand Reverse { get; }
+        public RelayCommand Clear { get; }
 
         public AddUpdateBusLineViewModel(Guid? updateId = null)
         {
@@ -62,6 +63,7 @@ namespace PL
             Ok = new RelayCommand(async obj => await _Ok(obj));
             InsertStation = new RelayCommand(obj => _AddRoute());
             Reverse = new RelayCommand(obj => _Reverse(), obj => LineStations.Count > 0);
+            Clear = new RelayCommand(obj => _Clear(), obj => LineStations.Count > 0);
         }
 
         private async Task GetBusLineFromBL(Guid id)
@@ -84,6 +86,16 @@ namespace PL
                 from reversed in reversedStations
                 select _CreateLineStationViewModel(reversed)
             );
+        }
+
+        private void _Clear()
+        {
+            if (DialogService.ShowYesNoDialog(
+                "Are you sure you want to clear the route?",
+                "Clear Route") == DialogResult.Yes)
+            {
+                LineStations.Clear();
+            }
         }
 
         private void _AddRoute(LineStationViewModel after = null)

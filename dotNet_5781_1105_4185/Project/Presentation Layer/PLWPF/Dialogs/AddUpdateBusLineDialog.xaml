@@ -9,173 +9,205 @@
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="130"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition />
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
-        <!--#region Line and Region-->
-        <Grid Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="110" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Label Grid.Row="0" Grid.Column="0" Content="Line Number:" VerticalAlignment="Center" FontSize="17"/>
-            <Label Grid.Row="1" Grid.Column="0" Content="Region:" VerticalAlignment="Center" FontSize="17"/>
-            <Label Grid.Row="2" Grid.Column="0" Content="Route:" VerticalAlignment="Center" FontSize="17"/>
-
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding BusLine.LineNum, UpdateSourceTrigger=PropertyChanged}" Margin="5" VerticalAlignment="Center" FontSize="17"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Regions}" SelectedItem="{Binding BusLine.Region}" Margin="5" VerticalAlignment="Center" FontSize="17"/>
-            <Grid Grid.Row="2" Grid.Column="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="5" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="5" />
-                    <ColumnDefinition Width="80" />
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="2" Content="Insert Station" Command="{Binding InsertStation}"/>
-                <Button Grid.Column="4" Content="Reverse" Command="{Binding Reverse}"/>
-            </Grid>
-        </Grid>
-        <!--#endregion-->
-
-        <!--#region Line Stations-->
-        <ListView Grid.Row="1" ItemsSource="{Binding LineStations}" HorizontalContentAlignment="Stretch" BorderThickness="0">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Grid.Row="1" Margin="5">
+        <TabControl>
+            <!--#region Generic Info-->
+            <TabItem Header="Generic Info">
+                <StackPanel>
+                    <Grid Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35" />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="1" BorderThickness="1" Height="50">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="LightGreen"/>
-                                    <Setter Property="BorderBrush" Value="DarkGreen"/>
-                                    <Style.Triggers>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}"/>
-                                                <Condition Binding="{Binding IsLast}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Background" Value="LightSalmon"/>
-                                            <Setter Property="BorderBrush" Value="Red"/>
-                                        </MultiDataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <DockPanel Margin="5" LastChildFill="True">
-                                <Button Command="{Binding Remove}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Background="Transparent">
-                                    <Image Source="/Images/cancel_48px.png" />
-                                </Button>
-                                <Label Content="Station's Code: " VerticalAlignment="Center"/>
-                                <TextBox IsReadOnly="True" MinWidth="50" IsReadOnlyCaretVisible="True" Text="{Binding LineStation.Station.Code}" VerticalAlignment="Center"/>
-                                <Label Content="Name:" VerticalAlignment="Center"/>
-                                <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding LineStation.Station.Name}" VerticalAlignment="Center"/>
-                            </DockPanel>
-                        </Border>
+                        <Label Grid.Row="0" Grid.Column="0" Content="Line Number:" VerticalAlignment="Center" FontSize="17"/>
+                        <Label Grid.Row="1" Grid.Column="0" Content="Region:" VerticalAlignment="Center" FontSize="17"/>
 
-                        <Grid Grid.Column="1" Grid.Row="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <!--#region Connected-->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-
-                                <Label Grid.Column="0" Content="Distance:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding Distance, StringFormat=n2, UpdateSourceTrigger=PropertyChanged}" />
-                                <Label Grid.Column="2" Content="Time:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                <TextBox Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding DrivingTime, UpdateSourceTrigger=PropertyChanged}" />
-
-                                <Grid.Style>
-                                    <Style TargetType="Grid">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsLast}" Value="True">
-                                                <Setter Property="Visibility" Value="Hidden"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
-                                                <Setter Property="Visibility" Value="Hidden"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Grid.Style>
-                            </Grid>
-                            <!--#endregion-->
-                            <Button Grid.Column="1" Margin="5" Command="{Binding InverseAdjacents}">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Content" Value="Disconnect"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsLast}" Value="True">
-                                                <Setter Property="Visibility" Value="Hidden"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
-                                                <Setter Property="Content" Value="Connect"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
-                            <Button Grid.Column="2" Content="Insert After" Margin="5" Command="{Binding Insert}" />
-                        </Grid>
-
-                        <Image Grid.Column="0" Grid.Row="0" Source="/Images/bus_stop_48px.png" />
-                        <Image Grid.Column="0" Grid.Row="1" Source="/Images/arrow_down_48px.png">
-                            <Image.Style>
-                                <Style TargetType="Image">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Hidden"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding BusLine.LineNum, UpdateSourceTrigger=PropertyChanged}" Margin="5" VerticalAlignment="Center" FontSize="17"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Regions}" SelectedItem="{Binding BusLine.Region}" Margin="5" VerticalAlignment="Center" FontSize="17"/>
                     </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                </StackPanel>
+            </TabItem>
+            <!--#endregion-->
 
-        <Label Grid.Row="1" Content="Route is empty" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="17">
-            <Label.Style>
-                <Style TargetType="Label">
-                    <Setter Property="Visibility" Value="Hidden"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding LineStations.Count}" Value="0">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Label.Style>
-        </Label>
-        <!--#endregion-->
+            <!--#region Route-->
+            <TabItem Header="Route">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0" Content="Route:" VerticalAlignment="Center" FontSize="17"/>
+
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="5" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="2" Content="Clear" Command="{Binding Clear}"/>
+                            <Button Grid.Column="4" Content="Insert Station" Command="{Binding InsertStation}"/>
+                            <Button Grid.Column="6" Content="Reverse" Command="{Binding Reverse}"/>
+                        </Grid>
+                    </Grid>
+
+                    <ListView Grid.Row="1" ItemsSource="{Binding LineStations}" HorizontalContentAlignment="Stretch" BorderThickness="0">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Grid.Row="1" Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="35" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="1" BorderThickness="1" Height="50">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="LightGreen"/>
+                                                <Setter Property="BorderBrush" Value="DarkGreen"/>
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}"/>
+                                                            <Condition Binding="{Binding IsLast}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="LightSalmon"/>
+                                                        <Setter Property="BorderBrush" Value="Red"/>
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <DockPanel Margin="5" LastChildFill="True">
+                                            <Button Command="{Binding Remove}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Background="Transparent">
+                                                <Image Source="/Images/cancel_48px.png" />
+                                            </Button>
+                                            <Label Content="Station's Code: " VerticalAlignment="Center"/>
+                                            <TextBox IsReadOnly="True" MinWidth="50" IsReadOnlyCaretVisible="True" Text="{Binding LineStation.Station.Code}" VerticalAlignment="Center"/>
+                                            <Label Content="Name:" VerticalAlignment="Center"/>
+                                            <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding LineStation.Station.Name}" VerticalAlignment="Center"/>
+                                        </DockPanel>
+                                    </Border>
+
+                                    <Grid Grid.Column="1" Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <!--#region Connected-->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Label Grid.Column="0" Content="Distance:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding Distance, StringFormat=n2, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Grid.Column="2" Content="Time:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBox Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding DrivingTime, UpdateSourceTrigger=PropertyChanged}" />
+
+                                            <Grid.Style>
+                                                <Style TargetType="Grid">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsLast}" Value="True">
+                                                            <Setter Property="Visibility" Value="Hidden"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Hidden"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Grid.Style>
+                                        </Grid>
+                                        <!--#endregion-->
+                                        <Button Grid.Column="1" Margin="5" Command="{Binding InverseAdjacents}">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Content" Value="Disconnect"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsLast}" Value="True">
+                                                            <Setter Property="Visibility" Value="Hidden"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
+                                                            <Setter Property="Content" Value="Connect"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        <Button Grid.Column="2" Content="Insert After" Margin="5" Command="{Binding Insert}" />
+                                    </Grid>
+
+                                    <Image Grid.Column="0" Grid.Row="0" Source="/Images/bus_stop_48px.png" />
+                                    <Image Grid.Column="0" Grid.Row="1" Source="/Images/arrow_down_48px.png">
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <Label Grid.Row="1" Content="Route is empty" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="17">
+                        <Label.Style>
+                            <Style TargetType="Label">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding LineStations.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Label.Style>
+                    </Label>
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
+
+            <!--#region Trips-->
+            <TabItem Header="Trips">
+
+            </TabItem>
+            <!--#endregion-->
+        </TabControl>
 
         <!--#region Ok and Cancel-->
-        <Grid Grid.Row="2" Margin="5">
+        <Grid Grid.Row="1" Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="5"/>
@@ -185,5 +217,6 @@
             <Button Grid.Column="2" IsCancel="True" Command="{Binding Cancel}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">Cancel</Button>
         </Grid>
         <!--#endregion-->
+
     </Grid>
 </Window>
