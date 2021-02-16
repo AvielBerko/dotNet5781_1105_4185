@@ -162,7 +162,11 @@ namespace PL
         private LineTripViewModel _CreateLineTripViewModel(BO.LineTrip trip)
         {
             var vm = new LineTripViewModel(trip);
-            vm.RemoveLineTrip += sender => LineTrips.Remove(sender);
+            vm.RemoveLineTrip += sender =>
+            {
+                LineTrips.Remove(sender);
+                _ValidateLineTripsCollisions();
+            };
             vm.PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == "LineTrip") _ValidateLineTripsCollisions();

@@ -11,6 +11,13 @@ namespace BL
 {
     class BLImp : IBL
     {
+        #region Singleton
+        static readonly Lazy<BLImp> lazy = new Lazy<BLImp>(() => new BLImp());
+        public static BLImp Instance => lazy.Value;
+
+        private BLImp() { }
+        #endregion
+
         private readonly IDL dl = DLFactory.GetDL();
 
         #region User

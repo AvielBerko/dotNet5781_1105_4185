@@ -167,7 +167,7 @@
                         <Label Grid.Row="0" Grid.Column="0" Content="Finish Time:" Margin="5"/>
                         <Label Grid.Row="1" Grid.Column="0" Content="Frequency:" Margin="5"/>
                         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding FinishTime, StringFormat=hh\\:mm}" VerticalContentAlignment="Center" Margin="5"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" x:Name="txbFreq" Text="{Binding Frequency, StringFormat=hh\\:mm}" VerticalContentAlignment="Center"  Margin="5"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" x:Name="txbFreq" Text="{Binding Frequency, ValidatesOnDataErrors=True}" VerticalContentAlignment="Center"  Margin="5"/>
                         <Label Grid.Row="2" Grid.Column="1" Content="{Binding Path=(Validation.Errors)[0].ErrorContent, ElementName=txbFreq}" Foreground="Red" />
 
                         <Grid.Style>
