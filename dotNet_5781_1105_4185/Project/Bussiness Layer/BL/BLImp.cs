@@ -595,10 +595,26 @@ namespace BL
             try
             {
                 dl.AddBusLine(BusLineBoToDo(busLine));
+            }
+            catch (DO.BadBusLineIDException e)
+            {
+                throw new BO.BadBusLineIDException(busLine.ID, e.Message);
+            }
 
-                if (busLine.Route.Count() == 0) return;
+            if (busLine.Trips.Count() > 0)
+            {
+                var doTrips = from lt in busLine.Trips
+                              select LineTripBoToDo(lt, busLine.ID);
 
-                int index = 0;
+                foreach(var lt in doTrips)
+                {
+                    dl.AddLineTrip(lt);
+                }
+            }
+
+            if (busLine.Route.Count() > 0)
+            {
+                int routeIndex = 0;
                 busLine.Route.Last().NextStationRoute = null;
 
                 foreach (var routeAdj in GetRouteAdjacentStations(busLine.Route))
@@ -606,7 +622,7 @@ namespace BL
                     dl.AddLineStation(new DO.LineStation()
                     {
                         LineID = busLine.ID,
-                        RouteIndex = index++,
+                        RouteIndex = routeIndex++,
                         StationCode = routeAdj.left.Station.Code,
                     });
 
@@ -635,15 +651,11 @@ namespace BL
                 dl.AddLineStation(new DO.LineStation()
                 {
                     LineID = busLine.ID,
-                    RouteIndex = index++,
+                    RouteIndex = routeIndex++,
                     StationCode = busLine.Route.Last().Station.Code,
                 });
 
                 UpdateAllBusLinesFullRoute();
-            }
-            catch (DO.BadBusLineIDException e)
-            {
-                throw new BO.BadBusLineIDException(busLine.ID, e.Message);
             }
         }
 
@@ -657,6 +669,7 @@ namespace BL
         {
             try
             {
+                dl.DeleteLineTripsBy(lt => lt.LineID == ID);
                 dl.DeleteLineStationsBy(ls => ls.LineID == ID);
                 dl.DeleteBusLine(ID);
             }
@@ -668,6 +681,7 @@ namespace BL
 
         public void DeleteAllBusLines()
         {
+            dl.DeleteAllLineTrips();
             dl.DeleteAllLineStations();
             dl.DeleteAllBusLines();
         }
@@ -683,6 +697,7 @@ namespace BL
             reversed.Last().NextStationRoute = null;
             return reversed;
         }
+
         private void UpdateBusLineFullRoute(Guid ID)
         {
             try
@@ -758,7 +773,7 @@ namespace BL
 
         public IEnumerable<BO.LineTrip> CollidingTrips(IEnumerable<BO.LineTrip> trips)
         {
-            var pairs = trips.Zip(trips.Skip(1), (a,b) => new BO.LineTrip[]{ a, b });
+            var pairs = trips.Zip(trips.Skip(1), (a, b) => new BO.LineTrip[] { a, b });
 
             var colliding = from pair in pairs
                             where TripsColliding(pair[0], pair[1])
@@ -771,14 +786,14 @@ namespace BL
         private bool TripsColliding(BO.LineTrip a, BO.LineTrip b)
         {
             return false;
-                //// bStart < aStart < bFinish
-                //a.StartTime < b.FinishTime && a.StartTime > b.StartTime ||
-                //// bStart < aFinish < bFinish
-                //a.FinishTime < b.FinishTime && a.FinishTime > b.StartTime ||
-                //// aStart < bStart < aFinish
-                //b.StartTime < a.FinishTime && b.StartTime > a.StartTime ||
-                //// aStart < bFinish < aFinish
-                //b.FinishTime < a.FinishTime && b.FinishTime > a.StartTime;
+            //// bStart < aStart < bFinish
+            //a.StartTime < b.FinishTime && a.StartTime > b.StartTime ||
+            //// bStart < aFinish < bFinish
+            //a.FinishTime < b.FinishTime && a.FinishTime > b.StartTime ||
+            //// aStart < bStart < aFinish
+            //b.StartTime < a.FinishTime && b.StartTime > a.StartTime ||
+            //// aStart < bFinish < aFinish
+            //b.FinishTime < a.FinishTime && b.FinishTime > a.StartTime;
         }
         #endregion
     }

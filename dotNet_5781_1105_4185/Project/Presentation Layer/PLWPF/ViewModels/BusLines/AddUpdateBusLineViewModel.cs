@@ -202,6 +202,8 @@ namespace PL
             {
                 BusLine.Route = from vm in LineStations
                                 select vm.LineStation;
+                BusLine.Trips = from vm in LineTrips
+                                select vm.LineTrip;
                 if (IsUpdate)
                     await BlWorkAsync(bl => bl.UpdateBusLine(BusLine));
                 else
