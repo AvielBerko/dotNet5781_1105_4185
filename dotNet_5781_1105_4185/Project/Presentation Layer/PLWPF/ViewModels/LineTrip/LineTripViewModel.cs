@@ -110,8 +110,8 @@ namespace PL
                 }
                 else
                 {
-                    // Also sets the finish time
                     Frequency = TimeSpan.Zero;
+                    FinishTime = TimeSpan.Zero;
                 }
 
                 OnPropertyChanged(nameof(OneTime));
@@ -137,7 +137,12 @@ namespace PL
         public LineTripViewModel(BO.LineTrip trip)
         {
             LineTrip = trip;
-            Frequency = TimeSpan.Zero;
+
+            if (trip.Frequencied?.Frequency == TimeSpan.Zero)
+            {
+                Frequency = TimeSpan.FromMinutes(1);
+            }
+
             Remove = new RelayCommand(obj => _Remove());
         }
 
