@@ -12,6 +12,6 @@ namespace BO
         public int LineNum { get; set; }
         public Regions Region { get; set; }
         public IEnumerable<LineStation> Route { get; set; }
-        public IEnumerable<Trip> Trips;
+        public IEnumerable<LineTrip> Trips;
     }
 }

@@ -26,6 +26,8 @@ namespace PL
 
         public BusLinesListViewModel()
         {
+            BusLines = new ObservableCollection<BusLineViewModel>();
+
             _ = _UpdateList();
 
             AddBusLine = new RelayCommand(obj => _AddBusLine());
@@ -38,7 +40,8 @@ namespace PL
         {
             await Load(async () =>
             {
-                var busLines = (IEnumerable<BO.BusLine>)await BlWorkAsync(bl => bl.GetAllBusLinesWithoutFullRoute());
+                var busLines = (IEnumerable<BO.BusLine>)
+                    await BlWorkAsync(bl => bl.GetAllBusLinesWithoutFullRouteAndTrips());
                 BusLines = new ObservableCollection<BusLineViewModel>(
                     from busLine in busLines
                     select CreateBusLineViewModel(busLine));

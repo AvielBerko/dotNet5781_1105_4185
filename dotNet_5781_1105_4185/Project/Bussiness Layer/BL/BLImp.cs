@@ -377,7 +377,7 @@ namespace BL
         }
         #endregion
 
-        #region BusLine, LineStation
+        #region BusLine, LineStation, LineTrip
         private BO.LineStation LineStationDoToBo(DO.LineStation doLineStation, BO.LineStation prevStation = null)
         {
             if (prevStation != null)
@@ -396,7 +396,33 @@ namespace BL
             };
         }
 
-        private BO.BusLine BusLineDoToBoWithoutFullRoute(DO.BusLine doBusLine)
+        private BO.LineTrip LineTripDoToBo(DO.LineTrip doLineTrip)
+        {
+            var result = new BO.LineTrip { StartTime = doLineTrip.StartTime };
+            if (doLineTrip.Frequency != null && doLineTrip.FinishTime != null)
+            {
+                result.Frequncied = new BO.FrequnciedTrip
+                {
+                    Frequency = doLineTrip.Frequency ?? TimeSpan.Zero,
+                    FinishTime = doLineTrip.FinishTime ?? DateTime.Now
+                };
+            }
+
+            return result;
+        }
+
+        private DO.LineTrip LineTripBoToDo(BO.LineTrip boLineTrip, Guid lineID)
+        {
+            return new DO.LineTrip
+            {
+                LineID = lineID,
+                StartTime = boLineTrip.StartTime,
+                Frequency = boLineTrip.Frequncied?.Frequency,
+                FinishTime = boLineTrip.Frequncied?.FinishTime,
+            };
+        }
+
+        private BO.BusLine BusLineDoToBoWithoutFullRouteAndTrips(DO.BusLine doBusLine)
         {
             var result = (BO.BusLine)doBusLine.CopyPropertiesToNew(typeof(BO.BusLine));
             var startEnd = new List<BO.LineStation>();
@@ -436,6 +462,9 @@ namespace BL
             }
             busLine.Route = route;
 
+            busLine.Trips = from lt in dl.GetLineTripsBy(lt => lt.LineID == busLine.ID)
+                            select LineTripDoToBo(lt);
+
             return busLine;
         }
 
@@ -471,10 +500,10 @@ namespace BL
                     (left, right) => new RouteAdjacentStations { left = left, right = right });
         }
 
-        public IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute()
+        public IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRouteAndTrips()
         {
             return from doBusLine in dl.GetAllBusLines()
-                   select BusLineDoToBoWithoutFullRoute(doBusLine);
+                   select BusLineDoToBoWithoutFullRouteAndTrips(doBusLine);
         }
 
         public IEnumerable<BO.BusLine> GetAllBusLines()
@@ -491,7 +520,7 @@ namespace BL
             return from busLine in dl.GetBusLinesBy(
                    bl => bl.HasFullRoute &&
                          busLinesIDs.Any(id => bl.ID == id))
-                   select BusLineDoToBoWithoutFullRoute(busLine);
+                   select BusLineDoToBoWithoutFullRouteAndTrips(busLine);
         }
 
         public BO.BusLine GetBusLine(Guid ID)
@@ -507,12 +536,12 @@ namespace BL
             }
         }
 
-        public BO.BusLine GetBusLineWithoutRoute(Guid ID)
+        public BO.BusLine GetBusLineWithoutRouteAndTrips(Guid ID)
         {
             try
             {
                 var doBusLine = dl.GetBusLine(ID);
-                return BusLineDoToBoWithoutFullRoute(doBusLine);
+                return BusLineDoToBoWithoutFullRouteAndTrips(doBusLine);
             }
             catch (DO.BadBusLineIDException e)
             {
@@ -541,7 +570,7 @@ namespace BL
                     dl.AddLineStation(ls);
                 }
 
-                return BusLineDoToBoWithoutFullRoute(busLine);
+                return BusLineDoToBoWithoutFullRouteAndTrips(busLine);
             }
             catch (DO.BadBusLineIDException e)
             {
@@ -572,23 +601,23 @@ namespace BL
                 int index = 0;
                 busLine.Route.Last().NextStationRoute = null;
 
-                foreach (var ls in GetRouteAdjacentStations(busLine.Route))
+                foreach (var routeAdj in GetRouteAdjacentStations(busLine.Route))
                 {
                     dl.AddLineStation(new DO.LineStation()
                     {
                         LineID = busLine.ID,
                         RouteIndex = index++,
-                        StationCode = ls.left.Station.Code,
+                        StationCode = routeAdj.left.Station.Code,
                     });
 
-                    if (ls.left.NextStationRoute != null)
+                    if (routeAdj.left.NextStationRoute != null)
                     {
                         var adj = new DO.AdjacentStations()
                         {
-                            Station1Code = ls.left.Station.Code,
-                            Station2Code = ls.right.Station.Code,
-                            Distance = ls.left.NextStationRoute?.Distance ?? 0,
-                            DrivingTime = ls.left.NextStationRoute?.DrivingTime ?? TimeSpan.Zero
+                            Station1Code = routeAdj.left.Station.Code,
+                            Station2Code = routeAdj.right.Station.Code,
+                            Distance = routeAdj.left.NextStationRoute?.Distance ?? 0,
+                            DrivingTime = routeAdj.left.NextStationRoute?.DrivingTime ?? TimeSpan.Zero
                         };
 
                         dl.AddOrUpdateAdjacentStations(adj);
@@ -597,7 +626,7 @@ namespace BL
                     {
                         try
                         {
-                            dl.DeleteAdjacentStations(ls.left.Station.Code, ls.right.Station.Code);
+                            dl.DeleteAdjacentStations(routeAdj.left.Station.Code, routeAdj.right.Station.Code);
                         }
                         catch (DO.BadAdjacentStationsCodeException) { }
                     }
@@ -727,9 +756,9 @@ namespace BL
             }
         }
 
-        public IEnumerable<BO.Trip> CollidingTrips(IEnumerable<BO.Trip> trips)
+        public IEnumerable<BO.LineTrip> CollidingTrips(IEnumerable<BO.LineTrip> trips)
         {
-            var pairs = trips.Zip(trips.Skip(1), (a,b) => new BO.Trip[]{ a, b });
+            var pairs = trips.Zip(trips.Skip(1), (a,b) => new BO.LineTrip[]{ a, b });
 
             var colliding = from pair in pairs
                             where TripsColliding(pair[0], pair[1])
@@ -739,17 +768,17 @@ namespace BL
             return colliding.Distinct();
         }
 
-        private bool TripsColliding(BO.Trip a, BO.Trip b)
+        private bool TripsColliding(BO.LineTrip a, BO.LineTrip b)
         {
-            return 
-                // bStart < aStart < bFinish
-                a.StartTime < b.FinishTime && a.StartTime > b.StartTime ||
-                // bStart < aFinish < bFinish
-                a.FinishTime < b.FinishTime && a.FinishTime > b.StartTime ||
-                // aStart < bStart < aFinish
-                b.StartTime < a.FinishTime && b.StartTime > a.StartTime ||
-                // aStart < bFinish < aFinish
-                b.FinishTime < a.FinishTime && b.FinishTime > a.StartTime;
+            return false;
+                //// bStart < aStart < bFinish
+                //a.StartTime < b.FinishTime && a.StartTime > b.StartTime ||
+                //// bStart < aFinish < bFinish
+                //a.FinishTime < b.FinishTime && a.FinishTime > b.StartTime ||
+                //// aStart < bStart < aFinish
+                //b.StartTime < a.FinishTime && b.StartTime > a.StartTime ||
+                //// aStart < bFinish < aFinish
+                //b.FinishTime < a.FinishTime && b.FinishTime > a.StartTime;
         }
         #endregion
     }

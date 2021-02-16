@@ -48,13 +48,13 @@ namespace BLAPI
         #endregion
 
         #region BusLine, LineStations, Trips
-        IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRoute();
+        IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRouteAndTrips();
         IEnumerable<BO.BusLine> GetAllBusLines();
         IEnumerable<BO.BusLine> GetLinesPassingTheStation(int code);
         IEnumerable<BO.LineStation> ReverseLineStations(IEnumerable<BO.LineStation> stations);
-        IEnumerable<BO.Trip> CollidingTrips(IEnumerable<BO.Trip> trips);
+        IEnumerable<BO.LineTrip> CollidingTrips(IEnumerable<BO.LineTrip> trips);
         BO.BusLine GetBusLine(Guid ID);
-        BO.BusLine GetBusLineWithoutRoute(Guid ID);
+        BO.BusLine GetBusLineWithoutRouteAndTrips(Guid ID);
         BO.BusLine DuplicateBusLine(Guid ID);
         bool BusLineHasFullRoute(Guid ID);
         void AddBusLine(BO.BusLine busLine);

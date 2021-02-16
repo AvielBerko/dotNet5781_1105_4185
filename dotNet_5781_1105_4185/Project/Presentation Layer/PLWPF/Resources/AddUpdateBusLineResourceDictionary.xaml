@@ -113,7 +113,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:TripViewModel}">
+    <DataTemplate DataType="{x:Type local:LineTripViewModel}">
         <Border BorderThickness="1">
             <Border.Style>
                 <Style TargetType="Border">
@@ -158,7 +158,7 @@
 
                         <Label Grid.Column="0" Content="Start Time:" />
                         <!-- StringFormat=t Means select time-only without seconds-->
-                        <TextBox Grid.Column="1" Text="{Binding Trip.StartTime, StringFormat=t, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
+                        <TextBox Grid.Column="1" Text="{Binding StartTime, StringFormat=t, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
                     </Grid>
 
                     <Grid Grid.Row="1">
@@ -174,8 +174,8 @@
                         <Label Grid.Row="0" Grid.Column="0" Content="Finish Time:" Margin="5"/>
                         <Label Grid.Row="1" Grid.Column="0" Content="Frequency:" Margin="5"/>
                         <!-- StringFormat=t Means select time-only without seconds-->
-                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Trip.FinishTime, StringFormat=t, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Margin="5"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Trip.Frequency, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"  Margin="5"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding FinishTime, StringFormat=t, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Margin="5"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Frequency, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"  Margin="5"/>
 
                         <Grid.Style>
                             <Style TargetType="Grid">

@@ -123,12 +123,12 @@
                                 <ColumnDefinition Width="5" />
                             </Grid.ColumnDefinitions>
 
-                            <Button Grid.Column="2" Content="Add Trip" Command="{Binding AddTrip}"/>
-                            <Button Grid.Column="4" Content="Clear" Command="{Binding ClearTrips}"/>
+                            <Button Grid.Column="2" Content="Add Trip" Command="{Binding AddLineTrip}"/>
+                            <Button Grid.Column="4" Content="Clear" Command="{Binding ClearLineTrips}"/>
                         </Grid>
                     </Grid>
 
-                    <ListView Grid.Row="1" ItemsSource="{Binding Trips}"
+                    <ListView Grid.Row="1" ItemsSource="{Binding LineTrips}"
                               HorizontalContentAlignment="Stretch" BorderThickness="0"/>
 
                     <Label Grid.Row="1" Content="No trips" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="17">
@@ -136,7 +136,7 @@
                             <Style TargetType="Label">
                                 <Setter Property="Visibility" Value="Hidden"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Trips.Count}" Value="0">
+                                    <DataTrigger Binding="{Binding LineTrips.Count}" Value="0">
                                         <Setter Property="Visibility" Value="Visible"/>
                                     </DataTrigger>
                                 </Style.Triggers>

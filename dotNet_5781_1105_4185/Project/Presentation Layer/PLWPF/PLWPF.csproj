@@ -86,7 +86,7 @@
     <Compile Include="ViewModels\BusLines\BusLineViewModel.cs" />
     <Compile Include="ViewModels\Bus\AddBusViewModel.cs" />
     <Compile Include="ViewModels\LineStation\LineStationViewModel.cs" />
-    <Compile Include="ViewModels\LineTrip\TripViewModel.cs" />
+    <Compile Include="ViewModels\LineTrip\LineTripViewModel.cs" />
     <Compile Include="ViewModels\Station\StationDetailsViewModel.cs" />
     <Compile Include="ViewModels\Station\AddUpdateStationViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />

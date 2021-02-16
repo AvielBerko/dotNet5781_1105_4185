@@ -22,14 +22,14 @@ namespace PL
             }
         }
 
-        private ObservableCollection<TripViewModel> _trips;
-        public ObservableCollection<TripViewModel> Trips
+        private ObservableCollection<LineTripViewModel> _lineTrips;
+        public ObservableCollection<LineTripViewModel> LineTrips
         {
-            get => _trips;
+            get => _lineTrips;
             private set
             {
-                _trips = value;
-                OnPropertyChanged(nameof(Trips));
+                _lineTrips = value;
+                OnPropertyChanged(nameof(LineTrips));
             }
         }
 
@@ -54,17 +54,17 @@ namespace PL
         public RelayCommand InsertStation { get; }
         public RelayCommand Reverse { get; }
         public RelayCommand ClearRoute { get; }
-        public RelayCommand ClearTrips { get; }
-        public RelayCommand AddTrip { get; }
+        public RelayCommand ClearLineTrips { get; }
+        public RelayCommand AddLineTrip { get; }
 
-        private List<BO.Trip> _collidingTrips;
+        private List<BO.LineTrip> _collidingTrips;
 
         public AddUpdateBusLineViewModel(Guid? updateId = null)
         {
             BusLine = new BO.BusLine() { ID = Guid.Empty };
             LineStations = new ObservableCollection<LineStationViewModel>();
-            Trips = new ObservableCollection<TripViewModel>();
-            _collidingTrips = new List<BO.Trip>();
+            LineTrips = new ObservableCollection<LineTripViewModel>();
+            _collidingTrips = new List<BO.LineTrip>();
 
             IsUpdate = updateId != null;
             if (IsUpdate)
@@ -80,8 +80,8 @@ namespace PL
             Reverse = new RelayCommand(obj => _Reverse(), obj => LineStations.Count > 1);
             ClearRoute = new RelayCommand(obj => _ClearRoute(), obj => LineStations.Count > 0);
 
-            ClearTrips = new RelayCommand(obj => _ClearTrips(), obj => Trips.Count > 0);
-            AddTrip = new RelayCommand(obj => _AddTrip());
+            ClearLineTrips = new RelayCommand(obj => _ClearLineTrips(), obj => LineTrips.Count > 0);
+            AddLineTrip = new RelayCommand(obj => _AddLineTrip());
 
             Cancel = new RelayCommand(_Cancel);
             Ok = new RelayCommand(async obj => await _Ok(obj));
@@ -94,6 +94,8 @@ namespace PL
                 BusLine = (BO.BusLine)await BlWorkAsync(bl => bl.GetBusLine(id));
                 LineStations = new ObservableCollection<LineStationViewModel>
                     (from ls in BusLine.Route select _CreateLineStationViewModel(ls));
+                LineTrips = new ObservableCollection<LineTripViewModel>
+                    (from lt in BusLine.Trips select _CreateLineTripViewModel(lt));
             });
         }
 
@@ -119,13 +121,13 @@ namespace PL
             }
         }
 
-        private void _ClearTrips()
+        private void _ClearLineTrips()
         {
             if (DialogService.ShowYesNoDialog(
                 "Are you sure you want to clear the trips?",
                 "Clear Trips") == DialogResult.Yes)
             {
-                Trips.Clear();
+                LineTrips.Clear();
             }
         }
 
@@ -153,15 +155,15 @@ namespace PL
             return vm;
         }
 
-        private void _AddTrip()
+        private void _AddLineTrip()
         {
-            Trips.Add(_CreateTripViewModel(new BO.Trip()));
+            LineTrips.Add(_CreateLineTripViewModel(new BO.LineTrip()));
         }
 
-        private TripViewModel _CreateTripViewModel(BO.Trip trip)
+        private LineTripViewModel _CreateLineTripViewModel(BO.LineTrip trip)
         {
-            var vm = new TripViewModel(trip, _CheckIsColliding);
-            vm.RemoveTrip += sender => Trips.Remove(sender);
+            var vm = new LineTripViewModel(trip, _CheckIsColliding);
+            vm.RemoveLineTrip += sender => LineTrips.Remove(sender);
             vm.PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == "Trip") _ValidateTrips();
@@ -169,15 +171,15 @@ namespace PL
             return vm;
         }
 
-        private bool _CheckIsColliding(TripViewModel vm)
+        private bool _CheckIsColliding(LineTripViewModel vm)
         {
-            return _collidingTrips.Any(trip => trip == vm.Trip);
+            return _collidingTrips.Any(trip => trip == vm.LineTrip);
         }
 
         private void _ValidateTrips()
         {
-            var trips = from vm in Trips select vm.Trip;
-            _collidingTrips = ((IEnumerable<BO.Trip>)BlWork(bl => bl.CollidingTrips(trips))).ToList();
+            var trips = from vm in LineTrips select vm.LineTrip;
+            _collidingTrips = ((IEnumerable<BO.LineTrip>)BlWork(bl => bl.CollidingTrips(trips))).ToList();
 
             DialogService.ShowYesNoDialog($"colliding: {_collidingTrips.Count}", "test");
         }

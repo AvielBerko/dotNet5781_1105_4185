@@ -952,7 +952,18 @@ namespace DS
 
             LineTrips = new List<DO.LineTrip>
             {
-
+                new DO.LineTrip
+                {
+                    LineID = Lines[0].ID,
+                    StartTime = new DateTime(1, 1, 1, 11, 5, 0),
+                    FinishTime = new DateTime(1, 1, 1, 22, 30, 0),
+                    Frequency = new TimeSpan(0, 30, 0),
+                },
+                new DO.LineTrip
+                {
+                    LineID = Lines[0].ID,
+                    StartTime = new DateTime(1, 1, 1, 9, 0, 0),
+                },
             };
         }
     }
