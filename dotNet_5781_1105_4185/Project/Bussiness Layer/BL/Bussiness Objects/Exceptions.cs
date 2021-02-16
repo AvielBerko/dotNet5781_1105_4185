@@ -225,4 +225,24 @@ namespace BO
         }
     }
     #endregion
+
+    #region LineTrip
+    public class BadLineTripFrequencyException : Exception
+	{
+        public TimeSpan Frequency { get; }
+
+        public BadLineTripFrequencyException(TimeSpan frequency)
+        {
+            Frequency = frequency;
+        }
+        public BadLineTripFrequencyException(TimeSpan frequency, string message) : base(message)
+        {
+            Frequency = frequency;
+        }
+        public BadLineTripFrequencyException(TimeSpan frequency, string message, Exception innerException) : base(message, innerException)
+        {
+            Frequency = frequency;
+        }
+    }
+    #endregion
 }

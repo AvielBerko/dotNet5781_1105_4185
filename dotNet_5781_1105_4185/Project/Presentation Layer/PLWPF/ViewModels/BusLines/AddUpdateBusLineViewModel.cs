@@ -84,7 +84,9 @@ namespace PL
             AddLineTrip = new RelayCommand(obj => _AddLineTrip());
 
             Cancel = new RelayCommand(_Cancel);
-            Ok = new RelayCommand(async obj => await _Ok(obj));
+            Ok = new RelayCommand(async window => await _Ok(window),
+                obj => _collidingTrips.Count == 0 &&
+                       !_HasLineTripsFrequencyErrors());
         }
 
         private async Task GetBusLineFromBL(Guid id)
@@ -166,7 +168,7 @@ namespace PL
             vm.RemoveLineTrip += sender => LineTrips.Remove(sender);
             vm.PropertyChanged += (sender, e) =>
             {
-                if (e.PropertyName == "Trip") _ValidateTrips();
+                if (e.PropertyName == "Trip") _ValidateLineTripsCollisions();
             };
             return vm;
         }
@@ -176,12 +178,21 @@ namespace PL
             return _collidingTrips.Any(trip => trip == vm.LineTrip);
         }
 
-        private void _ValidateTrips()
+        private void _ValidateLineTripsCollisions()
         {
             var trips = from vm in LineTrips select vm.LineTrip;
             _collidingTrips = ((IEnumerable<BO.LineTrip>)BlWork(bl => bl.CollidingTrips(trips))).ToList();
 
             DialogService.ShowYesNoDialog($"colliding: {_collidingTrips.Count}", "test");
+        }
+
+        private bool _HasLineTripsFrequencyErrors()
+        {
+            foreach (var vm in LineTrips)
+            {
+                if (vm["Frequency"] != null) return true;
+            }
+            return false;
         }
 
         private void UpdateIsLast()

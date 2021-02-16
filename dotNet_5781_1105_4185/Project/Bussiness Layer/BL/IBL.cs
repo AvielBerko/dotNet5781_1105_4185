@@ -61,6 +61,7 @@ namespace BLAPI
         void UpdateBusLine(BO.BusLine busLine);
         void DeleteAllBusLines();
         void DeleteBusLi‎ne(Guid ID);
+        void ValidateLineTripFrequency(TimeSpan frequency);
         #endregion
     }
 }

@@ -147,7 +147,7 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>
-                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="3*"/>
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0" Margin="5">
@@ -165,6 +165,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition />
                             <RowDefinition />
+                            <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100"/>
@@ -175,7 +176,8 @@
                         <Label Grid.Row="1" Grid.Column="0" Content="Frequency:" Margin="5"/>
                         <!-- StringFormat=t Means select time-only without seconds-->
                         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding FinishTime, StringFormat=t, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Margin="5"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Frequency, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"  Margin="5"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" x:Name="txbFreq" Text="{Binding Frequency, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" VerticalContentAlignment="Center"  Margin="5"/>
+                        <Label Grid.Row="2" Grid.Column="1" Content="{Binding Path=(Validation.Errors)[0].ErrorContent, ElementName=txbFreq}" Foreground="Red" />
 
                         <Grid.Style>
                             <Style TargetType="Grid">

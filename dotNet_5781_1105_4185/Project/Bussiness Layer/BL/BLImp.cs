@@ -603,6 +603,14 @@ namespace BL
 
             if (busLine.Trips.Count() > 0)
             {
+                foreach (var lt in busLine.Trips)
+                {
+                    if (lt.Frequncied != null)
+                    {
+                        ValidateLineTripFrequency(lt.Frequncied?.Frequency ?? TimeSpan.Zero);
+                    }
+                }
+
                 var doTrips = from lt in busLine.Trips
                               select LineTripBoToDo(lt, busLine.ID);
 
@@ -794,6 +802,12 @@ namespace BL
             //b.StartTime < a.FinishTime && b.StartTime > a.StartTime ||
             //// aStart < bFinish < aFinish
             //b.FinishTime < a.FinishTime && b.FinishTime > a.StartTime;
+        }
+
+        public void ValidateLineTripFrequency(TimeSpan frequency)
+        {
+            if (frequency == TimeSpan.Zero)
+                throw new BO.BadLineTripFrequencyException(frequency, "Frequency cannot be zero");
         }
         #endregion
     }

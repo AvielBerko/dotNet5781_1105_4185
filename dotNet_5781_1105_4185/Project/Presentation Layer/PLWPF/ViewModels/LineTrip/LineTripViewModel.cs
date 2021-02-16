@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace PL
 {
-    public class LineTripViewModel : BaseViewModel
+    public class LineTripViewModel : BaseViewModel, IDataErrorInfo
     {
         public BO.LineTrip LineTrip { get; }
 
@@ -93,5 +95,39 @@ namespace PL
 
         public event Action<LineTripViewModel> RemoveLineTrip;
         protected virtual void OnRemove() => RemoveLineTrip?.Invoke(this);
+
+        public string this[string columnName]
+        {
+            get
+            {
+                switch(columnName)
+                {
+                    case nameof(Frequency):
+                        return ValidateFrequency().ErrorContent as string;
+                    case nameof(StartTime):
+                    case nameof(FinishTime):
+                    case nameof(OneTime):
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        private ValidationResult ValidateFrequency()
+        {
+            if (OneTime) return ValidationResult.ValidResult;
+
+            try
+            {
+                BlWork(bl => bl.ValidateLineTripFrequency(LineTrip.Frequncied?.Frequency ?? TimeSpan.Zero));
+                return ValidationResult.ValidResult;
+            }
+            catch (BO.BadLineTripFrequencyException ex)
+            {
+                return new ValidationResult(false, ex.Message);
+            }
+        }
+
+        public string Error => throw new NotImplementedException();
     }
 }
