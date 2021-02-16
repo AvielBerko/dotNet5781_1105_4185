@@ -190,8 +190,7 @@ namespace PL
         {
             foreach (var vm in LineTrips)
             {
-                if (vm.IsColliding || vm["Frequency"] != null)
-                    return true;
+                if (vm.IsColliding) return true;
             }
             return false;
         }

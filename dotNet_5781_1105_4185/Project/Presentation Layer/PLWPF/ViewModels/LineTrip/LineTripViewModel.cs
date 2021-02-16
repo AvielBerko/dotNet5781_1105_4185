@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace PL
 {
-    public class LineTripViewModel : BaseViewModel, IDataErrorInfo
+    public class LineTripViewModel : BaseViewModel
     {
         public BO.LineTrip LineTrip { get; }
 
@@ -83,6 +83,11 @@ namespace PL
                     freq = freq.Add(TimeSpan.FromDays(-freq.Days));
                 }
 
+                if (freq == TimeSpan.Zero)
+                {
+                    freq = TimeSpan.FromMinutes(1);
+                }
+
                 LineTrip.Frequencied = new BO.FrequnciedTrip
                 {
                     Frequency = freq,
@@ -105,8 +110,8 @@ namespace PL
                 }
                 else
                 {
-                    // Also sets the frequency
-                    FinishTime = TimeSpan.Zero;
+                    // Also sets the finish time
+                    Frequency = TimeSpan.Zero;
                 }
 
                 OnPropertyChanged(nameof(OneTime));
@@ -132,6 +137,7 @@ namespace PL
         public LineTripViewModel(BO.LineTrip trip)
         {
             LineTrip = trip;
+            Frequency = TimeSpan.Zero;
             Remove = new RelayCommand(obj => _Remove());
         }
 
@@ -142,39 +148,5 @@ namespace PL
 
         public event Action<LineTripViewModel> RemoveLineTrip;
         protected virtual void OnRemove() => RemoveLineTrip?.Invoke(this);
-
-        public string this[string columnName]
-        {
-            get
-            {
-                switch(columnName)
-                {
-                    case nameof(Frequency):
-                        return ValidateFrequency().ErrorContent as string;
-                    case nameof(StartTime):
-                    case nameof(FinishTime):
-                    case nameof(OneTime):
-                    default:
-                        return null;
-                }
-            }
-        }
-
-        private ValidationResult ValidateFrequency()
-        {
-            if (OneTime) return ValidationResult.ValidResult;
-
-            try
-            {
-                BlWork(bl => bl.ValidateLineTripFrequency(LineTrip.Frequencied?.Frequency ?? TimeSpan.Zero));
-                return ValidationResult.ValidResult;
-            }
-            catch (BO.BadLineTripFrequencyException ex)
-            {
-                return new ValidationResult(false, ex.Message);
-            }
-        }
-
-        public string Error => throw new NotImplementedException();
     }
 }
