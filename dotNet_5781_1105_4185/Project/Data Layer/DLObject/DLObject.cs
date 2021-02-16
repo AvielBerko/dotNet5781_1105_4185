@@ -465,7 +465,7 @@ namespace DL
                    select lt.Clone();
         }
 
-        public LineTrip GetLineTrip(Guid lineID, DateTime startTime)
+        public LineTrip GetLineTrip(Guid lineID, TimeSpan startTime)
         {
             var lineTrip = DataSet.LineTrips.Find(lt => lt.LineID == lineID && lt.StartTime == startTime);
             if (lineTrip == null) throw new BadLineTripIDAndTimeException(
@@ -506,7 +506,7 @@ namespace DL
             DataSet.LineTrips.Add(lineTrip.Clone());
         }
 
-        public void DeleteLineTrip(Guid lineID, DateTime startTime)
+        public void DeleteLineTrip(Guid lineID, TimeSpan startTime)
         {
             var exists = DataSet.LineTrips.Find(lt => lt.LineID == lineID);
             if (exists == null) throw new BadLineTripIDAndTimeException(

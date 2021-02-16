@@ -955,14 +955,14 @@ namespace DS
                 new DO.LineTrip
                 {
                     LineID = Lines[0].ID,
-                    StartTime = new DateTime(1, 1, 1, 11, 5, 0),
-                    FinishTime = new DateTime(1, 1, 1, 22, 30, 0),
+                    StartTime = new TimeSpan(11, 5, 0),
+                    FinishTime = new TimeSpan(22, 30, 0),
                     Frequency = new TimeSpan(0, 30, 0),
                 },
                 new DO.LineTrip
                 {
                     LineID = Lines[0].ID,
-                    StartTime = new DateTime(1, 1, 1, 9, 0, 0),
+                    StartTime = new TimeSpan(9, 0, 0),
                 },
             };
         }

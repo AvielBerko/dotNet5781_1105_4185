@@ -76,10 +76,10 @@ namespace DLAPI
         #region LineTrip
         IEnumerable<DO.LineTrip> GetAllLineTrips();
         IEnumerable<DO.LineTrip> GetLineTripsBy(Predicate<DO.LineTrip> predicate);
-        DO.LineTrip GetLineTrip(Guid lineID, DateTime startTime);
+        DO.LineTrip GetLineTrip(Guid lineID, TimeSpan startTime);
         void AddLineTrip(DO.LineTrip lineTrip);
         void UpdateLineTrip(DO.LineTrip lineTrip);
-        void DeleteLineTrip(Guid lineID, DateTime startTime);
+        void DeleteLineTrip(Guid lineID, TimeSpan startTime);
         void DeleteAllLineTrips();
         void DeleteLineTripsBy(Predicate<DO.LineTrip> predicate);
         #endregion

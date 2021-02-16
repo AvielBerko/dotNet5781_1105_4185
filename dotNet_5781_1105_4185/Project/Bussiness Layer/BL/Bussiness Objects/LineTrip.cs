@@ -8,13 +8,13 @@ namespace BO
 {
     public class LineTrip
     {
-        public DateTime StartTime { get; set; }
-        public FrequnciedTrip? Frequncied { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public FrequnciedTrip? Frequencied { get; set; }
     }
 
     public struct FrequnciedTrip
     {
-        public DateTime FinishTime { get; set; }
+        public TimeSpan FinishTime { get; set; }
         public TimeSpan Frequency { get; set; }
     }
 }

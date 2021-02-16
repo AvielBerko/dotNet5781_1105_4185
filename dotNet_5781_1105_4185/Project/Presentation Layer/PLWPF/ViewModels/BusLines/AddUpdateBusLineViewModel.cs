@@ -57,14 +57,11 @@ namespace PL
         public RelayCommand ClearLineTrips { get; }
         public RelayCommand AddLineTrip { get; }
 
-        private List<BO.LineTrip> _collidingTrips;
-
         public AddUpdateBusLineViewModel(Guid? updateId = null)
         {
             BusLine = new BO.BusLine() { ID = Guid.Empty };
             LineStations = new ObservableCollection<LineStationViewModel>();
             LineTrips = new ObservableCollection<LineTripViewModel>();
-            _collidingTrips = new List<BO.LineTrip>();
 
             IsUpdate = updateId != null;
             if (IsUpdate)
@@ -85,8 +82,7 @@ namespace PL
 
             Cancel = new RelayCommand(_Cancel);
             Ok = new RelayCommand(async window => await _Ok(window),
-                obj => _collidingTrips.Count == 0 &&
-                       !_HasLineTripsFrequencyErrors());
+                obj => !_HasLineTripsValidationErrors());
         }
 
         private async Task GetBusLineFromBL(Guid id)
@@ -160,37 +156,38 @@ namespace PL
         private void _AddLineTrip()
         {
             LineTrips.Add(_CreateLineTripViewModel(new BO.LineTrip()));
+            _ValidateLineTripsCollisions();
         }
 
         private LineTripViewModel _CreateLineTripViewModel(BO.LineTrip trip)
         {
-            var vm = new LineTripViewModel(trip, _CheckIsColliding);
+            var vm = new LineTripViewModel(trip);
             vm.RemoveLineTrip += sender => LineTrips.Remove(sender);
             vm.PropertyChanged += (sender, e) =>
             {
-                if (e.PropertyName == "Trip") _ValidateLineTripsCollisions();
+                if (e.PropertyName == "LineTrip") _ValidateLineTripsCollisions();
             };
             return vm;
-        }
-
-        private bool _CheckIsColliding(LineTripViewModel vm)
-        {
-            return _collidingTrips.Any(trip => trip == vm.LineTrip);
         }
 
         private void _ValidateLineTripsCollisions()
         {
             var trips = from vm in LineTrips select vm.LineTrip;
-            _collidingTrips = ((IEnumerable<BO.LineTrip>)BlWork(bl => bl.CollidingTrips(trips))).ToList();
+            var collidingLineTrips = ((IEnumerable<BO.LineTrip>)
+                BlWork(bl => bl.CollidingTrips(trips))).ToList();
 
-            DialogService.ShowYesNoDialog($"colliding: {_collidingTrips.Count}", "test");
+            foreach(var vm in LineTrips)
+            {
+                vm.IsColliding = collidingLineTrips.Contains(vm.LineTrip);
+            }
         }
 
-        private bool _HasLineTripsFrequencyErrors()
+        private bool _HasLineTripsValidationErrors()
         {
             foreach (var vm in LineTrips)
             {
-                if (vm["Frequency"] != null) return true;
+                if (vm.IsColliding || vm["Frequency"] != null)
+                    return true;
             }
             return false;
         }

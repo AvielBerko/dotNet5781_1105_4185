@@ -401,10 +401,10 @@ namespace BL
             var result = new BO.LineTrip { StartTime = doLineTrip.StartTime };
             if (doLineTrip.Frequency != null && doLineTrip.FinishTime != null)
             {
-                result.Frequncied = new BO.FrequnciedTrip
+                result.Frequencied = new BO.FrequnciedTrip
                 {
                     Frequency = doLineTrip.Frequency ?? TimeSpan.Zero,
-                    FinishTime = doLineTrip.FinishTime ?? DateTime.Now
+                    FinishTime = doLineTrip.FinishTime ?? TimeSpan.Zero,
                 };
             }
 
@@ -417,8 +417,8 @@ namespace BL
             {
                 LineID = lineID,
                 StartTime = boLineTrip.StartTime,
-                Frequency = boLineTrip.Frequncied?.Frequency,
-                FinishTime = boLineTrip.Frequncied?.FinishTime,
+                Frequency = boLineTrip.Frequencied?.Frequency,
+                FinishTime = boLineTrip.Frequencied?.FinishTime,
             };
         }
 
@@ -605,16 +605,16 @@ namespace BL
             {
                 foreach (var lt in busLine.Trips)
                 {
-                    if (lt.Frequncied != null)
+                    if (lt.Frequencied != null)
                     {
-                        ValidateLineTripFrequency(lt.Frequncied?.Frequency ?? TimeSpan.Zero);
+                        ValidateLineTripFrequency(lt.Frequencied?.Frequency ?? TimeSpan.Zero);
                     }
                 }
 
                 var doTrips = from lt in busLine.Trips
                               select LineTripBoToDo(lt, busLine.ID);
 
-                foreach(var lt in doTrips)
+                foreach (var lt in doTrips)
                 {
                     dl.AddLineTrip(lt);
                 }
@@ -781,27 +781,55 @@ namespace BL
 
         public IEnumerable<BO.LineTrip> CollidingTrips(IEnumerable<BO.LineTrip> trips)
         {
-            var pairs = trips.Zip(trips.Skip(1), (a, b) => new BO.LineTrip[] { a, b });
+            var pairs = trips.SelectMany((value, index) => trips.Skip(index + 1),
+                                         (first, second) => new BO.LineTrip[] { first, second });
 
             var colliding = from pair in pairs
-                            where TripsColliding(pair[0], pair[1])
+                            where LineTripsColliding(pair[0], pair[1])
                             from trip in pair
                             select trip;
 
             return colliding.Distinct();
         }
 
-        private bool TripsColliding(BO.LineTrip a, BO.LineTrip b)
+        private bool LineTripsColliding(BO.LineTrip a, BO.LineTrip b)
         {
+            if (a.StartTime == b.StartTime) return true;
+
+            if (a.Frequencied != null && b.Frequencied != null)
+            {
+                var aFinish = a.Frequencied?.FinishTime ?? TimeSpan.Zero;
+                var bFinish = b.Frequencied?.FinishTime ?? TimeSpan.Zero;
+
+                return b.StartTime < a.StartTime && a.StartTime <= bFinish ||
+                       b.StartTime < aFinish && aFinish <= bFinish ||
+                       a.StartTime < b.StartTime && b.StartTime <= aFinish ||
+                       a.StartTime < bFinish && bFinish <= aFinish;
+            }
+
+            // If a is frequencied, it means b is not frequencied.
+            if (a.Frequencied != null)
+            {
+                var aFinish = a.Frequencied?.FinishTime ?? TimeSpan.Zero;
+
+                if (a.StartTime < b.StartTime && b.StartTime <= aFinish)
+                    return true;
+
+                return false;
+            }
+
+            // If b is frequencied, it means a is not frequencied.
+            if (b.Frequencied != null)
+            {
+                var bFinish = b.Frequencied?.FinishTime ?? TimeSpan.Zero;
+
+                if (b.StartTime < a.StartTime && a.StartTime <= bFinish)
+                    return true;
+
+                return false;
+            }
+
             return false;
-            //// bStart < aStart < bFinish
-            //a.StartTime < b.FinishTime && a.StartTime > b.StartTime ||
-            //// bStart < aFinish < bFinish
-            //a.FinishTime < b.FinishTime && a.FinishTime > b.StartTime ||
-            //// aStart < bStart < aFinish
-            //b.StartTime < a.FinishTime && b.StartTime > a.StartTime ||
-            //// aStart < bFinish < aFinish
-            //b.FinishTime < a.FinishTime && b.FinishTime > a.StartTime;
         }
 
         public void ValidateLineTripFrequency(TimeSpan frequency)

@@ -9,8 +9,8 @@ namespace DO
     public class LineTrip
     {
         public Guid LineID { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime? FinishTime { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan? FinishTime { get; set; }
         public TimeSpan? Frequency { get; set; }
     }
 }

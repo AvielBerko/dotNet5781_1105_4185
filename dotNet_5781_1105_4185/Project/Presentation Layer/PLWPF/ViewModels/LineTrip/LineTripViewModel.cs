@@ -12,45 +12,81 @@ namespace PL
     {
         public BO.LineTrip LineTrip { get; }
 
-        public DateTime StartTime
+        public TimeSpan StartTime
         {
             get => LineTrip.StartTime;
             set
             {
                 LineTrip.StartTime = value;
 
+                // Remove days if set
+                if (StartTime.Days > 0)
+                {
+                    LineTrip.StartTime = StartTime.Add(TimeSpan.FromDays(-StartTime.Days));
+                }
+
+                if (!OneTime)
+                {
+                    var finishTime = FinishTime ?? TimeSpan.Zero;
+                    if (finishTime <= StartTime)
+                    {
+                        finishTime = finishTime.Add(TimeSpan.FromDays(1));
+                        FinishTime = finishTime;
+                    }
+                }
+
                 OnPropertyChanged(nameof(StartTime));
                 OnPropertyChanged(nameof(LineTrip));
-                OnPropertyChanged(nameof(IsColliding));
             }
         }
 
-        public DateTime? FinishTime
+        public TimeSpan? FinishTime
         {
-            get => LineTrip.Frequncied?.FinishTime;
+            get => LineTrip.Frequencied?.FinishTime;
             set
             {
-                LineTrip.Frequncied = new BO.FrequnciedTrip
+                // Checking if is in next day
+                var finishTime = value ?? TimeSpan.Zero;
+
+                // Remove days if set
+                if (finishTime.Days > 0)
                 {
-                    FinishTime = value ?? DateTime.Now,
-                    Frequency = LineTrip.Frequncied?.Frequency ?? TimeSpan.Zero,
+                    finishTime = finishTime.Add(TimeSpan.FromDays(-finishTime.Days));
+                }
+
+                if (finishTime <= StartTime)
+                {
+                    finishTime = finishTime.Add(TimeSpan.FromDays(1));
+                }
+
+                LineTrip.Frequencied = new BO.FrequnciedTrip
+                {
+                    FinishTime = finishTime,
+                    Frequency = LineTrip.Frequencied?.Frequency ?? TimeSpan.Zero,
                 };
 
                 OnPropertyChanged(nameof(FinishTime));
                 OnPropertyChanged(nameof(LineTrip));
-                OnPropertyChanged(nameof(IsColliding));
             }
         }
 
         public TimeSpan? Frequency
         {
-            get => LineTrip.Frequncied?.Frequency;
+            get => LineTrip.Frequencied?.Frequency;
             set
             {
-                LineTrip.Frequncied = new BO.FrequnciedTrip
+                var freq = value ?? TimeSpan.Zero;
+
+                // Remove days if set
+                if (freq.Days > 0)
                 {
-                    Frequency = value ?? TimeSpan.Zero,
-                    FinishTime = LineTrip.Frequncied?.FinishTime ?? DateTime.Now,
+                    freq = freq.Add(TimeSpan.FromDays(-freq.Days));
+                }
+
+                LineTrip.Frequencied = new BO.FrequnciedTrip
+                {
+                    Frequency = freq,
+                    FinishTime = LineTrip.Frequencied?.FinishTime ?? TimeSpan.Zero,
                 };
 
                 OnPropertyChanged(nameof(Frequency));
@@ -60,30 +96,41 @@ namespace PL
 
         public bool OneTime
         {
-            get => LineTrip.Frequncied == null;
+            get => LineTrip.Frequencied == null;
             set
             {
                 if (value)
-                    LineTrip.Frequncied = null;
+                {
+                    LineTrip.Frequencied = null;
+                }
                 else
-                    LineTrip.Frequncied = new BO.FrequnciedTrip();
+                {
+                    // Also sets the frequency
+                    FinishTime = TimeSpan.Zero;
+                }
 
                 OnPropertyChanged(nameof(OneTime));
                 OnPropertyChanged(nameof(FinishTime));
                 OnPropertyChanged(nameof(Frequency));
                 OnPropertyChanged(nameof(LineTrip));
+            }
+        }
+
+        private bool _isColliding;
+        public bool IsColliding
+        {
+            get => _isColliding;
+            set
+            {
+                _isColliding = value;
                 OnPropertyChanged(nameof(IsColliding));
             }
         }
 
-        public bool IsColliding => _isColliding(this);
-        private readonly Func<LineTripViewModel, bool> _isColliding;
-
         public RelayCommand Remove { get; }
 
-        public LineTripViewModel(BO.LineTrip trip, Func<LineTripViewModel, bool> isColliding)
+        public LineTripViewModel(BO.LineTrip trip)
         {
-            _isColliding = isColliding;
             LineTrip = trip;
             Remove = new RelayCommand(obj => _Remove());
         }
@@ -119,7 +166,7 @@ namespace PL
 
             try
             {
-                BlWork(bl => bl.ValidateLineTripFrequency(LineTrip.Frequncied?.Frequency ?? TimeSpan.Zero));
+                BlWork(bl => bl.ValidateLineTripFrequency(LineTrip.Frequencied?.Frequency ?? TimeSpan.Zero));
                 return ValidationResult.ValidResult;
             }
             catch (BO.BadLineTripFrequencyException ex)

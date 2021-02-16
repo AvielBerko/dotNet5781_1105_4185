@@ -170,19 +170,19 @@ namespace DO
     public class BadLineTripIDAndTimeException : Exception
     {
         public Guid LineID { get; }
-        public DateTime StartTime { get; }
+        public TimeSpan StartTime { get; }
 
-        public BadLineTripIDAndTimeException(Guid lineID, DateTime startTime)
+        public BadLineTripIDAndTimeException(Guid lineID, TimeSpan startTime)
         {
             LineID = lineID;
             StartTime = startTime;
         }
-        public BadLineTripIDAndTimeException(Guid lineID, DateTime startTime, string message) : base(message)
+        public BadLineTripIDAndTimeException(Guid lineID, TimeSpan startTime, string message) : base(message)
         {
             LineID = lineID;
             StartTime = startTime;
         }
-        public BadLineTripIDAndTimeException(Guid lineID, DateTime startTime, string message, Exception innerException) : base(message, innerException)
+        public BadLineTripIDAndTimeException(Guid lineID, TimeSpan startTime, string message, Exception innerException) : base(message, innerException)
         {
             LineID = lineID;
             StartTime = startTime;
