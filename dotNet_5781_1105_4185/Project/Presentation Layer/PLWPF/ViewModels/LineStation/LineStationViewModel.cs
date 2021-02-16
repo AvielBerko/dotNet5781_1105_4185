@@ -83,6 +83,7 @@ namespace PL
                     LineStation.NextStationRoute = null;
                 }
 
+                OnPropertyChanged(nameof(IsConnected));
                 OnPropertyChanged(nameof(LineStation));
                 OnPropertyChanged(nameof(Distance));
                 OnPropertyChanged(nameof(DrivingTime));

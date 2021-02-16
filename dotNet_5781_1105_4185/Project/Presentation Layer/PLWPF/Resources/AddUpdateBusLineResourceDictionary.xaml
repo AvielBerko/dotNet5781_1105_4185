@@ -23,7 +23,7 @@
                         <Style.Triggers>
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}"/>
+                                    <Condition Binding="{Binding IsConnected}" Value="False"/>
                                     <Condition Binding="{Binding IsLast}" Value="False"/>
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Background" Value="LightSalmon"/>
@@ -68,10 +68,7 @@
                     <Grid.Style>
                         <Style TargetType="Grid">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsLast}" Value="True">
-                                    <Setter Property="Visibility" Value="Hidden"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
+                                <DataTrigger Binding="{Binding IsConnected}" Value="False">
                                     <Setter Property="Visibility" Value="Hidden"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -79,7 +76,17 @@
                     </Grid.Style>
                 </Grid>
 
-                <ToggleButton Grid.Column="1" Content="Connected" Margin="5" IsChecked="{Binding IsConnected}" />
+                <ToggleButton Grid.Column="1" Content="Connected" Margin="5" IsChecked="{Binding IsConnected}">
+                    <ToggleButton.Style>
+                        <Style TargetType="ToggleButton">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLast}" Value="True">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
                 <Button Grid.Column="2" Content="Insert After" Margin="5" Command="{Binding Insert}" />
             </Grid>
 
@@ -89,7 +96,7 @@
                     <Style TargetType="Image">
                         <Setter Property="Visibility" Value="Visible" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
+                            <DataTrigger Binding="{Binding IsConnected}" Value="False">
                                 <Setter Property="Visibility" Value="Hidden"/>
                             </DataTrigger>
                         </Style.Triggers>
