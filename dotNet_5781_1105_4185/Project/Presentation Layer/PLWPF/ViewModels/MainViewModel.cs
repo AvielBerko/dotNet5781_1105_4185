@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-    public class MainViewModel : BaseViewModel
+    class MainViewModel : BaseViewModel
     {
         Uri mainPage;
         Uri MainPage
@@ -24,6 +24,7 @@ namespace PL
         public BusListViewModel BusListViewModel { get; }
         public StationListViewModel StationListViewModel { get; }
         public BusLinesListViewModel BusLinesListViewModel { get; }
+        public SimulationViewModel SimulationViewModel { get; set; }
 
         public MainViewModel()
         {
@@ -32,6 +33,7 @@ namespace PL
             BusListViewModel = new BusListViewModel();
             StationListViewModel = new StationListViewModel();
             BusLinesListViewModel = new BusLinesListViewModel();
+            SimulationViewModel = new SimulationViewModel();
 
             LoginViewModel.LoggedIn += LoggedIn;
             SignUpViewModel.SignedUp += LoggedIn;

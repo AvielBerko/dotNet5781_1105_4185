@@ -58,6 +58,7 @@
             </Grid>
         </TabItem>
         <!--#endregion-->
+
         <!--#region Line List-->
         <TabItem x:Name="LineListTab" Header="Lines Management" DataContext="{Binding BusLinesListViewModel}">
             <TabItem.Resources>
@@ -138,6 +139,7 @@
             </Grid>
         </TabItem>
         <!--#endregion-->
+
         <!--#region Station List-->
         <TabItem Header="Station Management" DataContext="{Binding StationListViewModel}">
             <TabItem.Resources>
@@ -226,5 +228,75 @@
             </Grid>
         </TabItem>
         <!--#endregion-->
+
+        <TabItem Header="Simulation" DataContext="{Binding SimulationViewModel }">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="2" Background="LightGreen" Orientation="Horizontal">
+                    <Button Content="Start" Command="{Binding StartSimulation}" Margin="5" MinWidth="75"/>
+                    <Button Content="Stop" Command="{Binding StopSimulation}" Margin="5" MinWidth="75"/>
+                    <Label Content="Time of day:" Margin="5" VerticalAlignment="Center"/>
+                    <!--#region Simulation Time-->
+                    <Grid>
+                        <TextBox Text="{Binding SimulationTime, StringFormat=hh\\:mm\\:ss}" Margin="10" MinWidth="50" VerticalContentAlignment="Center">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Started}" Value="True">
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <TextBlock Text="{Binding SimulationTime, StringFormat=hh\\:mm\\:ss}" Margin="5" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Started}" Value="False">
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                    <!--#endregion-->
+                    <Label Content="Rate:" Margin="5" VerticalAlignment="Center" />
+                    <!--#region Simulation Rate-->
+                    <Grid>
+                        <TextBox Text="{Binding SimulationRate}" Margin="10" MinWidth="50" VerticalContentAlignment="Center">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Started}" Value="True">
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <TextBlock Text="{Binding SimulationRate}" Margin="5" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Started}" Value="False">
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                    <!--#endregion-->
+                </StackPanel>
+            </Grid>
+        </TabItem>
+
     </TabControl>
 </Page>
