@@ -69,32 +69,34 @@ namespace PL
             }
         }
 
+        public bool IsConnected
+        {
+            get => LineStation.NextStationRoute != null;
+            set
+            {
+                if (value)
+                {
+                    LineStation.NextStationRoute = new BO.NextStationRoute();
+                }
+                else
+                {
+                    LineStation.NextStationRoute = null;
+                }
+
+                OnPropertyChanged(nameof(LineStation));
+                OnPropertyChanged(nameof(Distance));
+                OnPropertyChanged(nameof(DrivingTime));
+            }
+        }
+
         public RelayCommand Remove { get; }
-        public RelayCommand InverseAdjacents { get; }
         public RelayCommand Insert { get; }
 
         public LineStationViewModel(BO.LineStation lineStation)
         {
             LineStation = lineStation;
             Remove = new RelayCommand(obj => OnRemove());
-            InverseAdjacents = new RelayCommand(obj => _InverseAdjacents());
             Insert = new RelayCommand(obj => OnInsertStation());
-        }
-
-        private void _InverseAdjacents()
-        {
-            if (LineStation.NextStationRoute == null)
-            {
-                LineStation.NextStationRoute = new BO.NextStationRoute();
-            }
-            else
-            {
-                LineStation.NextStationRoute = null;
-            }
-
-            OnPropertyChanged(nameof(LineStation));
-            OnPropertyChanged(nameof(Distance));
-            OnPropertyChanged(nameof(DrivingTime));
         }
 
         public event Action<LineStationViewModel> InsertStation;

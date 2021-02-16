@@ -79,21 +79,7 @@
                     </Grid.Style>
                 </Grid>
 
-                <Button Grid.Column="1" Margin="5" Command="{Binding InverseAdjacents}">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Content" Value="Disconnect"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsLast}" Value="True">
-                                    <Setter Property="Visibility" Value="Hidden"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding LineStation.NextStationRoute}" Value="{x:Null}">
-                                    <Setter Property="Content" Value="Connect"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
+                <ToggleButton Grid.Column="1" Content="Connected" Margin="5" IsChecked="{Binding IsConnected}" />
                 <Button Grid.Column="2" Content="Insert After" Margin="5" Command="{Binding Insert}" />
             </Grid>
 
