@@ -63,5 +63,10 @@ namespace BLAPI
         void DeleteBusLi‎ne(Guid ID);
         void ValidateLineTripFrequency(TimeSpan frequency);
         #endregion
+
+        #region Simulation
+        void StartSimulation(TimeSpan timeOfDay, int rate, Action<TimeSpan> callback);
+        void StopSimulation();
+        #endregion
     }
 }

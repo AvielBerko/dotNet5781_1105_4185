@@ -33,5 +33,10 @@ namespace PL
         }
 
         public void Execute(object parameter) => _execute(parameter);
+
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
     }
 }

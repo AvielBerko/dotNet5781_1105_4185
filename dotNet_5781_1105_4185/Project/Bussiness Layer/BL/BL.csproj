@@ -45,6 +45,7 @@
     <Compile Include="BLImp.cs" />
     <Compile Include="Bussiness Objects\Bus.cs" />
     <Compile Include="Bussiness Objects\BusLine.cs" />
+    <Compile Include="Bussiness Objects\Clock.cs" />
     <Compile Include="Bussiness Objects\Enums.cs" />
     <Compile Include="Bussiness Objects\Exceptions.cs" />
     <Compile Include="Bussiness Objects\AdjacentStations.cs" />

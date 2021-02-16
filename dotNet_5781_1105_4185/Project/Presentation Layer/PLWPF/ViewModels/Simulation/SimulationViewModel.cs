@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PL
@@ -39,16 +41,9 @@ namespace PL
             }
         }
 
-        private bool _started = false;
-        public bool Started
-        {
-            get => _started;
-            set
-            {
-                _started = value;
-                OnPropertyChanged(nameof(Started));
-            }
-        }
+
+        private BackgroundWorker _simulation;
+        public bool Started => _simulation.IsBusy;
 
         public RelayCommand StartSimulation { get; }
         public RelayCommand StopSimulation { get; }
@@ -58,18 +53,54 @@ namespace PL
             SimulationTime = DateTime.Now.TimeOfDay;
             SimulationRate = 1;
 
-            StartSimulation = new RelayCommand(obj => _Start(), obj => !_started);
-            StopSimulation = new RelayCommand(obj => _Stop(), obj => _started);
+            _simulation = new BackgroundWorker
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true,
+            };
+            _simulation.DoWork += _SimulationDoWork;
+            _simulation.ProgressChanged += _SimulationProgressChanged;
+            _simulation.RunWorkerCompleted += _SimulationRunWorkerCompleted;
+
+            StartSimulation = new RelayCommand(obj => _Start(), obj => !Started);
+            StopSimulation = new RelayCommand(obj => _Stop(), obj => Started);
         }
 
         private void _Start()
         {
-            Started = true;
+            _simulation.RunWorkerAsync();
+            OnPropertyChanged(nameof(Started));
         }
 
         private void _Stop()
         {
-            Started = false;
+            _simulation.CancelAsync();
+        }
+
+        private void _SimulationDoWork(object sender, DoWorkEventArgs e)
+        {
+            BlWork(bl => bl.StartSimulation(SimulationTime, SimulationRate, _UpdateTime));
+        }
+
+        private void _UpdateTime(TimeSpan time)
+        {
+            _simulation.ReportProgress(0, time);
+
+            if (_simulation.CancellationPending)
+            {
+                BlWork(bl => bl.StopSimulation());
+            }
+        }
+
+        private void _SimulationProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            SimulationTime = (TimeSpan)e.UserState;
+        }
+
+        private void _SimulationRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            StartSimulation.RaiseCanExecuteChanged();
+            OnPropertyChanged(nameof(Started));
         }
     }
 }

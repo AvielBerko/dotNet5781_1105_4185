@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using BLAPI;
@@ -843,6 +845,33 @@ namespace BL
         {
             if (frequency == TimeSpan.Zero)
                 throw new BO.BadLineTripFrequencyException(frequency, "Frequency cannot be zero");
+        }
+        #endregion
+
+        #region Simulation
+        internal static volatile bool cancel = true;
+
+        public void StartSimulation(TimeSpan timeOfDay, int rate, Action<TimeSpan> callback)
+        {
+            BO.Clock.UpdateTime += callback;
+            BO.Clock.Rate = rate;
+            BO.Clock.Time = timeOfDay;
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            cancel = false;
+            while (!cancel)
+            {
+                Thread.Sleep(100);
+                TimeSpan time = timeOfDay + TimeSpan.FromTicks(watch.ElapsedTicks * rate);
+                BO.Clock.Time = time.Add(TimeSpan.FromDays(-time.Days));
+            }
+        }
+
+        public void StopSimulation()
+        {
+            cancel = true;
         }
         #endregion
     }
