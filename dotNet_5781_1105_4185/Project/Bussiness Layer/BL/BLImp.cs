@@ -901,7 +901,7 @@ namespace BL
         {
             try
             {
-                BO.TripOperator.Instance.DriveThreads = new List<Thread>();
+                BO.TripOperator.Instance.Threads = new List<Thread>();
                 BO.TripOperator.Instance.NextTrips = (
                     from doTrip in dl.GetAllLineTrips()
                     let trip = LineTripDoToBo(doTrip)
@@ -935,13 +935,13 @@ namespace BL
                     BO.TripOperator.Instance.NextTrips.Sort((a, b) => a.Item2.CompareTo(b.Item2));
 
                     var drive = new Thread(() => DriveThread(trip));
-                    BO.TripOperator.Instance.DriveThreads.Add(drive);
+                    BO.TripOperator.Instance.Threads.Add(drive);
                     drive.Start();
                 }
             }
             catch (ThreadInterruptedException)
             {
-                foreach (var drive in BO.TripOperator.Instance.DriveThreads)
+                foreach (var drive in BO.TripOperator.Instance.Threads)
                 {
                     if (drive.IsAlive)
                     {
@@ -949,7 +949,7 @@ namespace BL
                     }
                 }
 
-                BO.TripOperator.Instance.DriveThreads.Clear();
+                BO.TripOperator.Instance.Threads.Clear();
             }
         }
 
@@ -957,6 +957,7 @@ namespace BL
         {
             try
             {
+                var currentStartTime = BO.Clock.Instance.Time;
                 var busLine = BO.TripOperator.Instance.BusLines.Find(line => line.ID == trip.LineID);
 
                 foreach (var (ls, i) in busLine.Route.Select((ls, i) => (ls, i)))
@@ -971,10 +972,19 @@ namespace BL
                             {
                                 LineID = busLine.ID,
                                 TripStartTime = trip.StartTime,
+                                CurrentStartTime = currentStartTime,
                                 LineNum = busLine.LineNum,
                                 EndStationName = busLine.Route.Last().Station.Name,
                                 ArrivalTime = timeToTravel,
                             };
+
+                            if (timeToTravel == TimeSpan.Zero)
+                            {
+                                var arrived = (BO.LineTiming)timing.CopyPropertiesToNew(typeof(BO.LineTiming));
+                                Thread removeArrived = new Thread(() => RemoveArrivedTiming(arrived));
+                                BO.TripOperator.Instance.Threads.Add(removeArrived);
+                                removeArrived.Start();
+                            }
 
                             BO.TripOperator.Instance.RaiseUpdateTiming(timing);
                             break;
@@ -996,6 +1006,18 @@ namespace BL
                 }
             }
             catch (ThreadInterruptedException) { }
+        }
+
+        private void RemoveArrivedTiming(BO.LineTiming arrived)
+        {
+            try
+            {
+                arrived.ArrivalTime = TimeSpan.FromMinutes(-1);
+                var simulatedTime = TimeSpan.FromTicks(TimeSpan.FromMinutes(1).Ticks / BO.Clock.Instance.Rate);
+                Thread.Sleep(simulatedTime);
+                BO.TripOperator.Instance.RaiseUpdateTiming(arrived);
+            }
+            catch(ThreadInterruptedException) { }
         }
 
         /// <summary>

@@ -154,13 +154,17 @@ namespace PL
         {
             Context.Invoke(() =>
             {
-                //var existing = ArrivingLines.FirstOrDefault(lt => lt.LineID == lineTiming.LineID);
-                //if (existing != null)
-                //{
-                //    ArrivingLines.Remove(existing);
-                //}
+                var existing = ArrivingLines.FirstOrDefault( lt =>
+                    lt.LineID == lineTiming.LineID && lt.CurrentStartTime == lineTiming.CurrentStartTime);
+                if (existing != null)
+                {
+                    ArrivingLines.Remove(existing);
+                }
 
-                ArrivingLines.Add(lineTiming);
+                if (lineTiming.ArrivalTime >= TimeSpan.Zero)
+                {
+                    ArrivingLines.Add(lineTiming);
+                }
             });
         }
 

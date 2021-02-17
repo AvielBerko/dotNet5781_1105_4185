@@ -12,6 +12,7 @@ namespace BO
         public int LineNum { get; set; }
         public string EndStationName { get; set; }
         public TimeSpan TripStartTime { get; set; }
+        public TimeSpan CurrentStartTime { get; set; }
         public TimeSpan ArrivalTime { get; set; }
     }
 }

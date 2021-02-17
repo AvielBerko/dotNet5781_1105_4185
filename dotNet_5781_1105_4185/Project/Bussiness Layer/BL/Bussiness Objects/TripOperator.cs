@@ -30,8 +30,11 @@ namespace BO
         }
 
         public List<Tuple<LineTrip, TimeSpan>> NextTrips { get; set; }
+
         public List<BO.BusLine> BusLines { get; set; }
-        public List<Thread> DriveThreads { get; set; }
+
+        public List<Thread> Threads { get; set; }
+
         public int? StationCode { get; set; }
     }
 }
