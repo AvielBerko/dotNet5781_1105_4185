@@ -204,5 +204,8 @@
     <Resource Include="Images\right_arrow_128px.png" />
     <Resource Include="Images\time_128px.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\orange_red_down_arrow_128px.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

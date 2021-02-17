@@ -32,6 +32,7 @@ namespace BO
         }
 
         public List<BO.LineTrip> LineTrips { get; set; }
+        public List<BO.BusLine> BusLines { get; set; }
         public List<Thread> DriveThreads { get; set; }
         public int? StationCode { get; set; }
     }

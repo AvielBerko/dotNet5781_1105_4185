@@ -60,6 +60,8 @@ namespace PL
                     BlWork(bl => bl.SetStationPanel(_selectedStation?.Code, _UpdateArriving));
                 }
 
+                ArrivingLines.Clear();
+
                 _ = GetPassingBusLinesFromBL();
             }
         }
@@ -144,11 +146,11 @@ namespace PL
         {
             Context.Invoke(() =>
             {
-                var existing = ArrivingLines.FirstOrDefault(lt => lt.LineID == lineTiming.LineID);
-                if (existing != null)
-                {
-                    ArrivingLines.Remove(existing);
-                }
+                //var existing = ArrivingLines.FirstOrDefault(lt => lt.LineID == lineTiming.LineID);
+                //if (existing != null)
+                //{
+                //    ArrivingLines.Remove(existing);
+                //}
 
                 ArrivingLines.Add(lineTiming);
             });
@@ -167,6 +169,7 @@ namespace PL
         private void _TimeSimulationRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             StartSimulation.RaiseCanExecuteChanged();
+            ArrivingLines.Clear();
             OnPropertyChanged(nameof(Started));
         }
     }

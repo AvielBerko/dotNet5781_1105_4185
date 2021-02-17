@@ -11,7 +11,6 @@ namespace DS
         public static List<DO.User> Users;
         public static List<DO.Bus> Buses;
         public static List<DO.BusLine> Lines;
-        public static List<DO.DrivingBus> DrivingBuses;
         public static List<DO.Station> Stations;
         public static List<DO.LineStation> LineStations;
         public static List<DO.AdjacentStations> AdjacentStations;
@@ -93,11 +92,6 @@ namespace DS
                     HasFullRoute = true,
                     RouteLength = 2,
                 },
-            };
-
-            DrivingBuses = new List<DO.DrivingBus>
-            {
-
             };
 
             Stations = new List<DO.Station>

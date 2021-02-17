@@ -727,7 +727,7 @@ namespace DL
                 new XElement("Frequency", lineTrip.Frequency.ToString())
             ));
 
-            XMLTools.SaveListToXMLElement(root, FileName<AdjacentStations>());
+            XMLTools.SaveListToXMLElement(root, FileName<LineTrip>());
         }
 
         public void UpdateLineTrip(LineTrip lineTrip)
