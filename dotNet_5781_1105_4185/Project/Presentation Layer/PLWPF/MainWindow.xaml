@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
         Loaded="WindowLoaded" Closing="WindowClosing"
-        Title="MainWindow" Height="450" Width="600">
+        Title="MainWindow" Height="450" Width="650">
     <Frame x:Name="MainFrame" Source="Pages/AdminPage.xaml">
         
     </Frame>

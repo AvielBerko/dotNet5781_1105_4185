@@ -45,7 +45,6 @@
     <Compile Include="BLImp.cs" />
     <Compile Include="Bussiness Objects\Bus.cs" />
     <Compile Include="Bussiness Objects\BusLine.cs" />
-    <Compile Include="Bussiness Objects\Clock.cs" />
     <Compile Include="Bussiness Objects\Enums.cs" />
     <Compile Include="Bussiness Objects\Exceptions.cs" />
     <Compile Include="Bussiness Objects\AdjacentStations.cs" />
@@ -55,11 +54,12 @@
     <Compile Include="Bussiness Objects\Location.cs" />
     <Compile Include="Bussiness Objects\Registration.cs" />
     <Compile Include="Bussiness Objects\Station.cs" />
-    <Compile Include="Bussiness Objects\TripOperator.cs" />
     <Compile Include="Bussiness Objects\User.cs" />
+    <Compile Include="Clock.cs" />
     <Compile Include="DeepCopyUtilities.cs" />
     <Compile Include="IBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TripOperator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Data Layer\DLAPI\DLAPI.csproj">

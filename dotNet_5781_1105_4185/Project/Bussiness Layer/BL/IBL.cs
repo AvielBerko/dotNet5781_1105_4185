@@ -67,7 +67,7 @@ namespace BLAPI
         #region Simulation
         void StartSimulation(TimeSpan timeOfDay, int rate, Action<TimeSpan> callback);
         void StopSimulation();
-        void SetStationPanel(int? stationCode, Action<BO.LineTiming> updateTiming);
+        void SetStationPanel(int? stationCode, Action<BO.LineTiming[]> updateTiming);
         #endregion
     }
 }

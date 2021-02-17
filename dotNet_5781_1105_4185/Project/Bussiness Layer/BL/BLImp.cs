@@ -862,9 +862,9 @@ namespace BL
 
         public void StartSimulation(TimeSpan timeOfDay, int rate, Action<TimeSpan> callback)
         {
-            BO.Clock.Instance.UpdateTime += callback;
-            BO.Clock.Instance.Rate = rate;
-            BO.Clock.Instance.Time = timeOfDay;
+            Clock.Instance.UpdateTime += callback;
+            Clock.Instance.Rate = rate;
+            Clock.Instance.Time = timeOfDay;
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -877,7 +877,7 @@ namespace BL
             {
                 Thread.Sleep(100);
                 TimeSpan time = timeOfDay + TimeSpan.FromTicks(watch.ElapsedTicks * rate);
-                BO.Clock.Instance.Time = new TimeSpan(time.Hours, time.Minutes, time.Seconds);
+                Clock.Instance.Time = new TimeSpan(time.Hours, time.Minutes, time.Seconds);
             }
 
             if (tripOperation.IsAlive)
@@ -891,57 +891,59 @@ namespace BL
             cancel = true;
         }
 
-        public void SetStationPanel(int? stationCode, Action<BO.LineTiming> updateTiming)
+        public void SetStationPanel(int? stationCode, Action<BO.LineTiming[]> updateTiming)
         {
-            BO.TripOperator.Instance.StationCode = stationCode;
-            BO.TripOperator.Instance.UpdateTiming += updateTiming;
+            TripOperator.Instance.UpdateTiming += updateTiming;
+            TripOperator.Instance.StationCode = stationCode;
+
+            if (!cancel) TripOperator.Instance.RaiseUpdateTiming();
         }
 
         public void StartTripOperation()
         {
             try
             {
-                BO.TripOperator.Instance.Threads = new List<Thread>();
-                BO.TripOperator.Instance.NextTrips = (
+                TripOperator.Instance.Threads = new List<Thread>();
+                TripOperator.Instance.NextTrips = (
                     from doTrip in dl.GetAllLineTrips()
                     let trip = LineTripDoToBo(doTrip)
                     let time = NextTimeDriveByClock(trip)
                     orderby time
                     select Tuple.Create(trip, time)
                 ).ToList();
-                BO.TripOperator.Instance.BusLines = (
-                    from next in BO.TripOperator.Instance.NextTrips
+                TripOperator.Instance.BusLines = (
+                    from next in TripOperator.Instance.NextTrips
                     select GetBusLine(next.Item1.LineID)
                 ).ToList();
 
-                if (BO.TripOperator.Instance.NextTrips.Count == 0) return;
+                if (TripOperator.Instance.NextTrips.Count == 0) return;
 
 
                 while (true)
                 {
-                    var (trip, currentDrive) = BO.TripOperator.Instance.NextTrips.First();
-                    BO.TripOperator.Instance.NextTrips.RemoveAt(0);
+                    var (trip, currentDrive) = TripOperator.Instance.NextTrips.First();
+                    TripOperator.Instance.NextTrips.RemoveAt(0);
 
-                    var time = currentDrive - BO.Clock.Instance.Time;
+                    var time = currentDrive - Clock.Instance.Time;
                     if (time > TimeSpan.Zero)
                     {
-                        var simulatedTime = TimeSpan.FromTicks(time.Ticks / BO.Clock.Instance.Rate);
+                        var simulatedTime = TimeSpan.FromTicks(time.Ticks / Clock.Instance.Rate);
                         Thread.Sleep(simulatedTime);
                     }
 
                     var nextDrive = NextTimeDriveByLastDrive(trip, currentDrive);
-                    BO.TripOperator.Instance.NextTrips.Add(Tuple.Create(trip, nextDrive));
+                    TripOperator.Instance.NextTrips.Add(Tuple.Create(trip, nextDrive));
                     // Sorts by the time to the next drive.
-                    BO.TripOperator.Instance.NextTrips.Sort((a, b) => a.Item2.CompareTo(b.Item2));
+                    TripOperator.Instance.NextTrips.Sort((a, b) => a.Item2.CompareTo(b.Item2));
 
                     var drive = new Thread(() => DriveThread(trip));
-                    BO.TripOperator.Instance.Threads.Add(drive);
+                    TripOperator.Instance.Threads.Add(drive);
                     drive.Start();
                 }
             }
             catch (ThreadInterruptedException)
             {
-                foreach (var drive in BO.TripOperator.Instance.Threads)
+                foreach (var drive in TripOperator.Instance.Threads)
                 {
                     if (drive.IsAlive)
                     {
@@ -949,7 +951,8 @@ namespace BL
                     }
                 }
 
-                BO.TripOperator.Instance.Threads.Clear();
+                TripOperator.Instance.Threads.Clear();
+                TripOperator.Instance.ClearTable();
             }
         }
 
@@ -957,8 +960,8 @@ namespace BL
         {
             try
             {
-                var currentStartTime = BO.Clock.Instance.Time;
-                var busLine = BO.TripOperator.Instance.BusLines.Find(line => line.ID == trip.LineID);
+                var currentStartTime = Clock.Instance.Time;
+                var busLine = TripOperator.Instance.BusLines.Find(line => line.ID == trip.LineID);
 
                 foreach (var (ls, i) in busLine.Route.Select((ls, i) => (ls, i)))
                 {
@@ -966,29 +969,25 @@ namespace BL
                     var timeToTravel = TimeSpan.Zero;
                     foreach (var next in busLine.Route.Skip(i))
                     {
-                        if (next.Station.Code == BO.TripOperator.Instance.StationCode)
+                        var timing = new BO.LineTiming
                         {
-                            var timing = new BO.LineTiming
-                            {
-                                LineID = busLine.ID,
-                                TripStartTime = trip.StartTime,
-                                CurrentStartTime = currentStartTime,
-                                LineNum = busLine.LineNum,
-                                EndStationName = busLine.Route.Last().Station.Name,
-                                ArrivalTime = timeToTravel,
-                            };
+                            LineID = busLine.ID,
+                            TripStartTime = trip.StartTime,
+                            CurrentStartTime = currentStartTime,
+                            LineNum = busLine.LineNum,
+                            EndStationName = busLine.Route.Last().Station.Name,
+                            ArrivalTime = timeToTravel,
+                        };
 
-                            if (timeToTravel == TimeSpan.Zero)
-                            {
-                                var arrived = (BO.LineTiming)timing.CopyPropertiesToNew(typeof(BO.LineTiming));
-                                Thread removeArrived = new Thread(() => RemoveArrivedTiming(arrived));
-                                BO.TripOperator.Instance.Threads.Add(removeArrived);
-                                removeArrived.Start();
-                            }
-
-                            BO.TripOperator.Instance.RaiseUpdateTiming(timing);
-                            break;
+                        if (timeToTravel == TimeSpan.Zero)
+                        {
+                            var arrived = (BO.LineTiming)timing.CopyPropertiesToNew(typeof(BO.LineTiming));
+                            Thread removeArrived = new Thread(() => RemoveArrivedTiming(next.Station.Code, arrived));
+                            TripOperator.Instance.Threads.Add(removeArrived);
+                            removeArrived.Start();
                         }
+
+                        TripOperator.Instance.AddLineTiming(next.Station.Code, timing);
 
                         if (next.NextStationRoute == null) break;
                         timeToTravel = timeToTravel.Add(next.NextStationRoute?.DrivingTime ?? TimeSpan.Zero);
@@ -1001,23 +1000,23 @@ namespace BL
                     var randomMinutes = RandomDouble(-drivingTime.TotalMinutes * 0.1, drivingTime.TotalMinutes);
                     drivingTime = drivingTime.Add(TimeSpan.FromMinutes(randomMinutes));
 
-                    var simulated = TimeSpan.FromTicks(drivingTime.Ticks / BO.Clock.Instance.Rate);
+                    var simulated = TimeSpan.FromTicks(drivingTime.Ticks / Clock.Instance.Rate);
                     Thread.Sleep(simulated);
                 }
             }
             catch (ThreadInterruptedException) { }
         }
 
-        private void RemoveArrivedTiming(BO.LineTiming arrived)
+        private void RemoveArrivedTiming(int stationCode, BO.LineTiming arrived)
         {
             try
             {
                 arrived.ArrivalTime = TimeSpan.FromMinutes(-1);
-                var simulatedTime = TimeSpan.FromTicks(TimeSpan.FromMinutes(1).Ticks / BO.Clock.Instance.Rate);
+                var simulatedTime = TimeSpan.FromTicks(TimeSpan.FromMinutes(1).Ticks / Clock.Instance.Rate);
                 Thread.Sleep(simulatedTime);
-                BO.TripOperator.Instance.RaiseUpdateTiming(arrived);
+                TripOperator.Instance.AddLineTiming(stationCode, arrived);
             }
-            catch(ThreadInterruptedException) { }
+            catch (ThreadInterruptedException) { }
         }
 
         /// <summary>
@@ -1048,7 +1047,7 @@ namespace BL
         /// <returns>The time for the next drive</returns>
         private TimeSpan NextTimeDriveByClock(BO.LineTrip trip)
         {
-            if (BO.Clock.Instance.Time < trip.StartTime)
+            if (Clock.Instance.Time < trip.StartTime)
             {
                 return trip.StartTime;
             }
@@ -1061,7 +1060,7 @@ namespace BL
             var frequency = trip.Frequencied?.Frequency ?? TimeSpan.Zero;
             var finishTime = trip.Frequencied?.FinishTime ?? TimeSpan.Zero;
 
-            var tripFrequentNumber = (BO.Clock.Instance.Time - trip.StartTime).Ticks / frequency.Ticks + 1;
+            var tripFrequentNumber = (Clock.Instance.Time - trip.StartTime).Ticks / frequency.Ticks + 1;
             var nextDrive = TimeSpan.FromTicks(trip.StartTime.Ticks + frequency.Ticks * tripFrequentNumber);
             if (nextDrive <= finishTime)
             {

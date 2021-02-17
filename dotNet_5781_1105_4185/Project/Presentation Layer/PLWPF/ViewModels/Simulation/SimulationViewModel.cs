@@ -52,8 +52,19 @@ namespace PL
                 OnPropertyChanged(nameof(Stations));
             }
         }
+
+        private ObservableCollection<BO.LineTiming> _arrivingLines;
+        public ObservableCollection<BO.LineTiming> ArrivingLines
+        {
+            get => _arrivingLines;
+            private set
+            {
+                _arrivingLines = value;
+                OnPropertyChanged(nameof(ArrivingLines));
+            }
+        }
+
         public ObservableCollection<BusLineViewModel> PassingBusLines { get; private set; }
-        public ObservableCollection<BO.LineTiming> ArrivingLines { get; }
 
         private BO.Station _selectedStation;
         public BO.Station SelectedStation
@@ -64,12 +75,9 @@ namespace PL
                 _selectedStation = value;
                 OnPropertyChanged(nameof(SelectedStation));
 
-                if (Started)
-                {
-                    BlWork(bl => bl.SetStationPanel(_selectedStation?.Code, _UpdateArriving));
-                }
-
                 ArrivingLines.Clear();
+
+                BlWork(bl => bl.SetStationPanel(_selectedStation?.Code, _UpdateArriving));
 
                 _ = GetPassingBusLinesFromBL();
             }
@@ -132,7 +140,6 @@ namespace PL
         {
             _timeSimulation.RunWorkerAsync();
             OnPropertyChanged(nameof(Started));
-            BlWork(bl => bl.SetStationPanel(_selectedStation?.Code, _UpdateArriving));
         }
 
         private void _Stop()
@@ -150,21 +157,11 @@ namespace PL
             }
         }
 
-        private void _UpdateArriving(BO.LineTiming lineTiming)
+        private void _UpdateArriving(BO.LineTiming[] lineTiming)
         {
             Context.Invoke(() =>
             {
-                var existing = ArrivingLines.FirstOrDefault( lt =>
-                    lt.LineID == lineTiming.LineID && lt.CurrentStartTime == lineTiming.CurrentStartTime);
-                if (existing != null)
-                {
-                    ArrivingLines.Remove(existing);
-                }
-
-                if (lineTiming.ArrivalTime >= TimeSpan.Zero)
-                {
-                    ArrivingLines.Add(lineTiming);
-                }
+                ArrivingLines = new ObservableCollection<BO.LineTiming>(lineTiming);
             });
         }
 
