@@ -42,7 +42,16 @@ namespace PL
             }
         }
 
-        public ObservableCollection<BO.Station> Stations { get; private set; }
+        private ObservableCollection<BO.Station> _stations;
+        public ObservableCollection<BO.Station> Stations
+        {
+            get => _stations;
+            private set
+            {
+                _stations = value;
+                OnPropertyChanged(nameof(Stations));
+            }
+        }
         public ObservableCollection<BusLineViewModel> PassingBusLines { get; private set; }
         public ObservableCollection<BO.LineTiming> ArrivingLines { get; }
 
@@ -103,7 +112,6 @@ namespace PL
                 Stations = new ObservableCollection<BO.Station>((IEnumerable<BO.Station>)
                     await BlWorkAsync(bl => bl.GetAllStationsWithoutAdjacents())
                 );
-                OnPropertyChanged(nameof(Stations));
             });
         }
 
