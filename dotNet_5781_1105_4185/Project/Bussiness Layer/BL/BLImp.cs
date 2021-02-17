@@ -853,7 +853,7 @@ namespace BL
 
         #region Simulation
         private readonly Random random = new Random();
-        private double RandomRange(double a, double b)
+        private double RandomDouble(double a, double b)
         {
             return random.NextDouble() * (a + b) + a;
         }
@@ -899,121 +899,141 @@ namespace BL
 
         public void StartTripOperation()
         {
-            BO.TripOperator.Instance.DriveThreads = new List<Thread>();
-            BO.TripOperator.Instance.LineTrips = (
-                from trip in dl.GetAllLineTrips()
-                orderby trip.StartTime
-                select LineTripDoToBo(trip)
-             ).ToList();
-            BO.TripOperator.Instance.BusLines = (
-                from trip in BO.TripOperator.Instance.LineTrips
-                select GetBusLine(trip.LineID)
-             ).Distinct().ToList();
-
-            if (BO.TripOperator.Instance.LineTrips.Count == 0) return;
-
-
-            while (true)
+            try
             {
-                var (trip, nextDrive) = NextTrip();
-                var simulatedTime = TimeSpan.FromTicks(nextDrive.Ticks / BO.Clock.Instance.Rate);
-                try
-                {
-                    Thread.Sleep(simulatedTime);
-                }
-                catch { break; }
+                BO.TripOperator.Instance.DriveThreads = new List<Thread>();
+                BO.TripOperator.Instance.NextTrips = (
+                    from doTrip in dl.GetAllLineTrips()
+                    let trip = LineTripDoToBo(doTrip)
+                    let time = NextTimeDriveByClock(trip)
+                    orderby time
+                    select Tuple.Create(trip, time)
+                ).ToList();
+                BO.TripOperator.Instance.BusLines = (
+                    from next in BO.TripOperator.Instance.NextTrips
+                    select GetBusLine(next.Item1.LineID)
+                ).ToList();
 
-                var drive = new Thread(() =>
-                {
-                    var busLine = BO.TripOperator.Instance.BusLines.Find(line => line.ID == trip.LineID);
+                if (BO.TripOperator.Instance.NextTrips.Count == 0) return;
 
-                    foreach (var ls in GetRouteAdjacentStations(busLine.Route))
+
+                while (true)
+                {
+                    var (trip, currentDrive) = BO.TripOperator.Instance.NextTrips.First();
+                    BO.TripOperator.Instance.NextTrips.RemoveAt(0);
+
+                    var time = currentDrive - BO.Clock.Instance.Time;
+                    if (time > TimeSpan.Zero)
                     {
-                        var drivingTime = ls.left.NextStationRoute?.DrivingTime ?? TimeSpan.Zero;
-                        var randomMinutes = RandomRange(-drivingTime.TotalMinutes * 0.1, drivingTime.TotalMinutes);
-                        drivingTime = drivingTime.Add(TimeSpan.FromMinutes(randomMinutes));
-
-                        UpdateTiming(ls.left.Station.Code, busLine, trip, TimeSpan.Zero);
-                        UpdateTiming(ls.right.Station.Code, busLine, trip, drivingTime);
-
-                        var simulated = TimeSpan.FromTicks(drivingTime.Ticks / BO.Clock.Instance.Rate);
-                        try
-                        {
-                            Thread.Sleep(simulated);
-                        }
-                        catch { return; }
+                        var simulatedTime = TimeSpan.FromTicks(time.Ticks / BO.Clock.Instance.Rate);
+                        Thread.Sleep(simulatedTime);
                     }
 
-                    UpdateTiming(busLine.Route.Last().Station.Code, busLine, trip, TimeSpan.Zero);
-                });
+                    var nextDrive = NextTimeDriveByLastDrive(trip, currentDrive);
+                    BO.TripOperator.Instance.NextTrips.Add(Tuple.Create(trip, nextDrive));
+                    // Sorts by the time to the next drive.
+                    BO.TripOperator.Instance.NextTrips.Sort((a, b) => a.Item2.CompareTo(b.Item2));
 
-                BO.TripOperator.Instance.DriveThreads.Add(drive);
-
-                drive.Start();
-            }
-
-            foreach (var drive in BO.TripOperator.Instance.DriveThreads)
-            {
-                if (drive.IsAlive)
-                {
-                    drive.Interrupt();
+                    var drive = new Thread(() => DriveThread(trip));
+                    BO.TripOperator.Instance.DriveThreads.Add(drive);
+                    drive.Start();
                 }
             }
-
-            BO.TripOperator.Instance.DriveThreads.Clear();
-        }
-
-        private void UpdateTiming(int stationCode, BO.BusLine busLine, BO.LineTrip trip, TimeSpan drivingTime)
-        {
-            if (stationCode == BO.TripOperator.Instance.StationCode)
+            catch (ThreadInterruptedException)
             {
-                var timing = new BO.LineTiming
+                foreach (var drive in BO.TripOperator.Instance.DriveThreads)
                 {
-                    LineID = busLine.ID,
-                    LineNum = busLine.LineNum,
-                    EndStationName = busLine.Route.Last().Station.Name,
-                    TripStartTime = trip.StartTime,
-                    ArrivalTime = drivingTime,
-                };
+                    if (drive.IsAlive)
+                    {
+                        drive.Interrupt();
+                    }
+                }
 
-                BO.TripOperator.Instance.RaiseUpdateTiming(timing);
+                BO.TripOperator.Instance.DriveThreads.Clear();
             }
         }
 
-        private Tuple<BO.LineTrip, TimeSpan> NextTrip()
+        private void DriveThread(BO.LineTrip trip)
         {
-            BO.LineTrip result = BO.TripOperator.Instance.LineTrips.First();
-            TimeSpan nextDrive = NextTimeDrive(result);
-            if (nextDrive == TimeSpan.Zero)
-                return Tuple.Create(result, TimeSpan.Zero);
-
-            foreach (var trip in BO.TripOperator.Instance.LineTrips.Skip(1))
+            try
             {
-                TimeSpan nd = NextTimeDrive(trip);
-                if (nd == TimeSpan.Zero)
-                    return Tuple.Create(trip, TimeSpan.Zero);
+                var busLine = BO.TripOperator.Instance.BusLines.Find(line => line.ID == trip.LineID);
 
-                if (nd < nextDrive)
+                foreach (var (ls, i) in busLine.Route.Select((ls, i) => (ls, i)))
                 {
-                    result = trip;
-                    nextDrive = nd;
+                    // Calculating the time to travel to the observed station.
+                    var timeToTravel = TimeSpan.Zero;
+                    foreach (var next in busLine.Route.Skip(i))
+                    {
+                        if (next.Station.Code == BO.TripOperator.Instance.StationCode)
+                        {
+                            var timing = new BO.LineTiming
+                            {
+                                LineID = busLine.ID,
+                                TripStartTime = trip.StartTime,
+                                LineNum = busLine.LineNum,
+                                EndStationName = busLine.Route.Last().Station.Name,
+                                ArrivalTime = timeToTravel,
+                            };
+
+                            BO.TripOperator.Instance.RaiseUpdateTiming(timing);
+                            break;
+                        }
+
+                        if (next.NextStationRoute == null) break;
+                        timeToTravel = timeToTravel.Add(next.NextStationRoute?.DrivingTime ?? TimeSpan.Zero);
+                    }
+
+                    if (ls.NextStationRoute == null) break;
+
+                    var drivingTime = ls.NextStationRoute?.DrivingTime ?? TimeSpan.Zero;
+
+                    var randomMinutes = RandomDouble(-drivingTime.TotalMinutes * 0.1, drivingTime.TotalMinutes);
+                    drivingTime = drivingTime.Add(TimeSpan.FromMinutes(randomMinutes));
+
+                    var simulated = TimeSpan.FromTicks(drivingTime.Ticks / BO.Clock.Instance.Rate);
+                    Thread.Sleep(simulated);
                 }
             }
-
-            return Tuple.Create(result, nextDrive);
+            catch (ThreadInterruptedException) { }
         }
 
-        private TimeSpan NextTimeDrive(BO.LineTrip trip)
+        /// <summary>
+        /// Calculates the time for the next drive of the trip by the time of the last drive.
+        /// </summary>
+        /// <returns>The time for the next drive</returns>
+        private TimeSpan NextTimeDriveByLastDrive(BO.LineTrip trip, TimeSpan lastDrive)
+        {
+            if (trip.Frequencied == null)
+            {
+                return trip.StartTime.Add(TimeSpan.FromDays(1));
+            }
+
+            var frequency = trip.Frequencied?.Frequency ?? TimeSpan.Zero;
+            var finishTime = trip.Frequencied?.FinishTime ?? TimeSpan.Zero;
+
+            if (lastDrive + frequency > finishTime)
+            {
+                return trip.StartTime.Add(TimeSpan.FromDays(1));
+            }
+
+            return lastDrive + frequency;
+        }
+
+        /// <summary>
+        /// Calculates the time for the next drive of the trip by the time of the clock.
+        /// </summary>
+        /// <returns>The time for the next drive</returns>
+        private TimeSpan NextTimeDriveByClock(BO.LineTrip trip)
         {
             if (BO.Clock.Instance.Time < trip.StartTime)
             {
-                var ticks = (trip.StartTime - BO.Clock.Instance.Time).Ticks;
-                return TimeSpan.FromTicks(ticks);
+                return trip.StartTime;
             }
 
             if (trip.Frequencied == null)
             {
-                goto WaitForNextDay;
+                return trip.StartTime.Add(TimeSpan.FromDays(1));
             }
 
             var frequency = trip.Frequencied?.Frequency ?? TimeSpan.Zero;
@@ -1023,15 +1043,10 @@ namespace BL
             var nextDrive = TimeSpan.FromTicks(trip.StartTime.Ticks + frequency.Ticks * tripFrequentNumber);
             if (nextDrive <= finishTime)
             {
-                return TimeSpan.FromTicks(nextDrive.Ticks - BO.Clock.Instance.Time.Ticks);
+                return nextDrive;
             }
 
-        WaitForNextDay:
-            {
-                var startTime = trip.StartTime.Add(TimeSpan.FromDays(1));
-                var ticks = (startTime - BO.Clock.Instance.Time).Ticks;
-                return TimeSpan.FromTicks(ticks);
-            }
+            return trip.StartTime.Add(TimeSpan.FromDays(1));
         }
         #endregion
     }

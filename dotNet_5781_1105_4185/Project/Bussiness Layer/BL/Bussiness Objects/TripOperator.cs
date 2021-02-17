@@ -17,8 +17,6 @@ namespace BO
         private TripOperator() { }
         #endregion
 
-        private readonly IDL dl = DLFactory.GetDL();
-
         private Action<BO.LineTiming> _updateTiming;
         public event Action<BO.LineTiming> UpdateTiming
         {
@@ -31,7 +29,7 @@ namespace BO
             _updateTiming(lineTiming);
         }
 
-        public List<BO.LineTrip> LineTrips { get; set; }
+        public List<Tuple<LineTrip, TimeSpan>> NextTrips { get; set; }
         public List<BO.BusLine> BusLines { get; set; }
         public List<Thread> DriveThreads { get; set; }
         public int? StationCode { get; set; }
