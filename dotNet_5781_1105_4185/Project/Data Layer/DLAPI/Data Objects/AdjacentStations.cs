@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DO
 {
+    /// <summary>
+    /// <br>Entity that represents two adjacent stations</br>
+    /// <br>Saves the stations' codes and the distance and time from one to the other</br>
+    /// </summary>
     public class AdjacentStations
     {
         public int Station1Code { get; set; }

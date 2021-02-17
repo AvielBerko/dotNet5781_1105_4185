@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DO
 {
+    /// <summary>
+    /// <br>Entity that represents a pysical station</br>
+    /// <br>Saves the station's code, name, adress and location details</br>
+    /// </summary>
     public class Station
     {
         public int Code { get; set; }

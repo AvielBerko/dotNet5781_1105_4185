@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 namespace DO
 {
     #region User
+    /// <summary>
+    /// Bad user name exception
+    /// </summary>
     public class BadUserNameException : Exception
     {
+        // User's name
         public string Name { get; }
 
         public BadUserNameException(string name)
@@ -27,8 +31,12 @@ namespace DO
     #endregion
 
     #region Station
+    /// <summary>
+    /// Bad station code exception
+    /// </summary>
     public class BadStationCodeException : Exception
     {
+        // Station's code
         public int Code { get; }
 
         public BadStationCodeException(int code)
@@ -47,9 +55,15 @@ namespace DO
     #endregion
 
     #region Bus
+    /// <summary>
+    /// <br>Bad bus registration exception</br>
+    /// <br>For example: 7 digits after 2018</br>
+    /// </summary>
     public class BadBusRegistrationException : Exception
     {
+        // Bus's registration number
         public int RegNum { get; }
+        // Bus's registration date
         public DateTime? RegDate { get; }
         public BadBusRegistrationException(int regNum, DateTime? regDate = null)
         {
@@ -78,8 +92,12 @@ namespace DO
     #endregion
 
     #region BusLine
+    /// <summary>
+    /// Bad bus line exception
+    /// </summary>
     public class BadBusLineIDException : Exception
     {
+        // BusLine's ID
         public Guid ID { get; }
 
         public BadBusLineIDException(Guid id)
@@ -98,9 +116,14 @@ namespace DO
     #endregion
 
     #region LineStation
+    /// <summary>
+    /// Bad LineStation code exception
+    /// </summary>
     public class BadLineStationStationCodeException : Exception
     {
+        // LineStation's ID
         public Guid LineID { get; }
+        // Station's code
         public int StationCode { get; }
 
         public BadLineStationStationCodeException(Guid id, int stationCode)
@@ -119,9 +142,15 @@ namespace DO
             StationCode = stationCode;
         }
     }
+
+    /// <summary>
+    /// Bad LineStation index exception
+    /// </summary>
     public class BadLineStationIndexException : Exception
     {
+        // LineStation's ID
         public Guid LineID { get; }
+        // Station's index
         public int Index { get; }
 
         public BadLineStationIndexException(Guid id, int index)
@@ -143,9 +172,14 @@ namespace DO
     #endregion
 
     #region AdjacentStations
+    /// <summary>
+    /// Bad adjacent stations code exception
+    /// </summary>
     public class BadAdjacentStationsCodeException : Exception
     {
+        // First station code
         public int Station1Code { get; }
+        // Second station code
         public int Station2Code { get; }
 
         public BadAdjacentStationsCodeException(int code1, int code2)
@@ -209,8 +243,12 @@ namespace DO
     #endregion
 
     #region XML
+    /// <summary>
+    /// Bad XML exception
+    /// </summary>
     public class XMLFileException : Exception
     {
+        // The xml file's name
         public string FileName { get; }
 
         public XMLFileException(string fileName)

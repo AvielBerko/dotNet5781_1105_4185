@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DO
 {
+    /// <summary>
+    /// <br>Entity of a user using the system</br>
+    /// <br>Saves the users' name password and role</br>
+    /// </summary>
     public class User
     {
         public string Name { get; set; }
