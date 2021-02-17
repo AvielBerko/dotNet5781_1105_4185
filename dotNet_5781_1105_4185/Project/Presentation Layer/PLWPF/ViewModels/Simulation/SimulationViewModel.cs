@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -41,63 +42,129 @@ namespace PL
             }
         }
 
+        public ObservableCollection<BO.Station> Stations { get; private set; }
+        public ObservableCollection<BusLineViewModel> PassingBusLines { get; private set; }
+        public ObservableCollection<BO.LineTiming> ArrivingLines { get; }
 
-        private BackgroundWorker _simulation;
-        public bool Started => _simulation.IsBusy;
+        private BO.Station _selectedStation;
+        public BO.Station SelectedStation
+        {
+            get => _selectedStation;
+            set
+            {
+                _selectedStation = value;
+                OnPropertyChanged(nameof(SelectedStation));
+
+                if (Started)
+                {
+                    BlWork(bl => bl.SetStationPanel(_selectedStation?.Code, _UpdateArriving));
+                }
+
+                _ = GetPassingBusLinesFromBL();
+            }
+        }
+
+        private BackgroundWorker _timeSimulation;
+        public bool Started => _timeSimulation.IsBusy;
 
         public RelayCommand StartSimulation { get; }
         public RelayCommand StopSimulation { get; }
 
         public SimulationViewModel()
         {
+            Stations = new ObservableCollection<BO.Station>();
+            PassingBusLines = new ObservableCollection<BusLineViewModel>();
+            ArrivingLines = new ObservableCollection<BO.LineTiming>();
+
+            _ = GetStationsFromBL();
+
             SimulationTime = DateTime.Now.TimeOfDay;
             SimulationRate = 1;
 
-            _simulation = new BackgroundWorker
+            _timeSimulation = new BackgroundWorker
             {
                 WorkerReportsProgress = true,
                 WorkerSupportsCancellation = true,
             };
-            _simulation.DoWork += _SimulationDoWork;
-            _simulation.ProgressChanged += _SimulationProgressChanged;
-            _simulation.RunWorkerCompleted += _SimulationRunWorkerCompleted;
+            _timeSimulation.DoWork += _TimeSimulationDoWork;
+            _timeSimulation.ProgressChanged += _TimeSimulationProgressChanged;
+            _timeSimulation.RunWorkerCompleted += _TimeSimulationRunWorkerCompleted;
 
             StartSimulation = new RelayCommand(obj => _Start(), obj => !Started);
             StopSimulation = new RelayCommand(obj => _Stop(), obj => Started);
         }
 
+        private async Task GetStationsFromBL()
+        {
+            await Load(async () =>
+            {
+                Stations = new ObservableCollection<BO.Station>((IEnumerable<BO.Station>)
+                    await BlWorkAsync(bl => bl.GetAllStationsWithoutAdjacents())
+                );
+                OnPropertyChanged(nameof(Stations));
+            });
+        }
+
+        private async Task GetPassingBusLinesFromBL()
+        {
+            await Load(async () =>
+            {
+                var vms = from bl in (IEnumerable<BO.BusLine>)
+                            await BlWorkAsync(bl => bl.GetLinesPassingTheStation(_selectedStation.Code))
+                          select new BusLineViewModel(bl);
+                PassingBusLines = new ObservableCollection<BusLineViewModel>(vms);
+
+                OnPropertyChanged(nameof(PassingBusLines));
+            });
+        }
+
         private void _Start()
         {
-            _simulation.RunWorkerAsync();
+            _timeSimulation.RunWorkerAsync();
             OnPropertyChanged(nameof(Started));
+            BlWork(bl => bl.SetStationPanel(_selectedStation?.Code, _UpdateArriving));
         }
 
         private void _Stop()
         {
-            _simulation.CancelAsync();
-        }
-
-        private void _SimulationDoWork(object sender, DoWorkEventArgs e)
-        {
-            BlWork(bl => bl.StartSimulation(SimulationTime, SimulationRate, _UpdateTime));
+            _timeSimulation.CancelAsync();
         }
 
         private void _UpdateTime(TimeSpan time)
         {
-            _simulation.ReportProgress(0, time);
+            _timeSimulation.ReportProgress(0, time);
 
-            if (_simulation.CancellationPending)
+            if (_timeSimulation.CancellationPending)
             {
                 BlWork(bl => bl.StopSimulation());
             }
         }
 
-        private void _SimulationProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void _UpdateArriving(BO.LineTiming lineTiming)
+        {
+            Context.Invoke(() =>
+            {
+                var existing = ArrivingLines.FirstOrDefault(lt => lt.LineID == lineTiming.LineID);
+                if (existing != null)
+                {
+                    ArrivingLines.Remove(existing);
+                }
+
+                ArrivingLines.Add(lineTiming);
+            });
+        }
+
+        private void _TimeSimulationDoWork(object sender, DoWorkEventArgs e)
+        {
+            BlWork(bl => bl.StartSimulation(SimulationTime, SimulationRate, _UpdateTime));
+        }
+
+        private void _TimeSimulationProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             SimulationTime = (TimeSpan)e.UserState;
         }
 
-        private void _SimulationRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void _TimeSimulationRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             StartSimulation.RaiseCanExecuteChanged();
             OnPropertyChanged(nameof(Started));

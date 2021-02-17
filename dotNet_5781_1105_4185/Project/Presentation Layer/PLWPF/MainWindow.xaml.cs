@@ -34,5 +34,11 @@ namespace PL
             content.DataContext = MainFrame.DataContext;
 
         }
+
+        private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var vm = (MainViewModel)DataContext;
+            vm.Close.Execute(null);
+        }
     }
 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Loaded="WindowLoaded"
+        Loaded="WindowLoaded" Closing="WindowClosing"
         Title="MainWindow" Height="450" Width="600">
     <Frame x:Name="MainFrame" Source="Pages/AdminPage.xaml">
         

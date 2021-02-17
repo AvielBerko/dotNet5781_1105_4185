@@ -8,6 +8,7 @@ namespace BO
 {
     public class LineTrip
     {
+        public Guid LineID { get; set; }
         public TimeSpan StartTime { get; set; }
         public FrequnciedTrip? Frequencied { get; set; }
     }

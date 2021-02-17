@@ -26,6 +26,8 @@ namespace PL
         public BusLinesListViewModel BusLinesListViewModel { get; }
         public SimulationViewModel SimulationViewModel { get; set; }
 
+        public RelayCommand Close { get; set; }
+
         public MainViewModel()
         {
             LoginViewModel = new LoginViewModel();
@@ -35,6 +37,8 @@ namespace PL
             BusLinesListViewModel = new BusLinesListViewModel();
             SimulationViewModel = new SimulationViewModel();
 
+            Close = new RelayCommand(obj => _Close());
+
             LoginViewModel.LoggedIn += LoggedIn;
             SignUpViewModel.SignedUp += LoggedIn;
 
@@ -42,6 +46,11 @@ namespace PL
             {
                 OnShutdown();
             }
+        }
+
+        private void _Close()
+        {
+            SimulationViewModel.StopSimulation.Execute(null);
         }
 
         private void LoggedIn(object sender, BO.User user)

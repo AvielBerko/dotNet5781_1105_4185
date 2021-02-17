@@ -8,10 +8,17 @@ using System.Threading.Tasks;
 
 namespace BO
 {
-    static class Clock
+    class Clock
     {
-        private static TimeSpan _time;
-        public static TimeSpan Time
+        #region Singleton
+        static readonly Lazy<Clock> lazy = new Lazy<Clock>(() => new Clock());
+        public static Clock Instance => lazy.Value;
+
+        private Clock() { }
+        #endregion
+
+        private TimeSpan _time;
+        public TimeSpan Time
         {
             get => _time;
             set
@@ -21,10 +28,10 @@ namespace BO
             }
         }
 
-        public static int Rate { get; set; }
+        public int Rate { get; set; }
 
-        private static Action<TimeSpan> _updateTime;
-        public static event Action<TimeSpan> UpdateTime
+        private Action<TimeSpan> _updateTime;
+        public event Action<TimeSpan> UpdateTime
         {
             add => _updateTime = value;
             remove => _updateTime -= value;

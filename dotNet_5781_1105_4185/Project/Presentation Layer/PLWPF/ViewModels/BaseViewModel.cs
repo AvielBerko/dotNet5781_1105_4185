@@ -19,6 +19,8 @@ namespace PL
         protected async Task<object> BlWorkAsync(Func<IBL, object> work) => await Task.Run(() => work(bl));
         protected async Task BlWorkAsync(Action<IBL> work) => await Task.Run(() => work(bl));
 
+        public static IContext Context { get; set; }
+
         public static string DialogServiceType { get; set; } = "view";
         protected IDialogService DialogService => DialogServiceFactory.GetDialogService(DialogServiceType);
 

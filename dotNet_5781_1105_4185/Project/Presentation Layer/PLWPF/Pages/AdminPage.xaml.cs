@@ -28,10 +28,23 @@ namespace PL
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var tabControl = (TabControl)sender;
+
+            if (tabControl.SelectedItem != SimulationTab)
+            {
+                var vm = (SimulationViewModel)SimulationTab.DataContext;
+                if (vm != null && vm.StopSimulation.CanExecute(null))
+                {
+                    vm.StopSimulation.Execute(null);
+                }
+            }
+
             if (tabControl.SelectedItem == LineListTab)
             {
                 var vm = (BusLinesListViewModel)LineListTab.DataContext;
-                vm.Refresh.Execute(null);
+                if (vm != null)
+                {
+                    vm.Refresh.Execute(null);
+                }
             }
         }
     }

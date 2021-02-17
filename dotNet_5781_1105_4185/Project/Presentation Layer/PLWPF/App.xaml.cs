@@ -17,6 +17,8 @@ namespace PL
         {
             base.OnStartup(e);
 
+            BaseViewModel.Context = new ViewContext();
+
             MainWindow window = new MainWindow();
             MainViewModel mainVM = new MainViewModel();
             window.DataContext = mainVM;
