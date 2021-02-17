@@ -931,6 +931,20 @@ namespace BL
                         Thread.Sleep(simulatedTime);
                     }
 
+                    // If got to the next day, remove all days from nextTrip.
+                    if (currentDrive.Days > 0)
+                    {
+                        currentDrive = currentDrive.Add(TimeSpan.FromDays(-currentDrive.Days));
+                        for(int i = 0; i < TripOperator.Instance.NextTrips.Count; i++)
+                        {
+                            var negDays = TimeSpan.FromDays(-TripOperator.Instance.NextTrips[i].Item2.Days);
+                            TripOperator.Instance.NextTrips[i] = Tuple.Create(
+                                TripOperator.Instance.NextTrips[i].Item1,
+                                TripOperator.Instance.NextTrips[i].Item2.Add(negDays)
+                            );
+                        }
+                    }
+
                     var nextDrive = NextTimeDriveByLastDrive(trip, currentDrive);
                     TripOperator.Instance.NextTrips.Add(Tuple.Create(trip, nextDrive));
                     // Sorts by the time to the next drive.
@@ -965,7 +979,7 @@ namespace BL
 
                 foreach (var (ls, i) in busLine.Route.Select((ls, i) => (ls, i)))
                 {
-                    // Calculating the time to travel to the observed station.
+                    // Calculating the time to travel to all stations.
                     var timeToTravel = TimeSpan.Zero;
                     foreach (var next in busLine.Route.Skip(i))
                     {
