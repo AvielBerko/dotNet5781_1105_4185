@@ -20,9 +20,7 @@ namespace PL
         protected async Task BlWorkAsync(Action<IBL> work) => await Task.Run(() => work(bl));
 
         public static IContext Context { get; set; }
-
-        public static string DialogServiceType { get; set; } = "view";
-        protected IDialogService DialogService => DialogServiceFactory.GetDialogService(DialogServiceType);
+        public static IDialogService DialogService { get; set; }
 
         protected async Task Load(Func<Task> load)
         {

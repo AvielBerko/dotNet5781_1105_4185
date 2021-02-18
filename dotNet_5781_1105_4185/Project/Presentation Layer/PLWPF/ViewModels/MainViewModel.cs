@@ -19,7 +19,6 @@ namespace PL
             }
         }
 
-        public LoginViewModel LoginViewModel { get; }
         public BusListViewModel BusListViewModel { get; }
         public StationListViewModel StationListViewModel { get; }
         public BusLinesListViewModel BusLinesListViewModel { get; }
@@ -29,7 +28,6 @@ namespace PL
 
         public MainViewModel()
         {
-            LoginViewModel = new LoginViewModel();
             BusListViewModel = new BusListViewModel();
             StationListViewModel = new StationListViewModel();
             BusLinesListViewModel = new BusLinesListViewModel();
@@ -40,9 +38,10 @@ namespace PL
 
         public bool Login()
         {
-            if (DialogService.ShowLoginDialog(LoginViewModel) == DialogResult.Ok)
+            var vm = new LoginViewModel();
+            if (DialogService.ShowLoginDialog(vm) == DialogResult.Ok)
             {
-                if (LoginViewModel.User.Role == BO.Roles.Admin)
+                if (vm.User.Role == BO.Roles.Admin)
                 {
                     MainPage = new Uri("Pages/AdminPage.xaml", UriKind.Relative);
                 }

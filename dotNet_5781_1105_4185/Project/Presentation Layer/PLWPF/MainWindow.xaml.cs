@@ -36,19 +36,19 @@ namespace PL
             };
         }
 
-
-        private void WindowLoaded(object sender, RoutedEventArgs e)
-        {
-            var content = MainFrame.Content as FrameworkElement;
-            if (content == null)
-                return;
-            content.DataContext = MainFrame.DataContext;
-        }
-
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var vm = (MainViewModel)DataContext;
             vm.Close.Execute(null);
+        }
+
+        private void MainFrameNavigated(object sender, NavigationEventArgs e)
+        {
+            // Sets the frame content DataContext.
+            var content = MainFrame.Content as FrameworkElement;
+            if (content == null)
+                return;
+            content.DataContext = MainFrame.DataContext;
         }
     }
 }

@@ -58,7 +58,6 @@
     <Compile Include="Context\IContext.cs" />
     <Compile Include="Context\ViewContext.cs" />
     <Compile Include="DialogService\DialogResult.cs" />
-    <Compile Include="DialogService\DialogServiceFactory.cs" />
     <Compile Include="DialogService\IDialogService.cs" />
     <Compile Include="Dialogs\SelectStationsDialog.xaml.cs">
       <DependentUpon>SelectStationsDialog.xaml</DependentUpon>

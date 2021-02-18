@@ -9,11 +9,6 @@ namespace PL
 {
     public sealed class ViewDialogService : IDialogService
     {
-        static readonly Lazy<ViewDialogService> lazy = new Lazy<ViewDialogService>(() => new ViewDialogService());
-        public static ViewDialogService Instance => lazy.Value;
-
-        private ViewDialogService() { }
-
         public void CloseDialog(object window, DialogResult result)
         {
             switch (result)

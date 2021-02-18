@@ -18,7 +18,7 @@ namespace PL
             base.OnStartup(e);
 
             BaseViewModel.Context = new ViewContext();
-            BaseViewModel.DialogServiceType = "view";
+            BaseViewModel.DialogService = new ViewDialogService();
 
             var vm = new MainViewModel();
             var window = new MainWindow(vm);
