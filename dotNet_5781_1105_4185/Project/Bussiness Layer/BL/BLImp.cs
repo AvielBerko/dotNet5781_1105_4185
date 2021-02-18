@@ -891,7 +891,7 @@ namespace BL
             cancel = true;
         }
 
-        public void SetStationPanel(int? stationCode, Action<BO.LineTiming[]> updateTiming)
+        public void SetStationPanel(int? stationCode, Action<IEnumerable<BO.LineTiming>> updateTiming)
         {
             TripOperator.Instance.UpdateTiming += updateTiming;
             TripOperator.Instance.StationCode = stationCode;
@@ -993,6 +993,9 @@ namespace BL
                             ArrivalTime = timeToTravel,
                         };
 
+                        TripOperator.Instance.AddLineTiming(next.Station.Code, timing);
+
+                        // If the line jus got to the station, remove the line after 1 minute of simulation.
                         if (timeToTravel == TimeSpan.Zero)
                         {
                             var arrived = (BO.LineTiming)timing.CopyPropertiesToNew(typeof(BO.LineTiming));
@@ -1000,8 +1003,6 @@ namespace BL
                             TripOperator.Instance.Threads.Add(removeArrived);
                             removeArrived.Start();
                         }
-
-                        TripOperator.Instance.AddLineTiming(next.Station.Code, timing);
 
                         if (next.NextStationRoute == null) break;
                         timeToTravel = timeToTravel.Add(next.NextStationRoute?.DrivingTime ?? TimeSpan.Zero);

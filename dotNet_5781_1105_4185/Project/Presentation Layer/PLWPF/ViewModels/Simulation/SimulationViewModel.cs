@@ -157,7 +157,7 @@ namespace PL
             }
         }
 
-        private void _UpdateArriving(BO.LineTiming[] lineTiming)
+        private void _UpdateArriving(IEnumerable<BO.LineTiming> lineTiming)
         {
             Context.Invoke(() =>
             {

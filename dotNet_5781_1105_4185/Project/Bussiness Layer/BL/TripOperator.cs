@@ -17,8 +17,8 @@ namespace BL
         private TripOperator() { }
         #endregion
 
-        private Action<BO.LineTiming[]> _updateTiming;
-        public event Action<BO.LineTiming[]> UpdateTiming
+        private Action<IEnumerable<BO.LineTiming>> _updateTiming;
+        public event Action<IEnumerable<BO.LineTiming>> UpdateTiming
         {
             add => _updateTiming = value;
             remove => _updateTiming -= value;
@@ -82,10 +82,8 @@ namespace BL
 
                 if (StationCode == stationCode)
                 {
-                    var listToSend = (
-                        from lt in list
-                        select (BO.LineTiming)lt.CopyPropertiesToNew(typeof(BO.LineTiming))
-                    ).ToArray();
+                    var listToSend = from lt in list
+                                     select (BO.LineTiming)lt.CopyPropertiesToNew(typeof(BO.LineTiming));
 
                     _updateTiming(listToSend);
                 }
