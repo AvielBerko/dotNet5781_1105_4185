@@ -852,11 +852,6 @@ namespace BL
         #endregion
 
         #region Simulation
-        private readonly Random random = new Random();
-        private double RandomDouble(double a, double b)
-        {
-            return random.NextDouble() * (a + b) + a;
-        }
 
         internal static volatile bool cancel = true;
 
@@ -934,8 +929,8 @@ namespace BL
                     // If got to the next day, remove all days from nextTrip.
                     if (currentDrive.Days > 0)
                     {
-                        currentDrive = currentDrive.Add(TimeSpan.FromDays(-currentDrive.Days));
-                        for(int i = 0; i < TripOperator.Instance.NextTrips.Count; i++)
+                        currentDrive += TimeSpan.FromDays(-currentDrive.Days);
+                        for (int i = 0; i < TripOperator.Instance.NextTrips.Count; i++)
                         {
                             var negDays = TimeSpan.FromDays(-TripOperator.Instance.NextTrips[i].Item2.Days);
                             TripOperator.Instance.NextTrips[i] = Tuple.Create(
@@ -979,47 +974,78 @@ namespace BL
 
                 foreach (var (ls, i) in busLine.Route.Select((ls, i) => (ls, i)))
                 {
-                    // Calculating the time to travel to all stations.
-                    var timeToTravel = TimeSpan.Zero;
-                    foreach (var next in busLine.Route.Skip(i))
-                    {
-                        var timing = new BO.LineTiming
-                        {
-                            LineID = busLine.ID,
-                            TripStartTime = trip.StartTime,
-                            CurrentStartTime = currentStartTime,
-                            LineNum = busLine.LineNum,
-                            EndStationName = busLine.Route.Last().Station.Name,
-                            ArrivalTime = timeToTravel,
-                        };
-
-                        TripOperator.Instance.AddLineTiming(next.Station.Code, timing);
-
-                        // If the line jus got to the station, remove the line after 1 minute of simulation.
-                        if (timeToTravel == TimeSpan.Zero)
-                        {
-                            var arrived = (BO.LineTiming)timing.CopyPropertiesToNew(typeof(BO.LineTiming));
-                            Thread removeArrived = new Thread(() => RemoveArrivedTiming(next.Station.Code, arrived));
-                            TripOperator.Instance.Threads.Add(removeArrived);
-                            removeArrived.Start();
-                        }
-
-                        if (next.NextStationRoute == null) break;
-                        timeToTravel = timeToTravel.Add(next.NextStationRoute?.DrivingTime ?? TimeSpan.Zero);
-                    }
+                    InformAllPanels(i, TimeSpan.Zero, currentStartTime, busLine, trip);
 
                     if (ls.NextStationRoute == null) break;
 
                     var drivingTime = ls.NextStationRoute?.DrivingTime ?? TimeSpan.Zero;
+                    var randomTimeAdded = TimeSpan.Zero;
+                    var timeDrove = TimeSpan.Zero;
 
-                    var randomMinutes = RandomDouble(-drivingTime.TotalMinutes * 0.1, drivingTime.TotalMinutes);
-                    drivingTime = drivingTime.Add(TimeSpan.FromMinutes(randomMinutes));
+                    while (timeDrove < drivingTime)
+                    {
+                        var timeToArrive = drivingTime - timeDrove;
 
-                    var simulated = TimeSpan.FromTicks(drivingTime.Ticks / Clock.Instance.Rate);
-                    Thread.Sleep(simulated);
+                        // Generating a delay up to 200% or arrival early up to 10%.
+                        var randomTime = Utils.RandomDouble(-0.1, 1);
+                        var timeInterrupt =TimeSpan.FromMinutes(Utils.Clap(
+                                randomTimeAdded.TotalMinutes + randomTime,
+                                -drivingTime.TotalMinutes * 0.1,
+                                drivingTime.TotalMinutes
+                        ) - randomTimeAdded.TotalMinutes);
+
+                        // Checks that the time to arrive will not be less than zero.
+                        timeInterrupt = Utils.Max(timeToArrive + timeInterrupt, TimeSpan.Zero) - timeToArrive;
+
+                        randomTimeAdded += timeInterrupt;
+                        timeToArrive += timeInterrupt;
+
+                        InformAllPanels(i + 1, timeToArrive, currentStartTime, busLine, trip);
+
+                        var timeToWait = TimeSpan.FromMinutes(1);
+                        if (timeToArrive.TotalMinutes < 2)
+                        {
+                            timeToWait = timeToArrive;
+                        }
+
+                        var simulated = TimeSpan.FromTicks(timeToWait.Ticks / Clock.Instance.Rate);
+                        Thread.Sleep(simulated);
+
+                        timeDrove += timeToWait;
+                    }
                 }
             }
             catch (ThreadInterruptedException) { }
+        }
+
+        private void InformAllPanels(int stationIndex, TimeSpan timeToTravel, TimeSpan currentStartTime, BO.BusLine busLine, BO.LineTrip trip)
+        {
+            foreach (var next in busLine.Route.Skip(stationIndex))
+            {
+                var timing = new BO.LineTiming
+                {
+                    LineID = busLine.ID,
+                    TripStartTime = trip.StartTime,
+                    CurrentStartTime = currentStartTime,
+                    LineNum = busLine.LineNum,
+                    EndStationName = busLine.Route.Last().Station.Name,
+                    ArrivalTime = timeToTravel,
+                };
+
+                TripOperator.Instance.AddLineTiming(next.Station.Code, timing);
+
+                // If the line jus got to the station, remove the line after 1 minute of simulation.
+                if (timeToTravel == TimeSpan.Zero)
+                {
+                    var arrived = (BO.LineTiming)timing.CopyPropertiesToNew(typeof(BO.LineTiming));
+                    Thread removeArrived = new Thread(() => RemoveArrivedTiming(next.Station.Code, arrived));
+                    TripOperator.Instance.Threads.Add(removeArrived);
+                    removeArrived.Start();
+                }
+
+                if (next.NextStationRoute == null) break;
+                timeToTravel = timeToTravel.Add(next.NextStationRoute?.DrivingTime ?? TimeSpan.Zero);
+            }
         }
 
         private void RemoveArrivedTiming(int stationCode, BO.LineTiming arrived)
