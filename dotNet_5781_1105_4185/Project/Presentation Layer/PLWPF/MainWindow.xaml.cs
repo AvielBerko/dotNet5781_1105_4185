@@ -23,7 +23,17 @@ namespace PL
         public MainWindow(MainViewModel vm)
         {
             InitializeComponent();
-            this.DataContext = vm;
+
+            DataContext = vm;
+
+            // Change frame page manuali (not working by binding)
+            vm.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == "MainPage")
+                {
+                    MainFrame.Navigate(vm.MainPage);
+                }
+            };
         }
 
 
@@ -33,7 +43,6 @@ namespace PL
             if (content == null)
                 return;
             content.DataContext = MainFrame.DataContext;
-
         }
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)

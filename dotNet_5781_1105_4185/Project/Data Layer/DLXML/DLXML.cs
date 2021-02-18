@@ -23,6 +23,19 @@ namespace DL
         private static string FileName<T>() => typeof(T).Name + ".xml";
 
         #region User
+        public IEnumerable<User> GetAllUsers()
+        {
+            return XMLTools.LoadListFromXMLSerializer<User>(FileName<User>());
+        }
+
+        public IEnumerable<User> GetUsersBy(Predicate<User> predicate)
+        {
+            var users = XMLTools.LoadListFromXMLSerializer<User>(FileName<User>());
+            return from user in users
+                   where predicate(user)
+                   select user;
+        }
+
         public User GetUser(string name)
         {
             var users = XMLTools.LoadListFromXMLSerializer<User>(FileName<User>());
@@ -34,6 +47,7 @@ namespace DL
 
             return user;
         }
+
         public void AddUser(User user)
         {
             var users = XMLTools.LoadListFromXMLSerializer<User>(FileName<User>());

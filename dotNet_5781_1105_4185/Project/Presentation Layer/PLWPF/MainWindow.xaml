@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
         Loaded="WindowLoaded" Closing="WindowClosing"
-        Title="MainWindow" Height="450" Width="700">
-    <Frame x:Name="MainFrame" Source="Pages/AdminPage.xaml">
+        Title="Bus Management" Height="450" Width="700">
+    <Frame x:Name="MainFrame">
         
     </Frame>
 </Window>

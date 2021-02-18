@@ -27,6 +27,21 @@ namespace BL
         {
             try
             {
+                // Creates an initial admin if there are no admin in dl.
+                if (name == "admin" && password == "admin" &&
+                    dl.GetUsersBy(u => u.Role == DO.Roles.Admin).Count() == 0)
+                {
+                    var initAdmin = new DO.User
+                    {
+                        Name = "admin",
+                        Password = "admin",
+                        Role = DO.Roles.Admin
+                    };
+
+                    dl.AddUser(initAdmin);
+                    return (BO.User)initAdmin.CopyPropertiesToNew(typeof(BO.User));
+                }
+
                 var doUser = dl.GetUser(name);
 
                 if (doUser.Password != password)
@@ -45,13 +60,23 @@ namespace BL
             ValidateSignUpName(name);
             ValidateSignUpPassword(password);
 
-            dl.AddUser(new DO.User { Name = name, Password = password, Role = DO.Roles.Normal });
-            return new BO.User { Name = name, Password = password, Role = BO.Roles.Normal };
+            var user = new DO.User
+            {
+                Name = name,
+                Password = password,
+                Role = DO.Roles.Normal,
+            };
+
+            dl.AddUser(user);
+            return (BO.User)user.CopyPropertiesToNew(typeof(BO.User));
         }
 
         public void ValidateSignUpName(string name)
         {
-            if (string.IsNullOrEmpty(name)) throw new BO.BadNameValidationException(name, "Empty name is invalid");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new BO.BadNameValidationException(name, "Empty name is invalid");
+            }
 
             try
             {
@@ -60,13 +85,17 @@ namespace BL
             }
             catch (DO.BadUserNameException)
             {
+                // User doesn't exists as needed.
             }
         }
 
         public void ValidateSignUpPassword(string password)
         {
             if (string.IsNullOrEmpty(password) || password.Length < 8)
-                throw new BO.BadPasswordValidationException(password, "Password should contains at least 8 characters");
+            {
+                throw new BO.BadPasswordValidationException(password,
+                    "Password should contains at least 8 characters");
+            }
 
             bool hasLower = false;
             bool hasUpper = false;
@@ -79,11 +108,15 @@ namespace BL
                 if (char.IsUpper(ch)) hasUpper = true;
                 if (char.IsDigit(ch)) hasDigit = true;
                 if (char.IsPunctuation(ch)) hasPanctuation = true;
+
+                if (hasLower && hasUpper && hasDigit && hasPanctuation) return;
             }
 
             if (!(hasLower && hasUpper && hasDigit && hasPanctuation))
+            {
                 throw new BO.BadPasswordValidationException(password,
                     "The password should contain at least 1 lower case letter, 1 upper case letter, 1 digit and 1 panctuation");
+            }
         }
         #endregion
 
@@ -988,7 +1021,7 @@ namespace BL
 
                         // Generating a delay up to 200% or arrival early up to 10%.
                         var randomTime = Utils.RandomDouble(-0.1, 1);
-                        var timeInterrupt =TimeSpan.FromMinutes(Utils.Clap(
+                        var timeInterrupt = TimeSpan.FromMinutes(Utils.Clap(
                                 randomTimeAdded.TotalMinutes + randomTime,
                                 -drivingTime.TotalMinutes * 0.1,
                                 drivingTime.TotalMinutes

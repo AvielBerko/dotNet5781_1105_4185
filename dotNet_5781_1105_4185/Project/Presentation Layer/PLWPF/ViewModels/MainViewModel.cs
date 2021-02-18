@@ -8,14 +8,14 @@ namespace PL
 {
     public class MainViewModel : BaseViewModel
     {
-        Uri _mainPage;
-        Uri MainPage
+        private Uri _mainPage;
+        public Uri MainPage
         {
             get => _mainPage;
             set
             {
                 _mainPage = value;
-                OnPropertyChanged(nameof(_mainPage));
+                OnPropertyChanged(nameof(MainPage));
             }
         }
 

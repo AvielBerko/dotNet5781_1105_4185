@@ -121,7 +121,7 @@ namespace PL
             await Load(async () =>
             {
                 // The signup sould not faile when this function executes.
-                BO.User user = (BO.User)await BlWorkAsync(bl => bl.UserSignUp(Name, Password));
+                User = (BO.User)await BlWorkAsync(bl => bl.UserSignUp(Name, Password));
                 DialogService.CloseDialog(window, DialogResult.Ok);
             });
         }

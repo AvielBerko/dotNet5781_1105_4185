@@ -20,6 +20,18 @@ namespace DL
         #endregion
 
         #region User
+        public IEnumerable<User> GetAllUsers()
+        {
+            return from u in DataSet.Users select u.Clone();
+        }
+
+        public IEnumerable<User> GetUsersBy(Predicate<User> predicate)
+        {
+            return from u in DataSet.Users
+                   where predicate(u)
+                   select u.Clone();
+        }
+
         public DO.User GetUser(string name)
         {
             var user = DataSet.Users.Find(u => u.Name == name);
