@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace BL
 {
+    /// <summary>
+    /// A singleton class in charge of the simulation time
+    /// and updating the observerer about changin in time.
+    /// </summary>
     class Clock
     {
         #region Singleton
@@ -17,7 +21,10 @@ namespace BL
         private Clock() { }
         #endregion
 
-        private TimeSpan _time;
+        /// <summary>
+        /// The current time of the clock.
+        /// When it gets updated the observerer gets updated about the time.
+        /// </summary>
         public TimeSpan Time
         {
             get => _time;
@@ -27,14 +34,23 @@ namespace BL
                 _updateTime(_time);
             }
         }
+        private TimeSpan _time;
 
+        /// <summary>
+        /// The speed rate of the simulation clock's time.
+        /// Every 1 second in real time passing Rate seconds in simulation time.
+        /// </summary>
         public int Rate { get; set; }
 
-        private Action<TimeSpan> _updateTime;
+        /// <summary>
+        /// Observerer of the clock's time. <br />
+        /// Only one observerer can exist.
+        /// </summary>
         public event Action<TimeSpan> UpdateTime
         {
             add => _updateTime = value;
             remove => _updateTime -= value;
         }
+        private Action<TimeSpan> _updateTime;
     }
 }
