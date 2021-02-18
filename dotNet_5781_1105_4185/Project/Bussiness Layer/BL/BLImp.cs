@@ -1012,7 +1012,6 @@ namespace BL
                     if (ls.NextStationRoute == null) break;
 
                     var drivingTime = ls.NextStationRoute?.DrivingTime ?? TimeSpan.Zero;
-                    var randomTimeAdded = TimeSpan.Zero;
                     var timeDrove = TimeSpan.Zero;
 
                     while (timeDrove < drivingTime)
@@ -1020,17 +1019,7 @@ namespace BL
                         var timeToArrive = drivingTime - timeDrove;
 
                         // Generating a delay up to 200% or arrival early up to 10%.
-                        var randomTime = Utils.RandomDouble(-0.1, 1);
-                        var timeInterrupt = TimeSpan.FromMinutes(Utils.Clap(
-                                randomTimeAdded.TotalMinutes + randomTime,
-                                -drivingTime.TotalMinutes * 0.1,
-                                drivingTime.TotalMinutes
-                        ) - randomTimeAdded.TotalMinutes);
-
-                        // Checks that the time to arrive will not be less than zero.
-                        timeInterrupt = Utils.Max(timeToArrive + timeInterrupt, TimeSpan.Zero) - timeToArrive;
-
-                        randomTimeAdded += timeInterrupt;
+                        var timeInterrupt = TimeSpan.FromMinutes(Utils.RandomDouble(-0.1, 1));
                         timeToArrive += timeInterrupt;
 
                         InformAllPanels(i + 1, timeToArrive, currentStartTime, busLine, trip);
