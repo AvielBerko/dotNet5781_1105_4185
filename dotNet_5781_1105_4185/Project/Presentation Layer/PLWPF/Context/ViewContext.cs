@@ -8,17 +8,18 @@ using System.Windows.Threading;
 
 namespace PL
 {
+    /// <summary>
+    /// Implementation of the IContext with a given dispatcher. <br />
+    /// This is used when running the view in order to run an action on the UI thread.
+    /// </summary>
     public sealed class ViewContext : IContext
     {
+        /// <summary>
+        /// The main thread dispatcher.
+        /// </summary>
         private readonly Dispatcher _dispatcher;
 
-        public bool IsSynchronized
-        {
-            get
-            {
-                return _dispatcher.Thread == Thread.CurrentThread;
-            }
-        }
+        public bool IsSynchronized => _dispatcher.Thread == Thread.CurrentThread;
 
         public ViewContext() : this(Dispatcher.CurrentDispatcher)
         {
