@@ -20,10 +20,11 @@ namespace PL
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(MainViewModel vm)
         {
             InitializeComponent();
-        }  
+            this.DataContext = vm;
+        }
 
 
         private void WindowLoaded(object sender, RoutedEventArgs e)

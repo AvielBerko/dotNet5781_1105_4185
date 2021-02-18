@@ -39,7 +39,10 @@ namespace DL
 
         public void DeleteUser(DO.User user)
         {
-            throw new NotImplementedException();
+            var existing = DataSet.Users.Find(u => u.Name == user.Name);
+            if (existing == null) throw new BadUserNameException(user.Name, $"User with the name {user.Name} not found");
+
+            DataSet.Users.Remove(existing);
         }
         #endregion
 

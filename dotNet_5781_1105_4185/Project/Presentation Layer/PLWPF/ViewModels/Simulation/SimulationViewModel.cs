@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-    class SimulationViewModel : BaseViewModel
+    public class SimulationViewModel : BaseViewModel
     {
         private TimeSpan _simulationTime;
         public TimeSpan SimulationTime

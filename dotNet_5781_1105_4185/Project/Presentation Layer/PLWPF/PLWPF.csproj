@@ -80,9 +80,9 @@
       <DependentUpon>AdminPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="ViewModels\AdjacentStation\SelectStationsViewModel.cs" />
-    <Compile Include="ViewModels\AdjacentStation\AdjacentStationViewModel.cs" />
-    <Compile Include="ViewModels\AdjacentStation\SelectableStationsViewModel.cs" />
+    <Compile Include="ViewModels\AdjacentStations\SelectStationsViewModel.cs" />
+    <Compile Include="ViewModels\AdjacentStations\AdjacentStationViewModel.cs" />
+    <Compile Include="ViewModels\AdjacentStations\SelectableStationsViewModel.cs" />
     <Compile Include="ViewModels\BusLines\AddUpdateBusLineViewModel.cs" />
     <Compile Include="ViewModels\BusLines\BusLinesListViewModel.cs" />
     <Compile Include="ViewModels\BusLines\BusLineViewModel.cs" />
@@ -97,7 +97,6 @@
     <Compile Include="ViewModels\Bus\BusViewModel.cs" />
     <Compile Include="ViewModels\User\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\User\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Station\StationListViewModel.cs" />
     <Compile Include="ViewModels\Station\StationViewModel.cs" />
     <Page Include="Dialogs\SelectStationsDialog.xaml">

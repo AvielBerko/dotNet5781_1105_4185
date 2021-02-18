@@ -33,9 +33,9 @@ namespace PL
             }
         }
 
-        public DialogResult ShowLoginDialog(LoginViewModel login, SignUpViewModel signup)
+        public DialogResult ShowLoginDialog(LoginViewModel login)
         {
-            LoginDialog dialog = new LoginDialog(login, signup);
+            LoginDialog dialog = new LoginDialog(login);
 
             switch (dialog.ShowDialog())
             {

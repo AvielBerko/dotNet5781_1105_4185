@@ -18,11 +18,15 @@ namespace PL
             base.OnStartup(e);
 
             BaseViewModel.Context = new ViewContext();
+            BaseViewModel.DialogServiceType = "view";
 
-            MainWindow window = new MainWindow();
-            MainViewModel mainVM = new MainViewModel();
-            window.DataContext = mainVM;
-            mainVM.Shutdown += (sender) => Shutdown(0);
+            var vm = new MainViewModel();
+            var window = new MainWindow(vm);
+
+            if (!vm.Login())
+            {
+                Shutdown(0);
+            }
 
             window.Show();
         }

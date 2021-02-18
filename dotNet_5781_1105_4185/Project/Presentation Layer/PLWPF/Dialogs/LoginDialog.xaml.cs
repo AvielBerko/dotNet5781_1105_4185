@@ -19,13 +19,30 @@ namespace PL
     /// </summary>
     public partial class LoginDialog : Window
     {
-        public LoginDialog(LoginViewModel login, SignUpViewModel signup)
+        public LoginDialog(LoginViewModel login)
         {
             InitializeComponent();
 
-            tabLogin.DataContext = login;
-            tabSignUp.DataContext = signup;
+            DataContext = login;
         }
 
+        private void LoginPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            var vm = (LoginViewModel)DataContext;
+            var passwordBox = (PasswordBox)sender;
+            vm.Password = passwordBox.Password;
+        }
+
+        private void SignupPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            var vm = (LoginViewModel)DataContext;
+            var passwordBox = (PasswordBox)sender;
+            vm.Password = passwordBox.Password;
+
+            // Gets password validation error.
+            var validationError = vm["Password"];
+            signUpPassError.Text = validationError;
+            signUpPassError.ToolTip = validationError; 
+        }
     }
 }

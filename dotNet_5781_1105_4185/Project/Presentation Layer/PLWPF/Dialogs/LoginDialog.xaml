@@ -8,79 +8,88 @@
         Title="Log in or Sign up" Height="250" Width="300"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <TabControl>
-        <!--#region LogIn-->
-        <TabItem Header="Login" x:Name="tabLogin">
+        <!--#region Login-->
+        <TabItem Header="Login">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
                     <RowDefinition />
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition />
+                    <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
 
-                <Viewbox>
-                    <Label FontWeight="Bold">Log In</Label>
-                </Viewbox>
+                <Label Content="Log In" FontWeight="Bold" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center" />
+
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition Height="25"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70"/>
                         <ColumnDefinition />
-                        <ColumnDefinition Width="2.5*"/>
                     </Grid.ColumnDefinitions>
+
                     <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</Label>
                     <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Password:</Label>
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" Margin="10" VerticalContentAlignment="Center"/>
-                    <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" Margin="10" VerticalContentAlignment="Center"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="10" VerticalContentAlignment="Center"/>
+                    <PasswordBox Grid.Row="1" Grid.Column="1" PasswordChanged="LoginPasswordChanged" Margin="10" VerticalContentAlignment="Center"/>
+
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="Couldn't authenticate" IsReadOnly="True" IsReadOnlyCaretVisible="True" VerticalAlignment="Center" Foreground="Red" Background="Transparent" BorderThickness="0">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="Visibility" Value="Hidden" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AuthFailure}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                 </Grid>
-                <Button Grid.Row="2" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Command="{Binding Login}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
-                    <Button.Style>
-                        <Style>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding AuthFailure}" Value="True">
-                                    <Setter Property="Button.Foreground" Value="Red" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding AuthFailure}" Value="False">
-                                    <Setter Property="Button.Foreground" Value="Black" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    Log In
-                </Button>
+
+                <Button Grid.Row="2" IsDefault="True" Content="Log In" HorizontalAlignment="Center"  Margin="5" Padding="5"
+                        Command="{Binding Login}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
             </Grid>
         </TabItem>
         <!--#endregion-->
+
         <!--#region SignUp-->
-        <TabItem Header="SignUp" x:Name="tabSignUp">
+        <TabItem Header="SignUp">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
                     <RowDefinition />
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition />
+                    <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
-                <Viewbox Grid.Column="1">
-                    <Label FontWeight="Bold">Sign Up</Label>
-                </Viewbox>
+
+                <Label Content="Sign Up" FontWeight="Bold" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center" />
+
                 <Grid Grid.Row="1" Grid.Column="1">
                     <Grid.RowDefinitions>
                         <RowDefinition />
+                        <RowDefinition Height="25" />
                         <RowDefinition />
-                        <RowDefinition />
+                        <RowDefinition Height="25" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70" />
                         <ColumnDefinition />
-                        <ColumnDefinition Width="2.5*"/>
                     </Grid.ColumnDefinitions>
+
                     <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name:</Label>
-                    <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Password:</Label>
-                    <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Confirm:</Label>
-                    <TextBox Grid.Row="0" Grid.Column="1" Margin="5" Text="{Binding Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="5" Text="{Binding Password, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Text="{Binding Confirm, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
+                    <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Password:</Label>
+
+                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="txbSignUpName" Text="{Binding Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"  Margin="5" VerticalContentAlignment="Center"/>
+                    <PasswordBox Grid.Row="2" Grid.Column="1" PasswordChanged="SignupPasswordChanged" Margin="5" VerticalContentAlignment="Center"/>
+
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ElementName=txbSignUpName, Path=(Validation.Errors)[0].ErrorContent}" IsReadOnly="True" IsReadOnlyCaretVisible="True" VerticalAlignment="Center" Foreground="Red" Background="Transparent" BorderThickness="0"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" x:Name="signUpPassError" IsReadOnly="True" IsReadOnlyCaretVisible="True" VerticalAlignment="Center" Foreground="Red" Background="Transparent" BorderThickness="0"/>
                 </Grid>
-                <Button Grid.Row="2" Grid.Column="1" IsDefault="True" Margin="5" MinHeight="20" HorizontalAlignment="Center" Padding="5" Command="{Binding SignUp}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">Sign Up</Button>
+
+                <Button Grid.Row="2" Grid.Column="1"  Content="Sign Up" IsDefault="True" Margin="5" Padding="5" HorizontalAlignment="Center" 
+                        Command="{Binding Signup}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
             </Grid>
         </TabItem>
         <!--#endregion-->

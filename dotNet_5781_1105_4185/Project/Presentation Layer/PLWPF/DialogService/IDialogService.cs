@@ -10,7 +10,7 @@ namespace PL
     {
         void CloseDialog(object window, DialogResult result);
 
-        DialogResult ShowLoginDialog(LoginViewModel login, SignUpViewModel signup);
+        DialogResult ShowLoginDialog(LoginViewModel login);
 
         DialogResult ShowAddBusDialog(AddBusViewModel addBus);
 
