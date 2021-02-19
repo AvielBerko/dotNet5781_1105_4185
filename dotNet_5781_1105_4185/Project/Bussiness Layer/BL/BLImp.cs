@@ -428,10 +428,15 @@ namespace BL
                 try
                 {
                     var doAdjStations = dl.GetAdjacentStations(prevStation.Station.Code, doLineStation.StationCode);
-                    prevStation.NextStationRoute = new BO.NextStationRoute() { Distance = doAdjStations.Distance, DrivingTime = doAdjStations.DrivingTime, };
+                    prevStation.NextStationRoute = new BO.NextStationRoute()
+                    {
+                        Distance = doAdjStations.Distance,
+                        DrivingTime = doAdjStations.DrivingTime,
+                    };
                 }
                 catch (DO.BadAdjacentStationsCodeException) { }
             }
+
             return new BO.LineStation
             {
                 Station = GetStationWithoutAdjacents(doLineStation.StationCode),
@@ -518,7 +523,8 @@ namespace BL
             result.RouteLength = boBusLine.Route.Count();
             if (boBusLine.Route.Count() > 0)
             {
-                result.HasFullRoute = !boBusLine.Route.Where(b => b != boBusLine.Route.Last()).Any(ls => ls.NextStationRoute == null);
+                result.HasFullRoute = !boBusLine.Route.Where(b => b != boBusLine.Route.Last())
+                                                      .Any(ls => ls.NextStationRoute == null);
                 result.StartStationCode = boBusLine.Route.First().Station.Code;
                 result.EndStationCode = boBusLine.Route.Last().Station.Code;
             }
@@ -526,11 +532,9 @@ namespace BL
             return result;
         }
 
-        private struct RouteAdjacentStations
-        {
-            public BO.LineStation left;
-            public BO.LineStation right;
-        }
+        /// <summary>
+        /// Gives pairs of all the stations in the route.
+        /// </summary>
         private IEnumerable<RouteAdjacentStations> GetRouteAdjacentStations(IEnumerable<BO.LineStation> stations)
         {
 
@@ -542,6 +546,14 @@ namespace BL
                     where right != stations.First()
                     select right,
                     (left, right) => new RouteAdjacentStations { left = left, right = right });
+        }
+        /// <summary>
+        /// Pair of two line stations.
+        /// </summary>
+        private struct RouteAdjacentStations
+        {
+            public BO.LineStation left;
+            public BO.LineStation right;
         }
 
         public IEnumerable<BO.BusLine> GetAllBusLinesWithoutFullRouteAndTrips()
@@ -562,8 +574,7 @@ namespace BL
                                select st.LineID).Distinct();
 
             return from busLine in dl.GetBusLinesBy(
-                   bl => bl.HasFullRoute &&
-                         busLinesIDs.Any(id => bl.ID == id))
+                   bl => bl.HasFullRoute && busLinesIDs.Any(id => bl.ID == id))
                    select BusLineDoToBoWithoutFullRouteAndTrips(busLine);
         }
 
@@ -651,6 +662,7 @@ namespace BL
                 {
                     // In case it wasn't set.
                     lt.LineID = busLine.ID;
+
                     if (lt.Frequencied != null)
                     {
                         ValidateLineTripFrequency(lt.Frequencied?.Frequency ?? TimeSpan.Zero);
@@ -671,6 +683,7 @@ namespace BL
                 int routeIndex = 0;
                 busLine.Route.Last().NextStationRoute = null;
 
+                // Adds the lines stations and adjacent stations to dl.
                 foreach (var routeAdj in GetRouteAdjacentStations(busLine.Route))
                 {
                     dl.AddLineStation(new DO.LineStation()
@@ -680,6 +693,7 @@ namespace BL
                         StationCode = routeAdj.left.Station.Code,
                     });
 
+                    // If the pair are connected add adjacent station to dl.
                     if (routeAdj.left.NextStationRoute != null)
                     {
                         var adj = new DO.AdjacentStations()
@@ -694,6 +708,7 @@ namespace BL
                     }
                     else
                     {
+                        // If the pair are not connected remove the adjacent station from dl if exists.
                         try
                         {
                             dl.DeleteAdjacentStations(routeAdj.left.Station.Code, routeAdj.right.Station.Code);
@@ -702,6 +717,7 @@ namespace BL
                     }
                 }
 
+                // Adds last line station to dl.
                 dl.AddLineStation(new DO.LineStation()
                 {
                     LineID = busLine.ID,
@@ -758,6 +774,7 @@ namespace BL
             {
                 DO.BusLine line = dl.GetBusLine(ID);
 
+                // Checks that all the route is connecte.
                 DO.LineStation prevLs = null;
                 int i = 0;
                 for (; i < line.RouteLength; i++)
@@ -807,6 +824,9 @@ namespace BL
             }
         }
 
+        /// <summary>
+        /// Remove the lines stattions by the predicate and order the index of the line stations.
+        /// </summary>
         public void DeleteLineStationsBy(Predicate<DO.LineStation> predicate)
         {
             foreach (var toDelete in dl.GetLineStationsBy(predicate).ToArray())
@@ -953,7 +973,7 @@ namespace BL
 
                 // Gets all buslines that have a trip, and save them in memory.
                 var lineIds = (from trip in TripOperator.Instance.NextTrips
-                                select trip.Item1.LineID).Distinct();
+                               select trip.Item1.LineID).Distinct();
                 TripOperator.Instance.BusLines = (
                     from id in lineIds
                     select GetBusLine(id)
