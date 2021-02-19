@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
         Closing="WindowClosing"
-        Title="Bus Management" Height="450" Width="700">
+        Title="Transport Management" Height="450" Width="700">
     <Frame x:Name="MainFrame" Navigated="MainFrameNavigated">
         
     </Frame>

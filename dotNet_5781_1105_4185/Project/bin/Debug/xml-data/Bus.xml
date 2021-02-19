@@ -4,8 +4,8 @@
     <RegNum>2393801</RegNum>
     <RegDate>28/06/0001 00:00:00</RegDate>
     <Kilometrage>0</Kilometrage>
-    <FuelLeft>0</FuelLeft>
-    <Status>Ready</Status>
+    <FuelLeft>1200</FuelLeft>
+    <Status>Refueling</Status>
     <Type>Single</Type>
   </Bus>
   <Bus>
