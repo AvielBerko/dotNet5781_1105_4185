@@ -32,10 +32,10 @@ namespace BLAPI
         /// <param name="name">User's username</param>
         void ValidateSignUpName(string name);
 
-        /// /// <summary>
-        /// Checks if the password is valid (uniqe)
+        /// <summary>
+        /// Checks if the password is valid
         /// </summary>
-        /// /// <param name="password">User's password</param>
+        /// <param name="password">User's password</param>
         void ValidateSignUpPassword(string password);
 
         #endregion

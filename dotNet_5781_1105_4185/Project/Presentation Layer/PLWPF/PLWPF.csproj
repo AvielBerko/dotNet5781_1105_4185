@@ -215,5 +215,14 @@
   <ItemGroup>
     <Resource Include="Images\broken_robot.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\background.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\duplicate_48px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\gas_station_48px.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

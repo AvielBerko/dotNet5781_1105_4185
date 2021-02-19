@@ -32,17 +32,5 @@ namespace PL
             var passwordBox = (PasswordBox)sender;
             vm.Password = passwordBox.Password;
         }
-
-        private void SignupPasswordChanged(object sender, RoutedEventArgs e)
-        {
-            var vm = (LoginViewModel)DataContext;
-            var passwordBox = (PasswordBox)sender;
-            vm.Password = passwordBox.Password;
-
-            // Gets password validation error.
-            var validationError = vm["Password"];
-            signUpPassError.Text = validationError;
-            signUpPassError.ToolTip = validationError; 
-        }
     }
 }

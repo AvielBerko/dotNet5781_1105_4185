@@ -45,13 +45,14 @@ namespace BL
                 var doUser = dl.GetUser(name);
 
                 if (doUser.Password != password)
-                    throw new BO.BadAuthenticationException(name, password, $"User with the name {name} doesn't have the password {password}.");
+                    throw new BO.BadAuthenticationException(name, password,
+                        "Name or password are wrong");
 
                 return (BO.User)doUser.CopyPropertiesToNew(typeof(BO.User));
             }
             catch (DO.BadUserNameException)
             {
-                throw new BO.BadAuthenticationException(name, password, $"User with the name {name} not found.");
+                throw new BO.BadAuthenticationException(name, password, "Name or password are wrong");
             }
         }
 
@@ -81,7 +82,7 @@ namespace BL
             try
             {
                 dl.GetUser(name);
-                throw new BO.BadNameValidationException(name, $"Name {name} already exists");
+                throw new BO.BadNameValidationException(name, $"The name {name} already taken");
             }
             catch (DO.BadUserNameException)
             {
