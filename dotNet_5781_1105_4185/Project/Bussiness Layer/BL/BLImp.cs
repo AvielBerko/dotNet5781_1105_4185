@@ -648,10 +648,10 @@ namespace BL
             {
                 foreach (var lt in busLine.Trips)
                 {
+                    // In case it wasn't set.
+                    lt.LineID = busLine.ID;
                     if (lt.Frequencied != null)
                     {
-                        // In case it wasn't set.
-                        lt.LineID = busLine.ID;
                         ValidateLineTripFrequency(lt.Frequencied?.Frequency ?? TimeSpan.Zero);
                     }
                 }
