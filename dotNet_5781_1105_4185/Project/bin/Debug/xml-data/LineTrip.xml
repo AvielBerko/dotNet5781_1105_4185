@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LineTrip.xml>
+  <LineTrip>
+    <LineID>06aae4a8-b706-40de-b086-25afa98ba5d3</LineID>
+    <StartTime>10:00:00</StartTime>
+    <FinishTime>22:00:00</FinishTime>
+    <Frequency>00:15:00</Frequency>
+  </LineTrip>
+  <LineTrip>
+    <LineID>28faca6c-6b41-42c3-a0b8-2891cdb07250</LineID>
+    <StartTime>06:30:00</StartTime>
+    <FinishTime>1.00:00:00</FinishTime>
+    <Frequency>00:30:00</Frequency>
+  </LineTrip>
+  <LineTrip>
+    <LineID>b6958e0b-ef82-4d64-aded-b04e1110e11f</LineID>
+    <StartTime>10:00:00</StartTime>
+    <FinishTime>22:00:00</FinishTime>
+    <Frequency>01:00:00</Frequency>
+  </LineTrip>
+  <LineTrip>
+    <LineID>f7a617e7-b956-4aae-892e-658feefbbf43</LineID>
+    <StartTime>09:00:00</StartTime>
+    <FinishTime></FinishTime>
+    <Frequency></Frequency>
+  </LineTrip>
+  <LineTrip>
+    <LineID>f7a617e7-b956-4aae-892e-658feefbbf43</LineID>
+    <StartTime>13:00:00</StartTime>
+    <FinishTime></FinishTime>
+    <Frequency></Frequency>
+  </LineTrip>
+  <LineTrip>
+    <LineID>f7a617e7-b956-4aae-892e-658feefbbf43</LineID>
+    <StartTime>18:00:00</StartTime>
+    <FinishTime></FinishTime>
+    <Frequency></Frequency>
+  </LineTrip>
+</LineTrip.xml>

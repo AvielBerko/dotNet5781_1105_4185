@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Bus.xml>
+  <Bus>
+    <RegNum>2393801</RegNum>
+    <RegDate>28/06/0001 00:00:00</RegDate>
+    <Kilometrage>0</Kilometrage>
+    <FuelLeft>0</FuelLeft>
+    <Status>Ready</Status>
+    <Type>Single</Type>
+  </Bus>
+  <Bus>
+    <RegNum>6325301</RegNum>
+    <RegDate>31/05/0001 00:00:00</RegDate>
+    <Kilometrage>25</Kilometrage>
+    <FuelLeft>0</FuelLeft>
+    <Status>Ready</Status>
+    <Type>Double</Type>
+  </Bus>
+  <Bus>
+    <RegNum>3116301</RegNum>
+    <RegDate>31/05/0001 00:00:00</RegDate>
+    <Kilometrage>25</Kilometrage>
+    <FuelLeft>0</FuelLeft>
+    <Status>Ready</Status>
+    <Type>Double</Type>
+  </Bus>
+  <Bus>
+    <RegNum>1939393</RegNum>
+    <RegDate>31/05/0001 00:00:00</RegDate>
+    <Kilometrage>25</Kilometrage>
+    <FuelLeft>0</FuelLeft>
+    <Status>Ready</Status>
+    <Type>Double</Type>
+  </Bus>
+  <Bus>
+    <RegNum>11111111</RegNum>
+    <RegDate>04/03/2018 00:00:00</RegDate>
+    <Kilometrage>25</Kilometrage>
+    <FuelLeft>0</FuelLeft>
+    <Status>Ready</Status>
+    <Type>Double</Type>
+  </Bus>
+  <Bus>
+    <RegNum>26475543</RegNum>
+    <RegDate>04/03/2018 00:00:00</RegDate>
+    <Kilometrage>25</Kilometrage>
+    <FuelLeft>0</FuelLeft>
+    <Status>Ready</Status>
+    <Type>Double</Type>
+  </Bus>
+  <Bus>
+    <RegNum>1233235</RegNum>
+    <RegDate>04/03/2011 00:00:00</RegDate>
+    <Kilometrage>25</Kilometrage>
+    <FuelLeft>0</FuelLeft>
+    <Status>Ready</Status>
+    <Type>Double</Type>
+  </Bus>
+</Bus.xml>
