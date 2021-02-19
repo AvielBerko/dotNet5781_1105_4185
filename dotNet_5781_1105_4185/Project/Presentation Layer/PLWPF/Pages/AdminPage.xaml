@@ -183,20 +183,20 @@
             </TabItem>
             <!--#endregion-->
 
-        <!--#region Simulation -->
-        <TabItem x:Name="SimulationTab" Header="Simulation" DataContext="{Binding SimulationViewModel }">
-            <TabItem.Resources>
-                <CollectionViewSource x:Key="ArrivingSorted" Source="{Binding ArrivingLines}">
-                    <CollectionViewSource.SortDescriptions>
-                        <scm:SortDescription PropertyName="ArrivalTime.TotalMinutes" />
-                    </CollectionViewSource.SortDescriptions>
-                </CollectionViewSource>
-					<CollectionViewSource x:Key='StationsCollection' Source="{Binding Stations}">
-						<CollectionViewSource.SortDescriptions>
-							<scm:SortDescription PropertyName="Station.Code" />
-						</CollectionViewSource.SortDescriptions>
-					</CollectionViewSource>
-				</TabItem.Resources>
+            <!--#region Simulation -->
+            <TabItem x:Name="SimulationTab" Header="Simulation" DataContext="{Binding SimulationViewModel }">
+                <TabItem.Resources>
+                    <CollectionViewSource x:Key="ArrivingSorted" Source="{Binding ArrivingLines}">
+                        <CollectionViewSource.SortDescriptions>
+                            <scm:SortDescription PropertyName="ArrivalTime.TotalMinutes" />
+                        </CollectionViewSource.SortDescriptions>
+                    </CollectionViewSource>
+                    <CollectionViewSource x:Key='StationCollection' Source="{Binding Stations}">
+                        <CollectionViewSource.SortDescriptions>
+                            <scm:SortDescription PropertyName="Station.Code" />
+                        </CollectionViewSource.SortDescriptions>
+                    </CollectionViewSource>
+                </TabItem.Resources>
 
                 <Grid>
                     <Grid.RowDefinitions>
@@ -205,25 +205,25 @@
                         <RowDefinition Height="40" />
                     </Grid.RowDefinitions>
 
-                <!--#region Station Selector-->
-                <DockPanel Grid.Row="0" LastChildFill="True">
-                    <Label Content="Station:" VerticalAlignment="Center"/>
-						<ComboBox SelectedItem="{Binding SelectedStation}" ItemsSource="{Binding Source={StaticResource StationsCollection}}" Margin="5" VerticalAlignment="Center">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0}: {1}">
-                                            <Binding Path="Code"/>
-                                            <Binding Path="Name"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </DockPanel>
-                <!--#endregion-->
+                    <!--#region Station Selector-->
+                    <DockPanel Grid.Row="0" LastChildFill="True">
+                        <Label Content="Station:" VerticalAlignment="Center"/>
+                        <ComboBox SelectedItem="{Binding SelectedStation}" ItemsSource="{Binding Source={StaticResource StationCollection}}" Margin="5" VerticalAlignment="Center">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}: {1}">
+                                                <Binding Path="Code"/>
+                                                <Binding Path="Name"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </DockPanel>
+                    <!--#endregion-->
 
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>

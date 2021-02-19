@@ -17,8 +17,11 @@ namespace PL
             {
                 _station = value;
                 OnPropertyChanged(nameof(Station));
+                OnPropertyChanged(nameof(Location));
             }
         }
+
+        public string Location => Station?.Location.ToString() ?? "";
 
         private ObservableCollection<AdjacentStationViewModel> _adjacentStations;
         public ObservableCollection<AdjacentStationViewModel> AdjacentStations

@@ -7,63 +7,63 @@
 		mc:Ignorable="d"
 		Title="StationDetailsDialog" Height="350" Width="500"
 		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
-	<TabControl>
-		<TabItem Header="General">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition/>
-					<RowDefinition/>
-					<RowDefinition/>
-					<RowDefinition/>
+    <Grid>
+        <Image Source="/Images/background.jpeg" Stretch="Fill" />
+        <Border Background="#8FFFFFFF" />
 
-				</Grid.RowDefinitions>
+        <TabControl Background="Transparent">
+            <TabItem Header="General">
+                <Grid Background="#99FFFFFF">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
 
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="150"/>
-					<ColumnDefinition Width="*"/>
+                    </Grid.RowDefinitions>
 
-				</Grid.ColumnDefinitions>
-				<!-- Registration Number Input -->
-				<Label VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0">Station Code:</Label>
-				<Label Grid.Column="1" VerticalAlignment="Center" Margin="10" FontSize="16" Content="{Binding Station.Code}" HorizontalContentAlignment="Left"/>
-				<!-- " PreviewTextInput="TextBoxDigitOnly" -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
 
-				<!-- Registration Date Input -->
-				<Label Grid.Row="1" VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0">Station Name:</Label>
-				<Label Grid.Row="1" VerticalAlignment="Center" Grid.Column="1" Margin="10" FontSize="16" Content="{Binding Station.Name}" HorizontalContentAlignment="Left"/>
+                    </Grid.ColumnDefinitions>
+                    <Label VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0">Station Code:</Label>
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="10" FontSize="16" Text="{Binding Station.Code}" HorizontalContentAlignment="Left" Background="Transparent" BorderThickness="0" IsReadOnly="True" IsReadOnlyCaretVisible="True"/>
 
-				<!-- Kilometrage Input -->
-				<Label Grid.Row="2" VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0">Station Address:</Label>
-				<Label Grid.Row="2" VerticalAlignment="Center" Grid.Column="1" Margin="10" FontSize="16" Content="{Binding Station.Address}" HorizontalContentAlignment="Left"/>
-				
-				<!-- Type Input -->
-				<Label Grid.Row="3" VerticalAlignment="Center" FontSize="16" >Station Location:</Label>
-				<Label Grid.Row="3" VerticalAlignment="Center" Grid.Column="1" Margin="10" FontSize="16" Content="{Binding Station.Location}" HorizontalContentAlignment="Left"/>
-			</Grid>
-		</TabItem>
-		<TabItem Header="Adjacent Stations">
-			<ListView Grid.Column="1" Margin="5" ItemsSource="{Binding AdjacentStations}">
-				<ListView.View>
-					<GridView>
-						<GridViewColumn Header="Code" DisplayMemberBinding="{Binding Adjacents.Station2.Code}"/>
-						<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Adjacents.Station2.Name}"/>
-						<GridViewColumn Header="Distance" DisplayMemberBinding="{Binding Adjacents.Distance}"/>
-						<GridViewColumn Header="Time" DisplayMemberBinding="{Binding Adjacents.DrivingTime}"/>
-					</GridView>
-				</ListView.View>
-			</ListView>
-		</TabItem>
-		<TabItem Header="Passing Lines">
-			<ListView Grid.Column="1" Margin="5" ItemsSource="{Binding PassingLines}">
-				<ListView.View>
-					<GridView>
-						<GridViewColumn Header="Line Number" DisplayMemberBinding="{Binding BusLine.LineNum}"/>
-						<GridViewColumn Header="Region" DisplayMemberBinding="{Binding BusLine.Region}"/>
-						<GridViewColumn Header="Start" DisplayMemberBinding="{Binding StartName}"/>
-						<GridViewColumn Header="End" DisplayMemberBinding="{Binding EndName}"/>
-					</GridView>
-				</ListView.View>
-			</ListView>
-		</TabItem>
-	</TabControl>
+                    <Label Grid.Row="1" VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0">Station Name:</Label>
+                    <TextBox Grid.Row="1" VerticalAlignment="Center" Grid.Column="1" Margin="10" FontSize="16" Text="{Binding Station.Name}" HorizontalContentAlignment="Left" Background="Transparent" BorderThickness="0" IsReadOnly="True" IsReadOnlyCaretVisible="True"/>
+
+                    <Label Grid.Row="2" VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0">Station Address:</Label>
+                    <TextBox Grid.Row="2" VerticalAlignment="Center" Grid.Column="1" Margin="10" FontSize="16" Text="{Binding Station.Address}" HorizontalContentAlignment="Left" Background="Transparent" BorderThickness="0" IsReadOnly="True" IsReadOnlyCaretVisible="True"/>
+
+                    <Label Grid.Row="3" VerticalAlignment="Center" FontSize="16" >Station Location:</Label>
+                    <TextBox Grid.Row="3" VerticalAlignment="Center" Grid.Column="1" Margin="10" FontSize="16" Text="{Binding Location, Mode=OneWay}" HorizontalContentAlignment="Left" Background="Transparent" BorderThickness="0" IsReadOnly="True" IsReadOnlyCaretVisible="True"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Adjacent Stations">
+                <ListView Grid.Column="1" Margin="5" ItemsSource="{Binding AdjacentStations}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Code" DisplayMemberBinding="{Binding Adjacents.Station2.Code}"/>
+                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Adjacents.Station2.Name}"/>
+                            <GridViewColumn Header="Distance" DisplayMemberBinding="{Binding Adjacents.Distance}"/>
+                            <GridViewColumn Header="Time" DisplayMemberBinding="{Binding Adjacents.DrivingTime}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+            <TabItem Header="Passing Lines">
+                <ListView Grid.Column="1" Margin="5" ItemsSource="{Binding PassingLines}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Line Number" DisplayMemberBinding="{Binding BusLine.LineNum}"/>
+                            <GridViewColumn Header="Region" DisplayMemberBinding="{Binding BusLine.Region}"/>
+                            <GridViewColumn Header="Start" DisplayMemberBinding="{Binding StartName}"/>
+                            <GridViewColumn Header="End" DisplayMemberBinding="{Binding EndName}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+        </TabControl>
+    </Grid>
 </Window>

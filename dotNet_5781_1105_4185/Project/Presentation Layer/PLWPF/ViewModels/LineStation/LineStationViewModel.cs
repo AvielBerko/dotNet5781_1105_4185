@@ -45,10 +45,17 @@ namespace PL
                 }
                 else
                 {
+                    // Removing days from the driving time.
+                    var drivingTime = value ?? TimeSpan.Zero;
+                    if (drivingTime.Days > 0)
+                    {
+                        drivingTime -= TimeSpan.FromDays(drivingTime.Days);
+                    }
+
                     LineStation.NextStationRoute = new BO.NextStationRoute
                     {
                         Distance = LineStation.NextStationRoute?.Distance ?? 0,
-                        DrivingTime = value ?? TimeSpan.Zero
+                        DrivingTime = drivingTime
                     };
                 }
 

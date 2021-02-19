@@ -203,7 +203,9 @@ namespace PL
                 {
                     vm.IsLast = false;
                 }
-                LineStations.Last().IsLast = true;
+                var last = LineStations.Last();
+                last.IsConnected = false;
+                last.IsLast = true;
             }
         }
 

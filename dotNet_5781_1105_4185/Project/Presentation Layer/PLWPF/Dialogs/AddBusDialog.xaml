@@ -7,48 +7,53 @@
         mc:Ignorable="d"
         Title="Add a new bus" Height="275" Width="400"
 		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
+    <Grid>
+        <Image Source="/Images/background.jpeg" Stretch="Fill" />
+        <Border Background="#8FFFFFFF" />
 
-		</Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
 
-		<!-- Registration Number Input -->
-		<StackPanel Orientation="Horizontal" Margin="5">
-			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Registration Number:</Label>
-			<TextBox Width="175" FontSize="17" Text="{Binding RegNum, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+            </Grid.RowDefinitions>
+
+            <!-- Registration Number Input -->
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Registration Number:</Label>
+                <TextBox Width="175" FontSize="17" Text="{Binding RegNum, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
 					 TextAlignment="Center"/>
-			<!-- " PreviewTextInput="TextBoxDigitOnly" -->
-		</StackPanel>
+                <!-- " PreviewTextInput="TextBoxDigitOnly" -->
+            </StackPanel>
 
-		<!-- Registration Date Input -->
-		<StackPanel Grid.Row ="1" Orientation="Horizontal" Margin="5">
-			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Registration Date:</Label>
-			<DatePicker SelectedDate="{Binding RegDate}" VerticalAlignment="Center"/>
-		</StackPanel>
+            <!-- Registration Date Input -->
+            <StackPanel Grid.Row ="1" Orientation="Horizontal" Margin="5">
+                <Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Registration Date:</Label>
+                <DatePicker SelectedDate="{Binding RegDate}" VerticalAlignment="Center"/>
+            </StackPanel>
 
-		<!-- Kilometrage Input -->
-		<StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
-			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Kilometrage:</Label>
-			<TextBox Width="175" FontSize="17" Text="{Binding Kilometrage, UpdateSourceTrigger=PropertyChanged}"
+            <!-- Kilometrage Input -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
+                <Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Kilometrage:</Label>
+                <TextBox Width="175" FontSize="17" Text="{Binding Kilometrage, UpdateSourceTrigger=PropertyChanged}"
 					  TextAlignment="Center"/>
-			<!-- " PreviewTextInput="TextBoxDigitOnly" -->
-		</StackPanel>
-		
-		<!-- Type Input -->
-		<StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5">
-			<Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Bus Type:</Label>
-			<ComboBox Width="175" FontSize="17" SelectedItem="{Binding Type}" ItemsSource="{Binding BusTypes}"/>
-		</StackPanel>
+                <!-- " PreviewTextInput="TextBoxDigitOnly" -->
+            </StackPanel>
 
-		<!-- Dialog Buttons -->
-		<StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
-			<Button Width="75" IsDefault="True" Margin="0,0,5,0" Command="{Binding Ok}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">OK</Button>
-			<Button Width="75" IsCancel="True" Command="{Binding Cancel}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">Cancel</Button>
-		</StackPanel>
-	</Grid>
+            <!-- Type Input -->
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5">
+                <Label VerticalAlignment="Center" FontSize="17" Margin="0,0,10,0">Bus Type:</Label>
+                <ComboBox Width="175" FontSize="17" SelectedItem="{Binding Type}" ItemsSource="{Binding BusTypes}"/>
+            </StackPanel>
+
+            <!-- Dialog Buttons -->
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                <Button Width="75" IsDefault="True" Margin="0,0,5,0" Command="{Binding Ok}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">OK</Button>
+                <Button Width="75" IsCancel="True" Command="{Binding Cancel}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">Cancel</Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
 </Window>
