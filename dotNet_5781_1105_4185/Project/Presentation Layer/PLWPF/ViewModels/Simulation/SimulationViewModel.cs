@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-    class SimulationViewModel : BaseViewModel
+    public class SimulationViewModel : BaseViewModel
     {
         private TimeSpan _simulationTime;
         public TimeSpan SimulationTime
@@ -157,7 +157,7 @@ namespace PL
             }
         }
 
-        private void _UpdateArriving(BO.LineTiming[] lineTiming)
+        private void _UpdateArriving(IEnumerable<BO.LineTiming> lineTiming)
         {
             Context.Invoke(() =>
             {

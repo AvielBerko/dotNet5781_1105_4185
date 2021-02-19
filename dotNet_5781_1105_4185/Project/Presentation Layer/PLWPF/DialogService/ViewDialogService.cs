@@ -7,13 +7,11 @@ using System.Windows;
 
 namespace PL
 {
+    /// <summary>
+    /// Implementation of the dialog service for the view.
+    /// </summary>
     public sealed class ViewDialogService : IDialogService
     {
-        static readonly Lazy<ViewDialogService> lazy = new Lazy<ViewDialogService>(() => new ViewDialogService());
-        public static ViewDialogService Instance => lazy.Value;
-
-        private ViewDialogService() { }
-
         public void CloseDialog(object window, DialogResult result)
         {
             switch (result)
@@ -33,9 +31,9 @@ namespace PL
             }
         }
 
-        public DialogResult ShowLoginDialog(LoginViewModel login, SignUpViewModel signup)
+        public DialogResult ShowLoginDialog(LoginViewModel login)
         {
-            LoginDialog dialog = new LoginDialog(login, signup);
+            var dialog = new LoginDialog(login);
 
             switch (dialog.ShowDialog())
             {
@@ -50,7 +48,7 @@ namespace PL
 
         public DialogResult ShowAddBusDialog(AddBusViewModel addBus)
         {
-            AddBusDialog dialog = new AddBusDialog(addBus);
+            var dialog = new AddBusDialog(addBus);
 
             switch (dialog.ShowDialog())
             {
@@ -65,7 +63,7 @@ namespace PL
 
         public DialogResult ShowAddUpdateStationDialog(AddUpdateStationViewModel addStation)
         {
-            AddUpdateStationDialog dialog = new AddUpdateStationDialog(addStation);
+            var dialog = new AddUpdateStationDialog(addStation);
 
             switch (dialog.ShowDialog())
             {
@@ -80,7 +78,7 @@ namespace PL
 
         public DialogResult ShowSelectStationsDialog(SelectStationsViewModel selectStations)
         {
-            SelectStationsDialog dialog = new SelectStationsDialog(selectStations);
+            var dialog = new SelectStationsDialog(selectStations);
 
             switch (dialog.ShowDialog())
             {
@@ -95,7 +93,7 @@ namespace PL
 
         public DialogResult ShowStationDetailsDialog(StationDetailsViewModel stationDetails)
         {
-            StationDetailsDialog dialog = new StationDetailsDialog(stationDetails);
+            var dialog = new StationDetailsDialog(stationDetails);
 
             switch (dialog.ShowDialog())
             {
@@ -110,7 +108,7 @@ namespace PL
 
         public DialogResult ShowAddUpdateBusLineDialog(AddUpdateBusLineViewModel addBusline)
         {
-            AddUpdateBusLineDialog dialog = new AddUpdateBusLineDialog(addBusline);
+            var dialog = new AddUpdateBusLineDialog(addBusline);
 
             switch (dialog.ShowDialog())
             {

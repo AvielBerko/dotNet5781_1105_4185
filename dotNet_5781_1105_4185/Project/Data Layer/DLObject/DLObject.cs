@@ -20,6 +20,18 @@ namespace DL
         #endregion
 
         #region User
+        public IEnumerable<User> GetAllUsers()
+        {
+            return from u in DataSet.Users select u.Clone();
+        }
+
+        public IEnumerable<User> GetUsersBy(Predicate<User> predicate)
+        {
+            return from u in DataSet.Users
+                   where predicate(u)
+                   select u.Clone();
+        }
+
         public DO.User GetUser(string name)
         {
             var user = DataSet.Users.Find(u => u.Name == name);
@@ -39,7 +51,10 @@ namespace DL
 
         public void DeleteUser(DO.User user)
         {
-            throw new NotImplementedException();
+            var existing = DataSet.Users.Find(u => u.Name == user.Name);
+            if (existing == null) throw new BadUserNameException(user.Name, $"User with the name {user.Name} not found");
+
+            DataSet.Users.Remove(existing);
         }
         #endregion
 

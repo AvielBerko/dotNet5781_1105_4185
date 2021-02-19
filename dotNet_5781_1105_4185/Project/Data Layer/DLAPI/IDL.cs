@@ -11,22 +11,31 @@ namespace DLAPI
         #region User
 
         /// <summary>
+        /// Gets all users
+        /// </summary>
+        /// <returns>IEnumerable of all existing users</returns>
+        IEnumerable<DO.User> GetAllUsers();
+
+        /// <summary>
+        /// Gets all users that obey a given predicate
+        /// </summary>
+        /// <returns>IEnumerable of all stations that obey the predicate</returns>
+        IEnumerable<DO.User> GetUsersBy(Predicate<DO.User> predicate);
+
+        /// <summary>
         /// Gets the user entity by name
         /// </summary>
-        /// <param name="name"></param>
         /// <returns>The user the the given name </returns>
         DO.User GetUser(string name);
 
         /// <summary>
         /// Adds a new user
         /// </summary>
-        /// <param name="user"></param>
         void AddUser(DO.User user);
 
         /// <summary>
         /// Deletes a given user
         /// </summary>
-        /// <param name="user"></param>
         void DeleteUser(DO.User user);
 
         #endregion

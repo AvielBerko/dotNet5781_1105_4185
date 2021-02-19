@@ -27,6 +27,21 @@ namespace BL
         {
             try
             {
+                // Creates an initial admin if there are no admin in dl.
+                if (name == "admin" && password == "admin" &&
+                    dl.GetUsersBy(u => u.Role == DO.Roles.Admin).Count() == 0)
+                {
+                    var initAdmin = new DO.User
+                    {
+                        Name = "admin",
+                        Password = "admin",
+                        Role = DO.Roles.Admin
+                    };
+
+                    dl.AddUser(initAdmin);
+                    return (BO.User)initAdmin.CopyPropertiesToNew(typeof(BO.User));
+                }
+
                 var doUser = dl.GetUser(name);
 
                 if (doUser.Password != password)
@@ -45,13 +60,23 @@ namespace BL
             ValidateSignUpName(name);
             ValidateSignUpPassword(password);
 
-            dl.AddUser(new DO.User { Name = name, Password = password, Role = DO.Roles.Normal });
-            return new BO.User { Name = name, Password = password, Role = BO.Roles.Normal };
+            var user = new DO.User
+            {
+                Name = name,
+                Password = password,
+                Role = DO.Roles.Normal,
+            };
+
+            dl.AddUser(user);
+            return (BO.User)user.CopyPropertiesToNew(typeof(BO.User));
         }
 
         public void ValidateSignUpName(string name)
         {
-            if (string.IsNullOrEmpty(name)) throw new BO.BadNameValidationException(name, "Empty name is invalid");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new BO.BadNameValidationException(name, "Empty name is invalid");
+            }
 
             try
             {
@@ -60,13 +85,17 @@ namespace BL
             }
             catch (DO.BadUserNameException)
             {
+                // User doesn't exists as needed.
             }
         }
 
         public void ValidateSignUpPassword(string password)
         {
             if (string.IsNullOrEmpty(password) || password.Length < 8)
-                throw new BO.BadPasswordValidationException(password, "Password should contains at least 8 characters");
+            {
+                throw new BO.BadPasswordValidationException(password,
+                    "Password should contains at least 8 characters");
+            }
 
             bool hasLower = false;
             bool hasUpper = false;
@@ -79,11 +108,15 @@ namespace BL
                 if (char.IsUpper(ch)) hasUpper = true;
                 if (char.IsDigit(ch)) hasDigit = true;
                 if (char.IsPunctuation(ch)) hasPanctuation = true;
+
+                if (hasLower && hasUpper && hasDigit && hasPanctuation) return;
             }
 
             if (!(hasLower && hasUpper && hasDigit && hasPanctuation))
+            {
                 throw new BO.BadPasswordValidationException(password,
                     "The password should contain at least 1 lower case letter, 1 upper case letter, 1 digit and 1 panctuation");
+            }
         }
         #endregion
 
@@ -852,11 +885,6 @@ namespace BL
         #endregion
 
         #region Simulation
-        private readonly Random random = new Random();
-        private double RandomDouble(double a, double b)
-        {
-            return random.NextDouble() * (a + b) + a;
-        }
 
         internal static volatile bool cancel = true;
 
@@ -870,7 +898,8 @@ namespace BL
             watch.Start();
             cancel = false;
 
-            Thread tripOperation = new Thread(StartTripOperation);
+            // Starts the trip operation in another thread.
+            Thread tripOperation = new Thread(TripOperation);
             tripOperation.Start();
 
             while (!cancel)
@@ -891,19 +920,26 @@ namespace BL
             cancel = true;
         }
 
-        public void SetStationPanel(int? stationCode, Action<BO.LineTiming[]> updateTiming)
+        public void SetStationPanel(int? stationCode, Action<IEnumerable<BO.LineTiming>> updateTiming)
         {
             TripOperator.Instance.UpdateTiming += updateTiming;
             TripOperator.Instance.StationCode = stationCode;
 
+            // If already running, inform the oberverer about the comming lines.
             if (!cancel) TripOperator.Instance.RaiseUpdateTiming();
         }
 
-        public void StartTripOperation()
+        /// <summary>
+        /// Going through each trip and simulate its drive.
+        /// </summary>
+        private void TripOperation()
         {
             try
             {
                 TripOperator.Instance.Threads = new List<Thread>();
+
+                // Gets all the trips and their next time to start by the clock
+                // ordered by the time to start
                 TripOperator.Instance.NextTrips = (
                     from doTrip in dl.GetAllLineTrips()
                     let trip = LineTripDoToBo(doTrip)
@@ -911,31 +947,36 @@ namespace BL
                     orderby time
                     select Tuple.Create(trip, time)
                 ).ToList();
-                TripOperator.Instance.BusLines = (
-                    from next in TripOperator.Instance.NextTrips
-                    select GetBusLine(next.Item1.LineID)
-                ).ToList();
 
                 if (TripOperator.Instance.NextTrips.Count == 0) return;
+
+                // Gets all buslines that have a trip, and save them in memory.
+                var lineIds = (from trip in TripOperator.Instance.NextTrips
+                                select trip.Item1.LineID).Distinct();
+                TripOperator.Instance.BusLines = (
+                    from id in lineIds
+                    select GetBusLine(id)
+                ).ToList();
 
 
                 while (true)
                 {
+                    // Pops the first trip to come.
                     var (trip, currentDrive) = TripOperator.Instance.NextTrips.First();
                     TripOperator.Instance.NextTrips.RemoveAt(0);
 
-                    var time = currentDrive - Clock.Instance.Time;
-                    if (time > TimeSpan.Zero)
+                    var timeToStart = currentDrive - Clock.Instance.Time;
+                    if (timeToStart > TimeSpan.Zero)
                     {
-                        var simulatedTime = TimeSpan.FromTicks(time.Ticks / Clock.Instance.Rate);
+                        var simulatedTime = TimeSpan.FromTicks(timeToStart.Ticks / Clock.Instance.Rate);
                         Thread.Sleep(simulatedTime);
                     }
 
                     // If got to the next day, remove all days from nextTrip.
                     if (currentDrive.Days > 0)
                     {
-                        currentDrive = currentDrive.Add(TimeSpan.FromDays(-currentDrive.Days));
-                        for(int i = 0; i < TripOperator.Instance.NextTrips.Count; i++)
+                        currentDrive += TimeSpan.FromDays(-currentDrive.Days);
+                        for (int i = 0; i < TripOperator.Instance.NextTrips.Count; i++)
                         {
                             var negDays = TimeSpan.FromDays(-TripOperator.Instance.NextTrips[i].Item2.Days);
                             TripOperator.Instance.NextTrips[i] = Tuple.Create(
@@ -945,11 +986,12 @@ namespace BL
                         }
                     }
 
+                    // Updates current trip time to restart, adds it to the list and sorts the list again.
                     var nextDrive = NextTimeDriveByLastDrive(trip, currentDrive);
                     TripOperator.Instance.NextTrips.Add(Tuple.Create(trip, nextDrive));
-                    // Sorts by the time to the next drive.
                     TripOperator.Instance.NextTrips.Sort((a, b) => a.Item2.CompareTo(b.Item2));
 
+                    // Starts the drive in another thread.
                     var drive = new Thread(() => DriveThread(trip));
                     TripOperator.Instance.Threads.Add(drive);
                     drive.Start();
@@ -957,6 +999,8 @@ namespace BL
             }
             catch (ThreadInterruptedException)
             {
+                // When current thread is interrupted, interrupt all drive threads and clears all the data.
+
                 foreach (var drive in TripOperator.Instance.Threads)
                 {
                     if (drive.IsAlive)
@@ -966,10 +1010,14 @@ namespace BL
                 }
 
                 TripOperator.Instance.Threads.Clear();
+                TripOperator.Instance.NextTrips.Clear();
                 TripOperator.Instance.ClearTable();
             }
         }
 
+        /// <summary>
+        /// Simulate the drive of a given trip.
+        /// </summary>
         private void DriveThread(BO.LineTrip trip)
         {
             try
@@ -977,57 +1025,101 @@ namespace BL
                 var currentStartTime = Clock.Instance.Time;
                 var busLine = TripOperator.Instance.BusLines.Find(line => line.ID == trip.LineID);
 
+                // Going through each station in the route to simulate the drive.
                 foreach (var (ls, i) in busLine.Route.Select((ls, i) => (ls, i)))
                 {
-                    // Calculating the time to travel to all stations.
-                    var timeToTravel = TimeSpan.Zero;
-                    foreach (var next in busLine.Route.Skip(i))
-                    {
-                        var timing = new BO.LineTiming
-                        {
-                            LineID = busLine.ID,
-                            TripStartTime = trip.StartTime,
-                            CurrentStartTime = currentStartTime,
-                            LineNum = busLine.LineNum,
-                            EndStationName = busLine.Route.Last().Station.Name,
-                            ArrivalTime = timeToTravel,
-                        };
+                    // Inform all panels that the bus line got to this station.
+                    InformAllPanels(i, TimeSpan.Zero, currentStartTime, busLine, trip);
 
-                        if (timeToTravel == TimeSpan.Zero)
-                        {
-                            var arrived = (BO.LineTiming)timing.CopyPropertiesToNew(typeof(BO.LineTiming));
-                            Thread removeArrived = new Thread(() => RemoveArrivedTiming(next.Station.Code, arrived));
-                            TripOperator.Instance.Threads.Add(removeArrived);
-                            removeArrived.Start();
-                        }
-
-                        TripOperator.Instance.AddLineTiming(next.Station.Code, timing);
-
-                        if (next.NextStationRoute == null) break;
-                        timeToTravel = timeToTravel.Add(next.NextStationRoute?.DrivingTime ?? TimeSpan.Zero);
-                    }
-
+                    // If its the last station, break.
                     if (ls.NextStationRoute == null) break;
 
                     var drivingTime = ls.NextStationRoute?.DrivingTime ?? TimeSpan.Zero;
+                    var timeDrove = TimeSpan.Zero;
 
-                    var randomMinutes = RandomDouble(-drivingTime.TotalMinutes * 0.1, drivingTime.TotalMinutes);
-                    drivingTime = drivingTime.Add(TimeSpan.FromMinutes(randomMinutes));
+                    // Sleeps 1 simulation minute before updating all the panels about the bus line's time to arrive.
+                    while (timeDrove < drivingTime)
+                    {
+                        var timeToArrive = drivingTime - timeDrove;
 
-                    var simulated = TimeSpan.FromTicks(drivingTime.Ticks / Clock.Instance.Rate);
-                    Thread.Sleep(simulated);
+                        // Generating a delay up to 200% or arrival early up to 10%.
+                        var timeInterrupt = TimeSpan.FromMinutes(Utils.RandomDouble(-0.1, 1));
+                        timeToArrive += timeInterrupt;
+
+                        InformAllPanels(i + 1, timeToArrive, currentStartTime, busLine, trip);
+
+                        var timeToWait = TimeSpan.FromMinutes(1);
+                        if (timeToArrive.TotalMinutes < 2)
+                        {
+                            // Waits the rest of the drive if less than 2 minutes to arrive.
+                            timeToWait = timeToArrive;
+                        }
+
+                        var simulated = TimeSpan.FromTicks(timeToWait.Ticks / Clock.Instance.Rate);
+                        Thread.Sleep(simulated);
+
+                        timeDrove += timeToWait;
+                    }
                 }
             }
             catch (ThreadInterruptedException) { }
         }
 
+        /// <summary>
+        /// Informs all panels about the arriving bus line timing.
+        /// </summary>
+        /// <param name="stationIndex">Station index in the route to start informing from it</param>
+        /// <param name="timeToTravel">Time to travel to the first station in list</param>
+        /// <param name="currentStartTime">The start time of the current drive</param>
+        /// <param name="busLine">The current bus line.</param>
+        /// <param name="trip">The current trip.</param>
+        private void InformAllPanels(int stationIndex, TimeSpan timeToTravel, TimeSpan currentStartTime, BO.BusLine busLine, BO.LineTrip trip)
+        {
+            // Calculates time to arrive for each stations to come.
+            foreach (var next in busLine.Route.Skip(stationIndex))
+            {
+                var timing = new BO.LineTiming
+                {
+                    LineID = busLine.ID,
+                    TripStartTime = trip.StartTime,
+                    CurrentStartTime = currentStartTime,
+                    LineNum = busLine.LineNum,
+                    EndStationName = busLine.Route.Last().Station.Name,
+                    ArrivalTime = timeToTravel,
+                };
+
+                TripOperator.Instance.AddLineTiming(next.Station.Code, timing);
+
+                // If the line jus got to the station, remove the line after 1 minute of simulation.
+                if (timeToTravel == TimeSpan.Zero)
+                {
+                    var arrived = (BO.LineTiming)timing.CopyPropertiesToNew(typeof(BO.LineTiming));
+                    Thread removeArrived = new Thread(() => RemoveArrivedTiming(next.Station.Code, arrived));
+                    TripOperator.Instance.Threads.Add(removeArrived);
+                    removeArrived.Start();
+                }
+
+                // Add mean time to arrive for the next station if exists.
+                if (next.NextStationRoute == null) break;
+                timeToTravel = timeToTravel.Add(next.NextStationRoute?.DrivingTime ?? TimeSpan.Zero);
+            }
+        }
+
+        /// <summary>
+        /// Waits 1 simulation minute and then remove a line that arrived from the station's panel.
+        /// </summary>
+        /// <param name="stationCode">The station that the line has arrived.</param>
+        /// <param name="arrived">The line timing that has been sent to the station with this line</param>
         private void RemoveArrivedTiming(int stationCode, BO.LineTiming arrived)
         {
             try
             {
+                // Sets arrival time to negative in order to remove.
                 arrived.ArrivalTime = TimeSpan.FromMinutes(-1);
+
                 var simulatedTime = TimeSpan.FromTicks(TimeSpan.FromMinutes(1).Ticks / Clock.Instance.Rate);
                 Thread.Sleep(simulatedTime);
+
                 TripOperator.Instance.AddLineTiming(stationCode, arrived);
             }
             catch (ThreadInterruptedException) { }
@@ -1041,6 +1133,7 @@ namespace BL
         {
             if (trip.Frequencied == null)
             {
+                // Now frequency, wait till next day.
                 return trip.StartTime.Add(TimeSpan.FromDays(1));
             }
 
@@ -1049,6 +1142,7 @@ namespace BL
 
             if (lastDrive + frequency > finishTime)
             {
+                // Over finish time, wait till next day.
                 return trip.StartTime.Add(TimeSpan.FromDays(1));
             }
 
@@ -1081,6 +1175,7 @@ namespace BL
                 return nextDrive;
             }
 
+            // Over finish time, need to wait until start time.
             return trip.StartTime.Add(TimeSpan.FromDays(1));
         }
         #endregion
