@@ -191,12 +191,7 @@
                         <scm:SortDescription PropertyName="ArrivalTime.TotalMinutes" />
                     </CollectionViewSource.SortDescriptions>
                 </CollectionViewSource>
-				<CollectionViewSource x:Key='StationCollection' Source="{Binding Stations}">
-					<CollectionViewSource.SortDescriptions>
-						<scm:SortDescription PropertyName="Station.Code" />
-					</CollectionViewSource.SortDescriptions>
-				</CollectionViewSource>
-			</TabItem.Resources>
+            </TabItem.Resources>
 
                 <Grid>
                     <Grid.RowDefinitions>
@@ -208,8 +203,8 @@
                 <!--#region Station Selector-->
                 <DockPanel Grid.Row="0" LastChildFill="True">
                     <Label Content="Station:" VerticalAlignment="Center"/>
-					<ComboBox SelectedItem="{Binding SelectedStation}" ItemsSource="{Binding Source={StaticResource StationCollection}}" Margin="5" VerticalAlignment="Center">
-						<ComboBox.ItemTemplate>
+                    <ComboBox SelectedItem="{Binding SelectedStation}" ItemsSource="{Binding Stations}" Margin="5" VerticalAlignment="Center">
+                        <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock>
                                     <TextBlock.Text>
