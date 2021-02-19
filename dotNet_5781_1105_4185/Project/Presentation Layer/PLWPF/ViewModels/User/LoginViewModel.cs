@@ -10,7 +10,7 @@ using System.Windows.Controls;
 
 namespace PL
 {
-    public class LoginViewModel : BaseViewModel, IDataErrorInfo
+    public class LoginViewModel : BaseViewModel
     {
         /// <summary>
         /// The authenticated user.
@@ -57,16 +57,16 @@ namespace PL
         /// <summary>
         /// Indicates whether a authentication failure occured.
         /// </summary>
-        public bool AuthFailure
+        public string ErrorMessage
         {
-            get => _authFailure;
+            get => _errorMessage;
             set
             {
-                _authFailure = value;
-                OnPropertyChanged(nameof(AuthFailure));
+                _errorMessage = value;
+                OnPropertyChanged(nameof(ErrorMessage));
             }
         }
-        private bool _authFailure;
+        private string _errorMessage;
 
         /// <summary>
         /// Command used in order to sign up a new user.
@@ -82,11 +82,11 @@ namespace PL
             Login = new RelayCommand(
                 async window => await _Login(window),
                 (obj) => !string.IsNullOrEmpty(Name) &&
-                         !string.IsNullOrEmpty(Password));
-            Signup = new RelayCommand(
-                async window => await _Signup(window),
-                (obj) => ValidateSignUpName().IsValid &&
-                         ValidateSignUpPassword().IsValid
+                         !string.IsNullOrEmpty(Password)
+            );
+            Signup = new RelayCommand(async window => await _Signup(window),
+                (obj) => !string.IsNullOrEmpty(Name) &&
+                         !string.IsNullOrEmpty(Password)
             );
         }
 
@@ -102,12 +102,11 @@ namespace PL
                 try
                 {
                     User = (BO.User)await BlWorkAsync(bl => bl.UserAuthentication(Name, Password));
-                    AuthFailure = false;
                     DialogService.CloseDialog(window, DialogResult.Ok);
                 }
-                catch (BO.BadAuthenticationException)
+                catch (BO.BadAuthenticationException ex)
                 {
-                    AuthFailure = true;
+                    ErrorMessage = ex.Message;
                 }
             });
         }
@@ -120,63 +119,20 @@ namespace PL
         {
             await Load(async () =>
             {
-                // The signup sould not faile when this function executes.
-                User = (BO.User)await BlWorkAsync(bl => bl.UserSignUp(Name, Password));
-                DialogService.CloseDialog(window, DialogResult.Ok);
-            });
-        }
-
-        public string this[string columnName]
-        {
-            get
-            {
-                // Returs the validation errors of a given property.
-                switch (columnName)
+                try
                 {
-                    case nameof(Name):
-                        return ValidateSignUpName().ErrorContent as string;
-                    case nameof(Password):
-                        return ValidateSignUpPassword().ErrorContent as string;
-                    default:
-                        return null;
+                    User = (BO.User)await BlWorkAsync(bl => bl.UserSignUp(Name, Password));
+                    DialogService.CloseDialog(window, DialogResult.Ok);
                 }
-            }
-        }
-
-        public string Error => throw new NotImplementedException();
-
-        /// <summary>
-        /// Validates the Name to sign up by the bussiness layer.
-        /// </summary>
-        /// <returns>If the name is invalid a validation result with the error message. Else return valid result</returns>
-        private ValidationResult ValidateSignUpName()
-        {
-            try
-            {
-                BlWork(bl => bl.ValidateSignUpName(Name));
-                return ValidationResult.ValidResult;
-            }
-            catch (BO.BadNameValidationException ex)
-            {
-                return new ValidationResult(false, ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Validates the Password to sign up by the bussiness layer.
-        /// </summary>
-        /// <returns>If the passord is invalid a validation result with the error message. Else return valid result</returns>
-        private ValidationResult ValidateSignUpPassword()
-        {
-            try
-            {
-                BlWork(bl => bl.ValidateSignUpPassword(Password));
-                return ValidationResult.ValidResult;
-            }
-            catch (BO.BadPasswordValidationException ex)
-            {
-                return new ValidationResult(false, ex.Message);
-            }
+                catch (BO.BadNameValidationException ex)
+                {
+                    ErrorMessage = ex.Message;
+                }
+                catch (BO.BadPasswordValidationException ex)
+                {
+                    ErrorMessage = ex.Message;
+                }
+            });
         }
     }
 }

@@ -8,176 +8,180 @@
       mc:Ignorable="d" 
       d:DesignHeight="350" d:DesignWidth="600"
       Title="AdminPage">
-    <TabControl SelectionChanged="TabControl_SelectionChanged">
-        <!--#region Line List-->
-        <TabItem x:Name="LineListTab" Header="Lines Management" DataContext="{Binding BusLinesListViewModel}">
-            <TabItem.Resources>
-                <CollectionViewSource x:Key='collection' Source="{Binding BusLines}">
-                    <CollectionViewSource.SortDescriptions>
-                        <scm:SortDescription PropertyName="BusLine.LineNum" />
-                    </CollectionViewSource.SortDescriptions>
-                </CollectionViewSource>
-            </TabItem.Resources>
+    <Grid>
+        <Image Source="/Images/background.jpeg" Stretch="Fill" />
+        <Border Background="#8FFFFFFF" />
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="40"/>
-                </Grid.RowDefinitions>
+        <TabControl SelectionChanged="TabControl_SelectionChanged" Background="Transparent">
+            <!--#region Line List-->
+            <TabItem x:Name="LineListTab" Header="Lines Management" DataContext="{Binding BusLinesListViewModel}">
+                <TabItem.Resources>
+                    <CollectionViewSource x:Key='collection' Source="{Binding BusLines}">
+                        <CollectionViewSource.SortDescriptions>
+                            <scm:SortDescription PropertyName="BusLine.LineNum" />
+                        </CollectionViewSource.SortDescriptions>
+                    </CollectionViewSource>
+                </TabItem.Resources>
 
-                <!-- Add Bus and Remove All buttons -->
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
-                    <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding AddBusLine}" Margin="0,0,5,0">Add Bus Line</Button>
-                    <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllBusLines}">Remove All Bus Lines</Button>
-                </StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="40"/>
+                    </Grid.RowDefinitions>
 
-                <ListView ItemsSource="{Binding Source={StaticResource collection}}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Line" DisplayMemberBinding="{Binding BusLine.LineNum}" />
-                            <GridViewColumn Header="Region" DisplayMemberBinding="{Binding BusLine.Region}" />
-                            <GridViewColumn Header="Start" DisplayMemberBinding="{Binding StartName}" />
-                            <GridViewColumn Header="End" DisplayMemberBinding="{Binding EndName}" />
-                            <GridViewColumn Header="Update">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="0" Background="Transparent"
+                    <!-- Add Bus and Remove All buttons -->
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
+                        <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding AddBusLine}" Margin="0,0,5,0">Add Bus Line</Button>
+                        <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllBusLines}">Remove All Bus Lines</Button>
+                    </StackPanel>
+
+                    <ListView ItemsSource="{Binding Source={StaticResource collection}}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Line" DisplayMemberBinding="{Binding BusLine.LineNum}" />
+                                <GridViewColumn Header="Region" DisplayMemberBinding="{Binding BusLine.Region}" />
+                                <GridViewColumn Header="Start" DisplayMemberBinding="{Binding StartName}" />
+                                <GridViewColumn Header="End" DisplayMemberBinding="{Binding EndName}" />
+                                <GridViewColumn Header="Update">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="0" Background="Transparent"
                                         BorderThickness="0" VerticalAlignment="Center"
                                         Command="{Binding UpdateBusLine}">
-                                            <!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
-                                            Update
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Duplicate">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="0" Background="Transparent"
+                                                <Image Source="/Images/synchronize_48px.png" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Duplicate">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="0" Background="Transparent"
                                         BorderThickness="0" VerticalAlignment="Center"
                                         Command="{Binding DuplicateBusLine}">
-                                            <!-- <Image Source="/Resources/delete_48px.png"/> -->
-                                            Duplicate
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Remove">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="0" Background="Transparent"
+                                                <Image Source="/Images/duplicate_48px.png" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Remove">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="0" Background="Transparent"
                                         BorderThickness="0" VerticalAlignment="Center"
                                         Command="{Binding RemoveBusLine}">
-                                            <Image Source="/Images/delete_48px.png"/>
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                    <ListView.Resources>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Height" Value="30"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding HasFullRoute}" Value="False">
-                                    <Setter Property="Background" Value="LightSalmon"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListView.Resources>
-                </ListView>
-            </Grid>
-        </TabItem>
-        <!--#endregion-->
+                                                <Image Source="/Images/delete_48px.png"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
 
-        <!--#region Station List-->
-        <TabItem Header="Station Management" DataContext="{Binding StationListViewModel}">
-            <TabItem.Resources>
-                <CollectionViewSource x:Key='collection' Source="{Binding Stations}">
-                    <CollectionViewSource.SortDescriptions>
-                        <scm:SortDescription PropertyName="Station.Code" />
-                    </CollectionViewSource.SortDescriptions>
-                </CollectionViewSource>
-            </TabItem.Resources>
+                        <ListView.Resources>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="Height" Value="30"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasFullRoute}" Value="False">
+                                        <Setter Property="Background" Value="LightSalmon"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.Resources>
+                    </ListView>
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="40"/>
-                </Grid.RowDefinitions>
+            <!--#region Station List-->
+            <TabItem Header="Station Management" DataContext="{Binding StationListViewModel}">
+                <TabItem.Resources>
+                    <CollectionViewSource x:Key='collection' Source="{Binding Stations}">
+                        <CollectionViewSource.SortDescriptions>
+                            <scm:SortDescription PropertyName="Station.Code" />
+                        </CollectionViewSource.SortDescriptions>
+                    </CollectionViewSource>
+                </TabItem.Resources>
 
-                <!-- Add Bus and Remove All buttons -->
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
-                    <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding AddStation}" Margin="0,0,5,0">Add Station</Button>
-                    <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllStations}">Remove All Stations</Button>
-                </StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="40"/>
+                    </Grid.RowDefinitions>
 
-                <ListView ItemsSource="{Binding Source={StaticResource collection}}" Margin="5">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Code" DisplayMemberBinding="{Binding Station.Code}" />
-                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Station.Name}" />
-                            <GridViewColumn Header="Details">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="0" Background="Transparent"
+                    <!-- Add Bus and Remove All buttons -->
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
+                        <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding AddStation}" Margin="0,0,5,0">Add Station</Button>
+                        <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllStations}">Remove All Stations</Button>
+                    </StackPanel>
+
+                    <ListView ItemsSource="{Binding Source={StaticResource collection}}" Margin="5">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Code" DisplayMemberBinding="{Binding Station.Code}" />
+                                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Station.Name}" />
+                                <GridViewColumn Header="Details">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="0" Background="Transparent"
                                         BorderThickness="0" VerticalAlignment="Center"
                                         Command="{Binding StationDetails}">
-                                            <Image Source="/Images/info_48px.png"/>
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Update">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="0" Background="Transparent"
+                                                <Image Source="/Images/info_48px.png"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Update">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="0" Background="Transparent"
                                         BorderThickness="0" VerticalAlignment="Center"
                                         Command="{Binding UpdateStation}">
-                                            <Image Source="/Images/synchronize_48px.png"/>
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Remove">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="0" Background="Transparent"
+                                                <Image Source="/Images/synchronize_48px.png"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Remove">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="0" Background="Transparent"
                                         BorderThickness="0" VerticalAlignment="Center"
                                         Command="{Binding RemoveStation}">
-                                            <Image Source="/Images/delete_48px.png"/>
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Height" Value="30"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsLoading}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                </ListView>
+                                                <Image Source="/Images/delete_48px.png"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
 
-                <Label Grid.Row ="0" Content="Loading..." VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="#50000000">
-                    <Label.Style>
-                        <Style TargetType="{x:Type Label}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsLoading}" Value="False">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Label.Style>
-                </Label>
-            </Grid>
-        </TabItem>
-        <!--#endregion-->
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="Height" Value="30"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+
+                    <Label Grid.Row ="0" Content="Loading..." VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="#50000000">
+                        <Label.Style>
+                            <Style TargetType="{x:Type Label}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLoading}" Value="False">
+                                        <Setter Property="Visibility" Value="Hidden" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Label.Style>
+                    </Label>
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
 
         <!--#region Simulation -->
         <TabItem x:Name="SimulationTab" Header="Simulation" DataContext="{Binding SimulationViewModel }">
@@ -194,12 +198,12 @@
 				</CollectionViewSource>
 			</TabItem.Resources>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="40" />
-                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="40" />
+                    </Grid.RowDefinitions>
 
                 <!--#region Station Selector-->
                 <DockPanel Grid.Row="0" LastChildFill="True">
@@ -221,230 +225,235 @@
                 </DockPanel>
                 <!--#endregion-->
 
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-                    <!--#region Station's Buses Sign-->
-                    <Grid Grid.Column="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="75" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+                        <!--#region Station's Buses Sign-->
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="75" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
 
-                        <Grid Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="75" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" BorderBrush="Black" BorderThickness="2">
-                                <Image Source="/Images/blue_background_bus_100px.png" />
-                            </Border>
-                            <Border Grid.Column="1" BorderBrush="Black" BorderThickness="2">
-                                <Label Content="{Binding SelectedStation.Name}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="75" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" BorderBrush="Black" BorderThickness="2">
+                                    <Image Source="/Images/blue_background_bus_100px.png" />
+                                </Border>
+                                <Border Grid.Column="1" BorderBrush="Black" BorderThickness="2" Background="White">
+                                    <Label Content="{Binding SelectedStation.Name}" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </Grid>
+
+                            <ListView Grid.Row="1" ItemsSource="{Binding PassingBusLines}" BorderThickness="2" BorderBrush="Black" Background="Yellow" HorizontalContentAlignment="Stretch">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="Black" Background="Yellow" BorderThickness="2">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="75" />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Label Grid.Column="0" Content="{Binding BusLine.LineNum}" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <Label Grid.Column="1" Content="{Binding EndName}" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
                         </Grid>
+                        <!--#endregion-->
 
-                        <ListView Grid.Row="1" ItemsSource="{Binding PassingBusLines}" BorderThickness="2" BorderBrush="Black" Background="Yellow" HorizontalContentAlignment="Stretch">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border BorderBrush="Black" Background="Yellow" BorderThickness="2">
+                        <!--#region Station's Buses Time Table -->
+                        <Grid Grid.Column="1" Background="#101010">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="75" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="75" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="75" />
+                                </Grid.ColumnDefinitions>
+
+                                <Image Grid.Column="0" Source="/Images/time_128px.png" Margin="20,10,0,10" />
+                                <Image Grid.Column="1" Source="/Images/right_arrow_128px.png" Margin="10" />
+                                <Image Grid.Column="2" Source="/Images/comming_bus_128px.png" Margin="0,10,20,10"/>
+                            </Grid>
+
+                            <!--#region Arriving Lines-->
+                            <ListView Grid.Row="1" ItemsSource="{Binding Source={StaticResource ArrivingSorted}}" HorizontalContentAlignment="Stretch" BorderThickness="8" BorderBrush="#101010" Background="#181818" >
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="75" />
-                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="1*" />
+                                                <ColumnDefinition Width="75" />
                                             </Grid.ColumnDefinitions>
 
-                                            <Label Grid.Column="0" Content="{Binding BusLine.LineNum}" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                            <Label Grid.Column="1" Content="{Binding EndName}" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <Label Grid.Column="1" Content="{Binding EndStationName }" FontSize="17" Foreground="OrangeRed"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <Label Grid.Column="2" Content="{Binding LineNum }" FontSize="17" Foreground="OrangeRed"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                            <Label Grid.Column="0" Content="{Binding ArrivalTime.TotalMinutes }" ContentStringFormat="n0" FontSize="17" Foreground="OrangeRed" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <Label.Style>
+                                                    <Style TargetType="Label">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ArrivalTime.TotalMinutes}" Value="0">
+                                                                <Setter Property="Visibility" Value="Hidden"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Label.Style>
+                                            </Label>
+
+                                            <Image Grid.Column="0" Height="40" Source="/Images/orange_red_down_arrow_128px.png">
+                                                <Image.Style>
+                                                    <Style TargetType="Image">
+                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ArrivalTime.TotalMinutes}" Value="0">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
                                         </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
-                    <!--#endregion-->
-
-                    <!--#region Station's Buses Time Table -->
-                    <Grid Grid.Column="1" Background="#101010">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="75" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-
-                        <Grid Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="75" />
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="75" />
-                            </Grid.ColumnDefinitions>
-
-                            <Image Grid.Column="0" Source="/Images/time_128px.png" Margin="20,10,0,10" />
-                            <Image Grid.Column="1" Source="/Images/right_arrow_128px.png" Margin="10" />
-                            <Image Grid.Column="2" Source="/Images/comming_bus_128px.png" Margin="0,10,20,10"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <!--#endregion-->
                         </Grid>
-
-                        <!--#region Arriving Lines-->
-                        <ListView Grid.Row="1" ItemsSource="{Binding Source={StaticResource ArrivingSorted}}" HorizontalContentAlignment="Stretch" BorderThickness="8" BorderBrush="#101010" Background="#181818" >
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="75" />
-                                            <ColumnDefinition Width="1*" />
-                                            <ColumnDefinition Width="75" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <Label Grid.Column="1" Content="{Binding EndStationName }" FontSize="17" Foreground="OrangeRed"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                        <Label Grid.Column="2" Content="{Binding LineNum }" FontSize="17" Foreground="OrangeRed"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
-                                        <Label Grid.Column="0" Content="{Binding ArrivalTime.TotalMinutes }" ContentStringFormat="n0" FontSize="17" Foreground="OrangeRed" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            <Label.Style>
-                                                <Style TargetType="Label">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ArrivalTime.TotalMinutes}" Value="0">
-                                                            <Setter Property="Visibility" Value="Hidden"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Label.Style>
-                                        </Label>
-
-                                        <Image Grid.Column="0" Height="40" Source="/Images/orange_red_down_arrow_128px.png">
-                                            <Image.Style>
-                                                <Style TargetType="Image">
-                                                    <Setter Property="Visibility" Value="Hidden"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ArrivalTime.TotalMinutes}" Value="0">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
                         <!--#endregion-->
                     </Grid>
+
+                    <!--#region Simulation Properties-->
+                    <StackPanel Grid.Row="2" Background="LightGreen" Orientation="Horizontal">
+                        <Button Content="Start" Command="{Binding StartSimulation}" Margin="5" MinWidth="75"/>
+                        <Button Content="Stop" Command="{Binding StopSimulation}" Margin="5" MinWidth="75"/>
+                        <Label Content="Time of day:" Margin="5" VerticalAlignment="Center"/>
+                        <!--#region Simulation Time-->
+                        <Grid>
+                            <TextBox Text="{Binding SimulationTime, StringFormat=hh\\:mm\\:ss}" Margin="10" MinWidth="50" VerticalContentAlignment="Center">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Started}" Value="True">
+                                                <Setter Property="Visibility" Value="Hidden" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <TextBlock Text="{Binding SimulationTime, StringFormat=hh\\:mm\\:ss}" Margin="5" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Started}" Value="False">
+                                                <Setter Property="Visibility" Value="Hidden" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                        <!--#endregion-->
+                        <Label Content="Rate:" Margin="5" VerticalAlignment="Center" />
+                        <!--#region Simulation Rate-->
+                        <Grid>
+                            <TextBox Text="{Binding SimulationRate}" Margin="10" MinWidth="50" VerticalContentAlignment="Center">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Started}" Value="True">
+                                                <Setter Property="Visibility" Value="Hidden" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <TextBlock Text="{Binding SimulationRate}" Margin="5" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Started}" Value="False">
+                                                <Setter Property="Visibility" Value="Hidden" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                        <!--#endregion-->
+                    </StackPanel>
                     <!--#endregion-->
                 </Grid>
+            </TabItem>
+            <!--#endregion-->
 
-                <!--#region Simulation Properties-->
-                <StackPanel Grid.Row="2" Background="LightGreen" Orientation="Horizontal">
-                    <Button Content="Start" Command="{Binding StartSimulation}" Margin="5" MinWidth="75"/>
-                    <Button Content="Stop" Command="{Binding StopSimulation}" Margin="5" MinWidth="75"/>
-                    <Label Content="Time of day:" Margin="5" VerticalAlignment="Center"/>
-                    <!--#region Simulation Time-->
-                    <Grid>
-                        <TextBox Text="{Binding SimulationTime, StringFormat=hh\\:mm\\:ss}" Margin="10" MinWidth="50" VerticalContentAlignment="Center">
-                            <TextBox.Style>
-                                <Style TargetType="TextBox">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Started}" Value="True">
-                                            <Setter Property="Visibility" Value="Hidden" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
-                        <TextBlock Text="{Binding SimulationTime, StringFormat=hh\\:mm\\:ss}" Margin="5" VerticalAlignment="Center">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Started}" Value="False">
-                                            <Setter Property="Visibility" Value="Hidden" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Grid>
-                    <!--#endregion-->
-                    <Label Content="Rate:" Margin="5" VerticalAlignment="Center" />
-                    <!--#region Simulation Rate-->
-                    <Grid>
-                        <TextBox Text="{Binding SimulationRate}" Margin="10" MinWidth="50" VerticalContentAlignment="Center">
-                            <TextBox.Style>
-                                <Style TargetType="TextBox">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Started}" Value="True">
-                                            <Setter Property="Visibility" Value="Hidden" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
-                        <TextBlock Text="{Binding SimulationRate}" Margin="5" VerticalAlignment="Center">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Started}" Value="False">
-                                            <Setter Property="Visibility" Value="Hidden" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Grid>
-                    <!--#endregion-->
-                </StackPanel>
-                <!--#endregion-->
-            </Grid>
-        </TabItem>
-        <!--#endregion-->
+            <!--#region Bus List-->
+            <TabItem Header="Bus Management" DataContext="{Binding BusListViewModel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="40"/>
+                    </Grid.RowDefinitions>
 
-        <!--#region Bus List-->
-        <TabItem Header="Bus Management" DataContext="{Binding BusListViewModel}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="40"/>
-                </Grid.RowDefinitions>
+                    <!-- Add Bus and Remove All buttons -->
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
+                        <Button MinWidth="75" Margin="0,0,5,0" HorizontalAlignment="Left" Command="{Binding AddBus}">Add Bus</Button>
+                        <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllBuses}">Remove All Buses</Button>
+                    </StackPanel>
 
-                <!-- Add Bus and Remove All buttons -->
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
-                    <Button MinWidth="75" Margin="0,0,5,0" HorizontalAlignment="Left" Command="{Binding AddBus}">Add Bus</Button>
-                    <Button MinWidth="75" HorizontalAlignment="Left" Command="{Binding RemoveAllBuses}">Remove All Buses</Button>
-                </StackPanel>
-
-                <ListView ItemsSource="{Binding Buses}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Bus Registration" DisplayMemberBinding="{Binding Bus.Registration}" />
-                            <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Bus.Status}" />
-                            <GridViewColumn Header="Refuel">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="0" Background="Transparent"
+                    <ListView ItemsSource="{Binding Buses}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Bus Registration" DisplayMemberBinding="{Binding Bus.Registration}" />
+                                <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Bus.Status}" />
+                                <GridViewColumn Header="Refuel">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="0" Background="Transparent"
                                                 BorderThickness="0" VerticalAlignment="Center"
                                                 Command="{Binding RefuelBus}">
-                                            <!-- <Image Source="/Resources/refuel-bus-48px.png"/> -->
-                                            Refuel
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Remove">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Margin="0" Background="Transparent"
+                                                <Image Source="/Images/gas_station_48px.png" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Remove">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="0" Background="Transparent"
                                         BorderThickness="0" VerticalAlignment="Center"
                                         Command="{Binding RemoveBus}">
-                                            <!-- <Image Source="/Resources/delete-bus-48px.png"/> -->
-                                            Remove
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </Grid>
-        </TabItem>
-        <!--#endregion-->
-    </TabControl>
+                                                <Image Source="/Images/delete_48px.png" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="Height" Value="30"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
+        </TabControl>
+    </Grid>
 </Page>
