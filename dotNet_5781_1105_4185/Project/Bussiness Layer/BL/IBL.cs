@@ -293,6 +293,7 @@ namespace BLAPI
         /// <param name="stationCode">Station's code</param>
         /// <param name="updateTiming"></param>
         void SetStationPanel(int? stationCode, Action<BO.LineTiming[]> updateTiming);
+
         #endregion
     }
 }

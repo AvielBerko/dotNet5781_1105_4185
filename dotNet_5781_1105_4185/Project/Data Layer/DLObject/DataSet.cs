@@ -36,6 +36,18 @@ namespace DS
                     Name = "user",
                     Password = "user",
                     Role = DO.Roles.Normal
+                },
+                new DO.User
+                {
+                    Name = "meir",
+                    Password = "Mkesifj2",
+                    Role = DO.Roles.Admin
+                },
+                new DO.User
+                {
+                    Name = "aviel",
+                    Password = "5002323",
+                    Role = DO.Roles.Admin
                 }
             };
 
@@ -91,6 +103,36 @@ namespace DS
                     EndStationCode = 176,
                     HasFullRoute = true,
                     RouteLength = 2,
+                },
+                 new DO.BusLine
+                {
+                    ID = Guid.NewGuid(),
+                    LineNum = 174,
+                    Region = DO.Regions.Center,
+                    StartStationCode = 203,
+                    EndStationCode = 211,
+                    HasFullRoute = true,
+                    RouteLength = 4,
+                },
+                new DO.BusLine
+                {
+                    ID = Guid.NewGuid(),
+                    LineNum = 1,
+                    Region = DO.Regions.TelAviv,
+                    StartStationCode = 301,
+                    EndStationCode = 306,
+                    HasFullRoute = true,
+                    RouteLength = 5,
+                },
+                 new DO.BusLine
+                {
+                    ID = Guid.NewGuid(),
+                    LineNum = 91,
+                    Region = DO.Regions.GolanHeights,
+                    StartStationCode = 350,
+                    EndStationCode = 363,
+                    HasFullRoute = false,
+                    RouteLength = 3,
                 },
             };
 
@@ -924,6 +966,78 @@ namespace DS
                     StationCode = 176,
                     RouteIndex = 1,
                 },
+                new DO.LineStation
+                {
+                    LineID = Lines[2].ID,
+                    StationCode = 203,
+                    RouteIndex = 0,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[2].ID,
+                    StationCode = 207,
+                    RouteIndex = 1,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[2].ID,
+                    StationCode = 210,
+                    RouteIndex = 2,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[2].ID,
+                    StationCode = 211,
+                    RouteIndex = 3,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[3].ID,
+                    StationCode = 301,
+                    RouteIndex = 0,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[3].ID,
+                    StationCode = 302,
+                    RouteIndex = 1,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[3].ID,
+                    StationCode = 304,
+                    RouteIndex = 2,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[3].ID,
+                    StationCode = 305,
+                    RouteIndex = 3,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[3].ID,
+                    StationCode = 306,
+                    RouteIndex = 4,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[4].ID,
+                    StationCode = 350,
+                    RouteIndex = 0,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[4].ID,
+                    StationCode = 352,
+                    RouteIndex = 1,
+                },
+                new DO.LineStation
+                {
+                    LineID = Lines[4].ID,
+                    StationCode = 363,
+                    RouteIndex = 2,
+                },
             };
 
             AdjacentStations = new List<DO.AdjacentStations>
@@ -942,6 +1056,69 @@ namespace DS
                     Distance = 295.46,
                     DrivingTime = TimeSpan.FromMinutes(1.90),
                 },
+                new DO.AdjacentStations
+                {
+                    Station1Code = 203,
+                    Station2Code = 207,
+                    Distance = 305.36,
+                    DrivingTime = TimeSpan.FromMinutes(4.3),
+                },
+                new DO.AdjacentStations
+                {
+                    Station1Code = 207,
+                    Station2Code = 210,
+                    Distance = 140,
+                    DrivingTime = TimeSpan.FromMinutes(2.1),
+                },
+                new DO.AdjacentStations
+                {
+                    Station1Code = 210,
+                    Station2Code = 211,
+                    Distance = 693.3,
+                    DrivingTime = TimeSpan.FromMinutes(6.6),
+                },
+                new DO.AdjacentStations
+                {
+                    Station1Code = 301,
+                    Station2Code = 302,
+                    Distance = 253,
+                    DrivingTime = TimeSpan.FromMinutes(2.3),
+                },
+                new DO.AdjacentStations
+                {
+                    Station1Code = 302,
+                    Station2Code = 304,
+                    Distance = 593,
+                    DrivingTime = TimeSpan.FromMinutes(3.62),
+                },
+                new DO.AdjacentStations
+                {
+                    Station1Code = 304,
+                    Station2Code = 305,
+                    Distance = 500,
+                    DrivingTime = TimeSpan.FromMinutes(3),
+                },
+                new DO.AdjacentStations
+                {
+                    Station1Code = 305,
+                    Station2Code = 306,
+                    Distance = 1028,
+                    DrivingTime = TimeSpan.FromMinutes(8.23),
+                },
+                new DO.AdjacentStations
+                {
+                    Station1Code = 350,
+                    Station2Code = 352,
+                    Distance = 253,
+                    DrivingTime = TimeSpan.FromMinutes(3.43),
+                },
+                /*new DO.AdjacentStations
+                {
+                    Station1Code = 352,
+                    Station2Code = 363,
+                    Distance = 783.2,
+                    DrivingTime = TimeSpan.FromMinutes(4.6),
+                },*/
             };
 
             LineTrips = new List<DO.LineTrip>

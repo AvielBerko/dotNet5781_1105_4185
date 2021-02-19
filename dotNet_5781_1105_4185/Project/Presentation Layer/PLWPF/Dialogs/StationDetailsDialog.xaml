@@ -45,10 +45,10 @@
 			<ListView Grid.Column="1" Margin="5" ItemsSource="{Binding AdjacentStations}">
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="Code" DisplayMemberBinding="{Binding Adjacent.ToStation.Code}"/>
-						<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Adjacent.ToStation.Name}"/>
-						<GridViewColumn Header="Distance" DisplayMemberBinding="{Binding Adjacent.Distance}"/>
-						<GridViewColumn Header="Time" DisplayMemberBinding="{Binding Adjacent.DrivingTime}"/>
+						<GridViewColumn Header="Code" DisplayMemberBinding="{Binding Adjacents.Station2.Code}"/>
+						<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Adjacents.Station2.Name}"/>
+						<GridViewColumn Header="Distance" DisplayMemberBinding="{Binding Adjacents.Distance}"/>
+						<GridViewColumn Header="Time" DisplayMemberBinding="{Binding Adjacents.DrivingTime}"/>
 					</GridView>
 				</ListView.View>
 			</ListView>

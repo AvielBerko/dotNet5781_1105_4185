@@ -27,6 +27,13 @@ namespace PL
         public AdjacentStationViewModel(BO.AdjacentStations adjacent, int fromStationCode)
         {
             _fromStationCode = fromStationCode;
+            if (adjacent.Station1.Code != fromStationCode) 
+            {
+                int temp = adjacent.Station1.Code;
+                adjacent.Station1.Code = adjacent.Station2.Code;
+                adjacent.Station2.Code = temp;
+            }
+
             Adjacents = adjacent;
 
             RemoveAdjacents = new RelayCommand(obj => _Remove());
