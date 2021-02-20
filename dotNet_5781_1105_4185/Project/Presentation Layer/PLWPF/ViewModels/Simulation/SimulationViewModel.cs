@@ -9,9 +9,14 @@ using System.Threading.Tasks;
 
 namespace PL
 {
+    /// <summary>
+    /// ViewModel in charge of the functionality of the simulation tab.
+    /// </summary>
     public class SimulationViewModel : BaseViewModel
     {
-        private TimeSpan _simulationTime;
+        /// <summary>
+        /// The time of the simulation.
+        /// </summary>
         public TimeSpan SimulationTime
         {
             get => _simulationTime;
@@ -28,8 +33,11 @@ namespace PL
                 OnPropertyChanged(nameof(SimulationTime));
             }
         }
+        private TimeSpan _simulationTime;
 
-        private int _simulationRate;
+        /// <summary>
+        /// The rate of the simulation
+        /// </summary>
         public int SimulationRate
         {
             get => _simulationRate;
@@ -41,8 +49,11 @@ namespace PL
                 OnPropertyChanged(nameof(SimulationRate));
             }
         }
+        private int _simulationRate;
 
-        private ObservableCollection<BO.Station> _stations;
+        /// <summary>
+        /// The list of stations to choose from.
+        /// </summary>
         public ObservableCollection<BO.Station> Stations
         {
             get => _stations;
@@ -52,8 +63,11 @@ namespace PL
                 OnPropertyChanged(nameof(Stations));
             }
         }
+        private ObservableCollection<BO.Station> _stations;
 
-        private ObservableCollection<BO.LineTiming> _arrivingLines;
+        /// <summary>
+        /// List of all the line timings to show on the digital panel.
+        /// </summary>
         public ObservableCollection<BO.LineTiming> ArrivingLines
         {
             get => _arrivingLines;
@@ -63,10 +77,25 @@ namespace PL
                 OnPropertyChanged(nameof(ArrivingLines));
             }
         }
+        private ObservableCollection<BO.LineTiming> _arrivingLines;
 
-        public ObservableCollection<BusLineViewModel> PassingBusLines { get; private set; }
+        /// <summary>
+        /// List of all the lines that passing the selected station.
+        /// </summary>
+        public ObservableCollection<BusLineViewModel> PassingBusLines
+        {
+            get => _passingBusLines;
+            private set
+            {
+                _passingBusLines = value;
+                OnPropertyChanged(nameof(PassingBusLines));
+            }
+        }
+        private ObservableCollection<BusLineViewModel> _passingBusLines;
 
-        private BO.Station _selectedStation;
+        /// <summary>
+        /// The chosen station to show details on.
+        /// </summary>
         public BO.Station SelectedStation
         {
             get => _selectedStation;
@@ -82,9 +111,10 @@ namespace PL
                 _ = GetPassingBusLinesFromBL();
             }
         }
+        private BO.Station _selectedStation;
 
-        private BackgroundWorker _timeSimulation;
         public bool Started => _timeSimulation.IsBusy;
+        private BackgroundWorker _timeSimulation;
 
         public RelayCommand StartSimulation { get; }
         public RelayCommand StopSimulation { get; }
@@ -131,8 +161,6 @@ namespace PL
                             await BlWorkAsync(bl => bl.GetLinesPassingTheStation(_selectedStation.Code))
                           select new BusLineViewModel(bl);
                 PassingBusLines = new ObservableCollection<BusLineViewModel>(vms);
-
-                OnPropertyChanged(nameof(PassingBusLines));
             });
         }
 
