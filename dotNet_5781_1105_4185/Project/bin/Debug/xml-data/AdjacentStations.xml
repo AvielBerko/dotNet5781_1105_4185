@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <AdjacentStations.xml>
   <AdjacentStations>
-    <Station1Code>91</Station1Code>
-    <Station2Code>93</Station2Code>
-    <Distance>123</Distance>
-    <DrivingTime>00:03:12</DrivingTime>
-  </AdjacentStations>
-  <AdjacentStations>
     <Station1Code>93</Station1Code>
     <Station2Code>94</Station2Code>
     <Distance>364</Distance>
@@ -83,18 +77,6 @@
     <Station2Code>113</Station2Code>
     <Distance>136.3</Distance>
     <DrivingTime>00:02:12</DrivingTime>
-  </AdjacentStations>
-  <AdjacentStations>
-    <Station1Code>91</Station1Code>
-    <Station2Code>113</Station2Code>
-    <Distance>53223</Distance>
-    <DrivingTime>01:30:00</DrivingTime>
-  </AdjacentStations>
-  <AdjacentStations>
-    <Station1Code>103</Station1Code>
-    <Station2Code>91</Station2Code>
-    <Distance>125</Distance>
-    <DrivingTime>00:01:00</DrivingTime>
   </AdjacentStations>
   <AdjacentStations>
     <Station1Code>102</Station1Code>

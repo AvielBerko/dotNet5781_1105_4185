@@ -1,26 +1,6 @@
 <?xml version="1.0"?>
 <ArrayOfLineStation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <LineStation>
-    <LineID>06aae4a8-b706-40de-b086-25afa98ba5d3</LineID>
-    <StationCode>91</StationCode>
-    <RouteIndex>0</RouteIndex>
-  </LineStation>
-  <LineStation>
-    <LineID>06aae4a8-b706-40de-b086-25afa98ba5d3</LineID>
-    <StationCode>93</StationCode>
-    <RouteIndex>1</RouteIndex>
-  </LineStation>
-  <LineStation>
-    <LineID>06aae4a8-b706-40de-b086-25afa98ba5d3</LineID>
-    <StationCode>94</StationCode>
-    <RouteIndex>2</RouteIndex>
-  </LineStation>
-  <LineStation>
-    <LineID>06aae4a8-b706-40de-b086-25afa98ba5d3</LineID>
-    <StationCode>95</StationCode>
-    <RouteIndex>3</RouteIndex>
-  </LineStation>
-  <LineStation>
     <LineID>28faca6c-6b41-42c3-a0b8-2891cdb07250</LineID>
     <StationCode>102</StationCode>
     <RouteIndex>0</RouteIndex>
@@ -67,11 +47,6 @@
   </LineStation>
   <LineStation>
     <LineID>fde9d948-81bc-47b6-ad30-7747011068fa</LineID>
-    <StationCode>91</StationCode>
-    <RouteIndex>1</RouteIndex>
-  </LineStation>
-  <LineStation>
-    <LineID>fde9d948-81bc-47b6-ad30-7747011068fa</LineID>
     <StationCode>102</StationCode>
     <RouteIndex>2</RouteIndex>
   </LineStation>
@@ -82,12 +57,27 @@
   </LineStation>
   <LineStation>
     <LineID>f7a617e7-b956-4aae-892e-658feefbbf43</LineID>
+    <StationCode>113</StationCode>
+    <RouteIndex>1</RouteIndex>
+  </LineStation>
+  <LineStation>
+    <LineID>06aae4a8-b706-40de-b086-25afa98ba5d3</LineID>
     <StationCode>91</StationCode>
     <RouteIndex>0</RouteIndex>
   </LineStation>
   <LineStation>
-    <LineID>f7a617e7-b956-4aae-892e-658feefbbf43</LineID>
-    <StationCode>113</StationCode>
+    <LineID>06aae4a8-b706-40de-b086-25afa98ba5d3</LineID>
+    <StationCode>93</StationCode>
     <RouteIndex>1</RouteIndex>
+  </LineStation>
+  <LineStation>
+    <LineID>06aae4a8-b706-40de-b086-25afa98ba5d3</LineID>
+    <StationCode>94</StationCode>
+    <RouteIndex>2</RouteIndex>
+  </LineStation>
+  <LineStation>
+    <LineID>06aae4a8-b706-40de-b086-25afa98ba5d3</LineID>
+    <StationCode>95</StationCode>
+    <RouteIndex>3</RouteIndex>
   </LineStation>
 </ArrayOfLineStation>

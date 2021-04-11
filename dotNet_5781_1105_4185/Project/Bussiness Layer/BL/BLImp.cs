@@ -979,7 +979,6 @@ namespace BL
                     select GetBusLine(id)
                 ).ToList();
 
-
                 while (true)
                 {
                     // Pops the first trip to come.
